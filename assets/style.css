@@ -1,0 +1,45 @@
+#slide-sec-3-1 .org-src-container,
+#slide-sec-3-2 .org-src-container,
+#slide-sec-3-9 .org-src-container {
+  width: 30%;
+  float: left;
+  box-sizing: border-box;
+}
+
+#slide-sec-3-1 > div:nth-child(2),
+#slide-sec-3-2 > div:nth-child(2),
+#slide-sec-3-9 > div:nth-child(2) {
+  margin-left: 22.5%;
+}
+
+.org-src-container pre {
+  border: none;
+  box-shadow: none;
+}
+
+h3 > code {
+  text-transform: none;
+}
+
+#slide-sec-5-1 > ul,
+#slide-sec-5-2 > ul {
+  font-size: 0.75em;
+}
+
+#slide-sec-4-3 .org-src-container,
+#slide-sec-4-4 .org-src-container,
+#slide-sec-4-5 .org-src-container,
+#slide-sec-4-6 .org-src-container,
+#slide-sec-4-7 .org-src-container {
+  text-align: center;
+}
+
+#slide-sec-4-3 .org-src-container pre,
+#slide-sec-4-4 .org-src-container pre,
+#slide-sec-4-5 .org-src-container pre,
+#slide-sec-4-6 .org-src-container pre,
+#slide-sec-4-7 .org-src-container pre {
+  margin-left: auto;
+  margin-right: auto;
+  width: 35%;
+}

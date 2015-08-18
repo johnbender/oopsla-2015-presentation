@@ -1,0 +1,269 @@
+#+REVEAL_HEAD_PREAMBLE: <link rel="stylesheet" type="text/css" href="assets/style.css" />
+#+REVEAL_ROOT: https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/
+#+REVEAL_THEME: solarized
+#+REVEAL_TRANS: none
+#+REVEAL_SLIDE_NUMBER: t
+#+REVEAL_HLEVEL: 10
+#+TITLE: Declarative Fence Insertion
+#+AUTHOR:
+#+EMAIL: johnbender@cs.ucla.edu
+#+OPTIONS: num:nil toc:nil reveal_history:t reveal_control:nil
+* A Savage Optimization
+** Recipe for PB&J
+   | chef 1              |
+   |---------------------|
+   | get bread           |
+   | apply peanut butter |
+   | apply jelly         |
+   | close halves        |
+** Delayed PB? Optimize.
+   | chef 1                |
+   |-----------------------|
+   | get bread             |
+   | apply jelly           |
+   | ! apply peanut butter |
+   | close halves          |
+
+* Concurrent Failure
+** A Delicate Activity
+   | chef 1              | chef 2       |
+   |---------------------+--------------|
+   | get bread           |              |
+   | apply peanut butter |              |
+   | apply jelly         |              |
+   |                     | check jelly  |
+   |                     | close halves |
+
+** Delayed PB? Optim— oh.
+   | chef 1                | chef 2       |
+   |-----------------------+--------------|
+   | get bread             |              |
+   | apply jelly           |              |
+   |                       | check jelly  |
+   |                       | close halves |
+   | ! apply peanut butter |              |
+
+* Dekker's Mutex
+** Simple Implementation
+  #+BEGIN_SRC c
+bool p0() {
+  flag0 = 1;
+  if(flag1 == 1){
+    return false;
+  }
+  // !! critical
+  return true;
+}
+  #+END_SRC
+  #+BEGIN_SRC c
+bool p1() {
+  flag1 = 1;
+  if(flag0 == 1){
+    return false;
+  }
+  // !! critical
+  return true;
+}
+  #+END_SRC
+
+** Simple Implementation
+  #+BEGIN_SRC c
+bool p0() {
+! flag0 = 1;
+! if(flag1 == 1){
+    return false;
+  }
+  // !! critical
+  return true;
+}
+  #+END_SRC
+  #+BEGIN_SRC c
+bool p1() {
+! flag1 = 1;
+! if(flag0 == 1){
+    return false;
+  }
+  // !! critical
+  return true;
+}
+  #+END_SRC
+
+** Sequential Consistency
+   | P0        | P1          |
+   |-----------+-------------|
+   | ~flag1=1~ |             |
+   | ~flag0:0~ |             |
+   |           | ~flag0=1~   |
+   |           | ! ~flag1:1~ |
+   |           | return      |
+   | enter     |             |
+
+** Buffered Store (~flag1~)
+   | P0        | P1          |
+   |-----------+-------------|
+   | ~flag1=1~ |             |
+   | ~flag0:0~ |             |
+   |           | ~flag0=1~   |
+   |           | ! ~flag1:0~ |
+   |           | enter       |
+   | enter     |             |
+** Buffered Store (~flag1~)
+   | P0          | P1        |
+   |-------------+-----------|
+   | ~flag0:0~   |           |
+   | ! ~flag1=1~ |           |
+   |             | ~flag0=1~ |
+   |             | ~flag1:1~ |
+   |             | return    |
+   | enter       |           |
+** Buffered Store (~flag1~)
+   | P0          | P1        |
+   |-------------+-----------|
+   | ~flag0:0~   |           |
+   |             | ~flag0=1~ |
+   | ! ~flag1=1~ |           |
+   |             | ~flag1:1~ |
+   |             | return    |
+   | enter       |           |
+** Buffered Store (~flag1~)
+   | P0          | P1        |
+   |-------------+-----------|
+   | ~flag0:0~   |           |
+   |             | ~flag0=1~ |
+   |             | ~flag1:0~ |
+   | ! ~flag1=1~ |           |
+   |             | ! enter   |
+   | enter       |           |
+** Buffered Store (~flag1~)
+   | P0          | P1        |
+   |-------------+-----------|
+   | ~flag0:0~   |           |
+   |             | ~flag0=1~ |
+   |             | ~flag1:0~ |
+   |             | ! enter   |
+   | ! ~flag1=1~ |           |
+   | enter       |           |
+
+** Fixed
+  #+BEGIN_SRC c
+bool p0() {
+  flag0 = 1;
+! __asm__ ("mfence");
+  if(flag1 == 1){
+    return false;
+  }
+  // !! critical
+  return true;
+}
+  #+END_SRC
+  #+BEGIN_SRC c
+bool p1() {
+  flag1 = 1;
+! __asm__ ("mfence");
+  if(flag0 == 1){
+    return false;
+  }
+  // !! critical
+  return true;
+}
+  #+END_SRC
+
+* The Problem
+** What we want:
+   - sc semantics
+   - x-platform
+   - performance
+** What we don't want:
+   - actual sc
+   - user intervention
+
+** Semantics != SC
+  #+BEGIN_SRC c
+bool p0() {
+  flag0 = 1;
+  __asm__ ("mfence");
+  if(flag0 == 1){
+    return false;
+  }
+  // !! no fences required
+  return true;
+}
+  #+END_SRC
+
+** Cross Platform
+  #+BEGIN_SRC c
+bool p0() {
+  flag0 = 1;
+  __asm__ ("mfence");
+  if(flag0 == 1){
+    return false;
+  }
+  // !! critical
+  return true;
+}
+  #+END_SRC
+
+** Cross Platform
+  #+BEGIN_SRC c
+bool p0() {
+  flag0 = 1;
+  __asm__ ("dmb");
+  if(flag0 == 1){
+    return false;
+  }
+  // !! critical
+  return true;
+}
+  #+END_SRC
+
+** Fence Selection
+  #+BEGIN_SRC c
+bool p0() {
+  flag0 = 1;
+  __asm__ ("dmb st");
+  if(flag0 == 1){
+    return false;
+  }
+  // !! critical
+  return true;
+}
+  #+END_SRC
+
+** Existing Fences(-likes)
+  #+BEGIN_SRC c
+bool p0() {
+  CAS(&flag0, 0, 1);
+  // fence unnecessary
+  if(flag0 == 1){
+    return false;
+  }
+  // !! critical
+  return true;
+}
+  #+END_SRC
+
+** TL2 STM Algorithm
+   #+INCLUDE: "tex/code/tl2-commit.c" src c
+
+
+* Related Work
+** Recovering sequential consistency
+   - Don't Sit on the Fence [Alglave et al.]
+   - Hiding relaxed memory consistency with a compiler [Lee et al.]
+   - all, whole program
+** Enforcing arbitrary properties
+   - Automatic inference of memory fences [Kuperstein et al.]
+   - Synthesis of memory fences via refinement propagation [Meshman et al.]
+   - all, whole program
+
+* Our Approach
+** Order Specifications
+   - order: relation between instructions
+   - account for loops, overlaps, etc
+   - platform agnostic
+   - annotation vs inference
+** Value
+   - declarative
+   - exact
+   - often included
+   - effective

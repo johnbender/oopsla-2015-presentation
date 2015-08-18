@@ -1,0 +1,868 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Declarative Fence Insertion</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/css/reveal.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/css/theme/solarized.css" id="theme"/>
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+<link rel="stylesheet" type="text/css" href="assets/style.css" />
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1>Declarative Fence Insertion</h1>
+<h2></h2>
+<h2><a href="mailto:johnbender@cs.ucla.edu">johnbender@cs.ucla.edu</a></h2>
+<h2></h2>
+</section>
+<section>
+<section id="slide-sec-1">
+<h2 id="sec-1">A Savage Optimization</h2>
+<div class="outline-text-2" id="text-1">
+</div></section>
+</section>
+<section>
+<section id="slide-sec-1-1">
+<h3 id="sec-1-1">Recipe for PB&amp;J</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">chef 1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">get bread</td>
+</tr>
+
+<tr>
+<td class="left">apply peanut butter</td>
+</tr>
+
+<tr>
+<td class="left">apply jelly</td>
+</tr>
+
+<tr>
+<td class="left">close halves</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section>
+<section id="slide-sec-1-2">
+<h3 id="sec-1-2">Delayed PB? Optimize.</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">chef 1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">get bread</td>
+</tr>
+
+<tr>
+<td class="left">apply jelly</td>
+</tr>
+
+<tr>
+<td class="left">! apply peanut butter</td>
+</tr>
+
+<tr>
+<td class="left">close halves</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-2">
+<h2 id="sec-2">Concurrent Failure</h2>
+<div class="outline-text-2" id="text-2">
+</div></section>
+</section>
+<section>
+<section id="slide-sec-2-1">
+<h3 id="sec-2-1">A Delicate Activity</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">chef 1</th>
+<th scope="col" class="left">chef 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">get bread</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">apply peanut butter</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">apply jelly</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">check jelly</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">close halves</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-2-2">
+<h3 id="sec-2-2">Delayed PB? Optim— oh.</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">chef 1</th>
+<th scope="col" class="left">chef 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">get bread</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">apply jelly</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">check jelly</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">close halves</td>
+</tr>
+
+<tr>
+<td class="left">! apply peanut butter</td>
+<td class="left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-3">
+<h2 id="sec-3">Dekker's Mutex</h2>
+<div class="outline-text-2" id="text-3">
+</div></section>
+</section>
+<section>
+<section id="slide-sec-3-1">
+<h3 id="sec-3-1">Simple Implementation</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p0</span>() {
+  flag0 = 1;
+  <span style="color: #00cd00;">if</span>(flag1 == 1){
+    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
+  }
+  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
+  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
+}
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre  class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p1</span>() {
+  flag1 = 1;
+  <span style="color: #00cd00;">if</span>(flag0 == 1){
+    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
+  }
+  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
+  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
+}
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-3-2">
+<h3 id="sec-3-2">Simple Implementation</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p0</span>() {
+<span style="color: #cd0000;">!</span> flag0 = 1;
+<span style="color: #cd0000;">!</span> <span style="color: #00cd00;">if</span>(flag1 == 1){
+    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
+  }
+  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
+  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
+}
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre  class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p1</span>() {
+<span style="color: #cd0000;">!</span> flag1 = 1;
+<span style="color: #cd0000;">!</span> <span style="color: #00cd00;">if</span>(flag0 == 1){
+    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
+  }
+  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
+  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
+}
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-3-3">
+<h3 id="sec-3-3">Sequential Consistency</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">P0</th>
+<th scope="col" class="left">P1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left"><code>flag1=1</code></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left"><code>flag0:0</code></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><code>flag0=1</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">! <code>flag1:1</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">return</td>
+</tr>
+
+<tr>
+<td class="left">enter</td>
+<td class="left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-3-4">
+<h3 id="sec-3-4">Buffered Store (<code>flag1</code>)</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">P0</th>
+<th scope="col" class="left">P1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left"><code>flag1=1</code></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left"><code>flag0:0</code></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><code>flag0=1</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">! <code>flag1:0</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">enter</td>
+</tr>
+
+<tr>
+<td class="left">enter</td>
+<td class="left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section>
+<section id="slide-sec-3-5">
+<h3 id="sec-3-5">Buffered Store (<code>flag1</code>)</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">P0</th>
+<th scope="col" class="left">P1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left"><code>flag0:0</code></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">! <code>flag1=1</code></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><code>flag0=1</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><code>flag1:1</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">return</td>
+</tr>
+
+<tr>
+<td class="left">enter</td>
+<td class="left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section>
+<section id="slide-sec-3-6">
+<h3 id="sec-3-6">Buffered Store (<code>flag1</code>)</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">P0</th>
+<th scope="col" class="left">P1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left"><code>flag0:0</code></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><code>flag0=1</code></td>
+</tr>
+
+<tr>
+<td class="left">! <code>flag1=1</code></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><code>flag1:1</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">return</td>
+</tr>
+
+<tr>
+<td class="left">enter</td>
+<td class="left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section>
+<section id="slide-sec-3-7">
+<h3 id="sec-3-7">Buffered Store (<code>flag1</code>)</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">P0</th>
+<th scope="col" class="left">P1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left"><code>flag0:0</code></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><code>flag0=1</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><code>flag1:0</code></td>
+</tr>
+
+<tr>
+<td class="left">! <code>flag1=1</code></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">! enter</td>
+</tr>
+
+<tr>
+<td class="left">enter</td>
+<td class="left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section>
+<section id="slide-sec-3-8">
+<h3 id="sec-3-8">Buffered Store (<code>flag1</code>)</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">P0</th>
+<th scope="col" class="left">P1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left"><code>flag0:0</code></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><code>flag0=1</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><code>flag1:0</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">! enter</td>
+</tr>
+
+<tr>
+<td class="left">! <code>flag1=1</code></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">enter</td>
+<td class="left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-3-9">
+<h3 id="sec-3-9">Fixed</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p0</span>() {
+  flag0 = 1;
+<span style="color: #cd0000;">!</span> <span style="color: #00cd00;">__asm__</span> (<span style="color: #00cdcd;">"mfence"</span>);
+  <span style="color: #00cd00;">if</span>(flag1 == 1){
+    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
+  }
+  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
+  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
+}
+</pre>
+</div>
+<div class="org-src-container">
+
+<pre  class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p1</span>() {
+  flag1 = 1;
+<span style="color: #cd0000;">!</span> <span style="color: #00cd00;">__asm__</span> (<span style="color: #00cdcd;">"mfence"</span>);
+  <span style="color: #00cd00;">if</span>(flag0 == 1){
+    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
+  }
+  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
+  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
+}
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-4">
+<h2 id="sec-4">The Problem</h2>
+<div class="outline-text-2" id="text-4">
+</div></section>
+</section>
+<section>
+<section id="slide-sec-4-1">
+<h3 id="sec-4-1">What we want:</h3>
+<ul>
+<li>sc semantics</li>
+<li>x-platform</li>
+<li>performance</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-sec-4-2">
+<h3 id="sec-4-2">What we don't want:</h3>
+<ul>
+<li>actual sc</li>
+<li>user intervention</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-4-3">
+<h3 id="sec-4-3">Semantics != SC</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p0</span>() {
+  flag0 = 1;
+  <span style="color: #00cd00;">__asm__</span> (<span style="color: #00cdcd;">"mfence"</span>);
+  <span style="color: #00cd00;">if</span>(flag0 == 1){
+    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
+  }
+  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! no fences required</span>
+  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
+}
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-4-4">
+<h3 id="sec-4-4">Cross Platform</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p0</span>() {
+  flag0 = 1;
+  <span style="color: #00cd00;">__asm__</span> (<span style="color: #00cdcd;">"mfence"</span>);
+  <span style="color: #00cd00;">if</span>(flag0 == 1){
+    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
+  }
+  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
+  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
+}
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-4-5">
+<h3 id="sec-4-5">Cross Platform</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p0</span>() {
+  flag0 = 1;
+  <span style="color: #00cd00;">__asm__</span> (<span style="color: #00cdcd;">"dmb"</span>);
+  <span style="color: #00cd00;">if</span>(flag0 == 1){
+    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
+  }
+  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
+  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
+}
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-4-6">
+<h3 id="sec-4-6">Fence Selection</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p0</span>() {
+  flag0 = 1;
+  <span style="color: #00cd00;">__asm__</span> (<span style="color: #00cdcd;">"dmb st"</span>);
+  <span style="color: #00cd00;">if</span>(flag0 == 1){
+    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
+  }
+  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
+  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
+}
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-4-7">
+<h3 id="sec-4-7">Existing Fences(-likes)</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p0</span>() {
+  CAS(&amp;flag0, 0, 1);
+  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">fence unnecessary</span>
+  <span style="color: #00cd00;">if</span>(flag0 == 1){
+    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
+  }
+  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
+  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
+}
+</pre>
+</div>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-4-8">
+<h3 id="sec-4-8">TL2 STM Algorithm</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c">...
+<span style="color: #ff0000;"># if</span><span style="color: #ff0000;">n</span><span style="color: #ff0000;">def</span> TL2_EAGER
+<span style="color: #ff0000;">#   ifdef</span> TL2_OPTIM_HASHLOG
+<span style="color: #00cd00;">for</span> (wr = logs; wr != end; wr++)
+<span style="color: #ff0000;">#   endif</span>
+{
+  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">write the deferred stores</span>
+  WriteBackForward(wr);
+}
+<span style="color: #ff0000;"># endif</span>
+
+<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">make stores visible before unlock</span>
+MEMBARSTST();
+
+<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">release locks and increment version</span>
+DropLocks(Self, wv);
+
+<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">ensure loads are from global writes</span>
+MEMBARSTLD();
+
+<span style="color: #00cd00;">return</span> 1;
+...
+</pre>
+</div>
+
+
+</section>
+</section>
+<section>
+<section id="slide-sec-5">
+<h2 id="sec-5">Related Work</h2>
+<div class="outline-text-2" id="text-5">
+</div></section>
+</section>
+<section>
+<section id="slide-sec-5-1">
+<h3 id="sec-5-1">Recovering sequential consistency</h3>
+<ul>
+<li>Don't Sit on the Fence [Alglave et al.]</li>
+<li>Hiding relaxed memory consistency with a compiler [Lee et al.]</li>
+<li>all, whole program</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-sec-5-2">
+<h3 id="sec-5-2">Enforcing arbitrary properties</h3>
+<ul>
+<li>Automatic inference of memory fences [Kuperstein et al.]</li>
+<li>Synthesis of memory fences via refinement propagation [Meshman et al.]</li>
+<li>all, whole program</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-6">
+<h2 id="sec-6">Our Approach</h2>
+<div class="outline-text-2" id="text-6">
+</div></section>
+</section>
+<section>
+<section id="slide-sec-6-1">
+<h3 id="sec-6-1">Order Specifications</h3>
+<ul>
+<li>order: relation between instructions</li>
+<li>account for loops, overlaps, etc</li>
+<li>platform agnostic</li>
+<li>annotation vs inference</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-sec-6-2">
+<h3 id="sec-6-2">Value</h3>
+<ul>
+<li>declarative</li>
+<li>exact</li>
+<li>often included</li>
+<li>effective</li>
+
+</ul>
+</section>
+</section>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/lib/js/head.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: false,
+progress: true,
+history: true,
+center: true,
+slideNumber: true,
+rollingLinks: false,
+keyboard: true,
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'none', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+]
+});
+</script>
+</body>
+</html>
