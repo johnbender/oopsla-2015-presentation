@@ -8,7 +8,7 @@
 #+TITLE: Declarative Fence Insertion
 #+AUTHOR:
 #+EMAIL: johnbender@cs.ucla.edu
-#+OPTIONS: num:nil toc:nil reveal_history:t reveal_control:nil
+#+OPTIONS: num:nil toc:nil reveal_history:t reveal_control:nil reveal_mathjax:t
 * A Savage Optimization
 ** Recipe for PB&J
    | chef 1              |
@@ -269,24 +269,144 @@ return 1;
 ...
    #+END_SRC
 
-* Related Work
-** Recovering sequential consistency
-   - Don't Sit on the Fence [Alglave et al.]
-   - Hiding relaxed memory consistency with a compiler [Lee et al.]
-   - all, whole program
-** Enforcing arbitrary properties
-   - Automatic inference of memory fences [Kuperstein et al.]
-   - Synthesis of memory fences via refinement propagation [Meshman et al.]
-   - all, whole program
+** Fence Macros
+   #+BEGIN_SRC c
+...
+# ifndef TL2_EAGER
+#   ifdef TL2_OPTIM_HASHLOG
+for (wr = logs; wr != end; wr++)
+#   endif
+{
+  // write the deferred stores
+  WriteBackForward(wr);
+}
+# endif
 
+// make stores visible before unlock
+> MEMBARSTST();
+
+// release locks and increment version
+DropLocks(Self, wv);
+
+// ensure loads are from global writes
+> MEMBARSTLD();
+
+return 1;
+...
+   #+END_SRC
+** Loops
+   #+BEGIN_SRC c
+...
+# ifndef TL2_EAGER
+#   ifdef TL2_OPTIM_HASHLOG
+for (wr = logs; wr != end; wr++)
+#   endif
+{
+  // write the deferred stores
+  > WriteBackForward(wr);
+  > // this might be bad place
+}
+# endif
+
+// make stores visible before unlock
+MEMBARSTST();
+
+// release locks and increment version
+DropLocks(Self, wv);
+
+// ensure loads are from global writes
+MEMBARSTLD();
+
+return 1;
+...
+   #+END_SRC
+** Unnecessary
+   #+BEGIN_SRC c
+...
+# ifndef TL2_EAGER
+#   ifdef TL2_OPTIM_HASHLOG
+for (wr = logs; wr != end; wr++)
+#   endif
+{
+  // write the deferred stores
+  WriteBackForward(wr);
+}
+# endif
+
+// unnecessary ifdef TL2_EAGER
+> MEMBARSTST();
+
+// release locks and increment version
+DropLocks(Self, wv);
+
+// ensure loads are from global writes
+MEMBARSTLD();
+
+return 1;
+...
+   #+END_SRC
 * Our Approach
 ** Order Specifications
    - order: relation between instructions
    - account for loops, overlaps, etc
    - platform agnostic
    - annotation vs inference
+** Dekker
+   ${st(\mathtt{flag0}) \rightarrow ld(\mathtt{flag1})}$
+   #+BEGIN_SRC c
+bool p0() {
+> flag0 = 1;
+|
+> if(flag1 == 1){
+    return false;
+  }
+  // !! critical
+  return true;
+}
+  #+END_SRC
+** TL2 STM
+  #+BEGIN_SRC c
+    ...
+    # ifndef TL2_EAGER
+    #   ifdef TL2_OPTIM_HASHLOG
+    for (wr = logs; wr != end; wr++)
+    #   endif
+    {
+      // write the deferred stores
+  >   WriteBackForward(wr);
+  | }
+  | # endif
+  |
+  | // unnecessary ifdef TL2_EAGER
+  | MEMBARSTST();
+  |
+  |  // release locks and increment version
+> > DropLocks(Self, wv);
+|
+|   // ensure loads are from global writes
+|   MEMBARSTLD();
+|
+>   return 1;
+    ...
+   #+END_SRC
+** TL2 STM
+   - ${st(\mathtt{addr}) \rightarrow ld(\mathtt{lck_{addr}})}$
+   - ${st(\mathtt{lck_{addr}}) \rightarrow ld(*)}$
+
 ** Value
    - declarative
    - exact
    - often included
    - effective
+* Related Work
+** Recovering sequential consistency
+   - Don't Sit on the Fence [Alglave]
+   - Hiding relaxed memory consistency with a compiler [Lee]
+   - all, whole program
+** Enforcing arbitrary properties
+   - Automatic inference of memory fences [Kuperstein]
+   - Synthesis of memory fences via refinement propagation [Meshman]
+   - all, whole program
+
+
+* Thanks!

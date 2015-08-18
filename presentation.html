@@ -18,6 +18,7 @@
         document.getElementsByTagName( 'head' )[0].appendChild( link );
     }
 </script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 <link rel="stylesheet" type="text/css" href="assets/style.css" />
 </head>
 <body>
@@ -766,43 +767,108 @@ MEMBARSTLD();
 </section>
 </section>
 <section>
+<section id="slide-sec-4-9">
+<h3 id="sec-4-9">Fence Macros</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c">...
+<span style="color: #ff0000;"># if</span><span style="color: #ff0000;">n</span><span style="color: #ff0000;">def</span> TL2_EAGER
+<span style="color: #ff0000;">#   ifdef</span> TL2_OPTIM_HASHLOG
+<span style="color: #00cd00;">for</span> (wr = logs; wr != end; wr++)
+<span style="color: #ff0000;">#   endif</span>
+{
+  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">write the deferred stores</span>
+  WriteBackForward(wr);
+}
+<span style="color: #ff0000;"># endif</span>
+
+<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">make stores visible before unlock</span>
+&gt; MEMBARSTST();
+
+<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">release locks and increment version</span>
+DropLocks(Self, wv);
+
+<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">ensure loads are from global writes</span>
+&gt; MEMBARSTLD();
+
+<span style="color: #00cd00;">return</span> 1;
+...
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-sec-4-10">
+<h3 id="sec-4-10">Loops</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c">...
+<span style="color: #ff0000;"># if</span><span style="color: #ff0000;">n</span><span style="color: #ff0000;">def</span> TL2_EAGER
+<span style="color: #ff0000;">#   ifdef</span> TL2_OPTIM_HASHLOG
+<span style="color: #00cd00;">for</span> (wr = logs; wr != end; wr++)
+<span style="color: #ff0000;">#   endif</span>
+{
+  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">write the deferred stores</span>
+  &gt; WriteBackForward(wr);
+  &gt; <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">this might be bad place</span>
+}
+<span style="color: #ff0000;"># endif</span>
+
+<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">make stores visible before unlock</span>
+MEMBARSTST();
+
+<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">release locks and increment version</span>
+DropLocks(Self, wv);
+
+<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">ensure loads are from global writes</span>
+MEMBARSTLD();
+
+<span style="color: #00cd00;">return</span> 1;
+...
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-sec-4-11">
+<h3 id="sec-4-11">Unnecessary</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c">...
+<span style="color: #ff0000;"># if</span><span style="color: #ff0000;">n</span><span style="color: #ff0000;">def</span> TL2_EAGER
+<span style="color: #ff0000;">#   ifdef</span> TL2_OPTIM_HASHLOG
+<span style="color: #00cd00;">for</span> (wr = logs; wr != end; wr++)
+<span style="color: #ff0000;">#   endif</span>
+{
+  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">write the deferred stores</span>
+  WriteBackForward(wr);
+}
+<span style="color: #ff0000;"># endif</span>
+
+<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">unnecessary ifdef TL2_EAGER</span>
+&gt; MEMBARSTST();
+
+<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">release locks and increment version</span>
+DropLocks(Self, wv);
+
+<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">ensure loads are from global writes</span>
+MEMBARSTLD();
+
+<span style="color: #00cd00;">return</span> 1;
+...
+</pre>
+</div>
+</section>
+</section>
+<section>
 <section id="slide-sec-5">
-<h2 id="sec-5">Related Work</h2>
+<h2 id="sec-5">Our Approach</h2>
 <div class="outline-text-2" id="text-5">
 </div></section>
 </section>
 <section>
 <section id="slide-sec-5-1">
-<h3 id="sec-5-1">Recovering sequential consistency</h3>
-<ul>
-<li>Don't Sit on the Fence [Alglave et al.]</li>
-<li>Hiding relaxed memory consistency with a compiler [Lee et al.]</li>
-<li>all, whole program</li>
-
-</ul>
-</section>
-</section>
-<section>
-<section id="slide-sec-5-2">
-<h3 id="sec-5-2">Enforcing arbitrary properties</h3>
-<ul>
-<li>Automatic inference of memory fences [Kuperstein et al.]</li>
-<li>Synthesis of memory fences via refinement propagation [Meshman et al.]</li>
-<li>all, whole program</li>
-
-</ul>
-
-</section>
-</section>
-<section>
-<section id="slide-sec-6">
-<h2 id="sec-6">Our Approach</h2>
-<div class="outline-text-2" id="text-6">
-</div></section>
-</section>
-<section>
-<section id="slide-sec-6-1">
-<h3 id="sec-6-1">Order Specifications</h3>
+<h3 id="sec-5-1">Order Specifications</h3>
 <ul>
 <li>order: relation between instructions</li>
 <li>account for loops, overlaps, etc</li>
@@ -813,8 +879,71 @@ MEMBARSTLD();
 </section>
 </section>
 <section>
-<section id="slide-sec-6-2">
-<h3 id="sec-6-2">Value</h3>
+<section id="slide-sec-5-2">
+<h3 id="sec-5-2">Dekker</h3>
+<p>
+\({st(\mathtt{flag0}) \rightarrow ld(\mathtt{flag1})}\)
+</p>
+<div class="org-src-container">
+
+<pre  class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p0</span>() {
+&gt; flag0 = 1;
+|
+&gt; <span style="color: #00cd00;">if</span>(flag1 == 1){
+    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
+  }
+  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
+  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
+}
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-sec-5-3">
+<h3 id="sec-5-3">TL2 STM</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c">    ...
+<span style="color: #ff0000;">    # if</span><span style="color: #ff0000;">n</span><span style="color: #ff0000;">def</span> TL2_EAGER
+<span style="color: #ff0000;">    #   ifdef</span> TL2_OPTIM_HASHLOG
+    <span style="color: #00cd00;">for</span> (wr = logs; wr != end; wr++)
+<span style="color: #ff0000;">    #   endif</span>
+    {
+      <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">write the deferred stores</span>
+  &gt;   WriteBackForward(wr);
+  | }
+  | # endif
+  |
+  | <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">unnecessary ifdef TL2_EAGER</span>
+  | MEMBARSTST();
+  |
+  |  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">release locks and increment version</span>
+&gt; &gt; DropLocks(Self, wv);
+|
+|   <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">ensure loads are from global writes</span>
+|   MEMBARSTLD();
+|
+&gt;   <span style="color: #00cd00;">return</span> 1;
+    ...
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-sec-5-4">
+<h3 id="sec-5-4">TL2 STM</h3>
+<ul>
+<li>\({st(\mathtt{addr}) \rightarrow ld(\mathtt{lck_{addr}})}\)</li>
+<li>\({st(\mathtt{lck_{addr}}) \rightarrow ld(*)}\)</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-5-5">
+<h3 id="sec-5-5">Value</h3>
 <ul>
 <li>declarative</li>
 <li>exact</li>
@@ -822,6 +951,41 @@ MEMBARSTLD();
 <li>effective</li>
 
 </ul>
+</section>
+</section>
+<section>
+<section id="slide-sec-6">
+<h2 id="sec-6">Related Work</h2>
+<div class="outline-text-2" id="text-6">
+</div></section>
+</section>
+<section>
+<section id="slide-sec-6-1">
+<h3 id="sec-6-1">Recovering sequential consistency</h3>
+<ul>
+<li>Don't Sit on the Fence [Alglave]</li>
+<li>Hiding relaxed memory consistency with a compiler [Lee]</li>
+<li>all, whole program</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-sec-6-2">
+<h3 id="sec-6-2">Enforcing arbitrary properties</h3>
+<ul>
+<li>Automatic inference of memory fences [Kuperstein]</li>
+<li>Synthesis of memory fences via refinement propagation [Meshman]</li>
+<li>all, whole program</li>
+
+</ul>
+
+
+</section>
+</section>
+<section>
+<section id="slide-sec-7">
+<h2 id="sec-7">Thanks!</h2>
 </section>
 </section>
 </div>

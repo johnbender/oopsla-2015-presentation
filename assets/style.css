@@ -34,6 +34,7 @@ h3 > code {
   text-align: center;
 }
 
+#slide-sec-5-2 .org-src-container pre,
 #slide-sec-4-3 .org-src-container pre,
 #slide-sec-4-4 .org-src-container pre,
 #slide-sec-4-5 .org-src-container pre,
@@ -42,4 +43,30 @@ h3 > code {
   margin-left: auto;
   margin-right: auto;
   width: 35%;
+}
+
+#slide-sec-5-3 .org-src-container,
+#slide-sec-4-8 .org-src-container,
+#slide-sec-4-9 .org-src-container,
+#slide-sec-4-10 .org-src-container,
+#slide-sec-4-11 .org-src-container {
+  text-align: center;
+}
+
+#slide-sec-5-3 .org-src-container pre,
+#slide-sec-4-8 .org-src-container pre,
+#slide-sec-4-9 .org-src-container pre,
+#slide-sec-4-10 .org-src-container pre,
+#slide-sec-4-11 .org-src-container pre {
+  margin-left: auto;
+  margin-right: auto;
+  width: 55%;
+}
+
+#slide-sec-5-4 ul {
+  list-style: none;
+}
+
+#slide-sec-5-4 li {
+  padding-left: 0;
 }
