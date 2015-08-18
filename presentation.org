@@ -390,8 +390,8 @@ bool p0() {
     ...
    #+END_SRC
 ** TL2 STM
-   - ${st(\mathtt{addr}) \rightarrow ld(\mathtt{lck_{addr}})}$
-   - ${st(\mathtt{lck_{addr}}) \rightarrow ld(*)}$
+   - ${st(\mathtt{addr}) \rightarrow ld(\mathtt{lock_{addr}})}$
+   - ${st(\mathtt{lock_{addr}}) \rightarrow ld(*)}$
 
 ** Value
    - declarative
