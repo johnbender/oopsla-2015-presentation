@@ -4,6 +4,7 @@
 #+REVEAL_TRANS: none
 #+REVEAL_SLIDE_NUMBER: t
 #+REVEAL_HLEVEL: 10
+#+EXPORT_FILE_NAME: index
 #+TITLE: Declarative Fence Insertion
 #+AUTHOR:
 #+EMAIL: johnbender@cs.ucla.edu
@@ -243,8 +244,30 @@ bool p0() {
   #+END_SRC
 
 ** TL2 STM Algorithm
-   #+INCLUDE: "tex/code/tl2-commit.c" src c
+   #+BEGIN_SRC c
+...
+# ifndef TL2_EAGER
+#   ifdef TL2_OPTIM_HASHLOG
+for (wr = logs; wr != end; wr++)
+#   endif
+{
+  // write the deferred stores
+  WriteBackForward(wr);
+}
+# endif
 
+// make stores visible before unlock
+MEMBARSTST();
+
+// release locks and increment version
+DropLocks(Self, wv);
+
+// ensure loads are from global writes
+MEMBARSTLD();
+
+return 1;
+...
+   #+END_SRC
 
 * Related Work
 ** Recovering sequential consistency
