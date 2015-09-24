@@ -1,0 +1,122 @@
+#+REVEAL_HLEVEL: 10
+#+OPTIONS: num:nil toc:nil reveal_history:t reveal_control:nil reveal_mathjax:t
+
+* high level example
+** Recipe for PB&J
+   | chef 1              |
+   |---------------------|
+   | get bread           |
+   | apply peanut butter |
+   | apply jelly         |
+   | close halves        |
+
+   If a resource is delayed we can do other work
+
+   | chef 1                |
+   |-----------------------|
+   | get bread             |
+   | apply jelly           |
+   | ! apply peanut butter |
+   | close halves          |
+
+* Concurrent Failure
+** A Delicate Activity
+
+   Optimizing further by dividing the work amongst two actors, the
+   second actor checks for jelly before finishing the sandwich:
+
+   | chef 1              | chef 2       |
+   |---------------------+--------------|
+   | get bread           |              |
+   | apply peanut butter |              |
+   | apply jelly         |              |
+   |                     | check jelly  |
+   |                     | close halves |
+
+   Applying the same optimization to this division of labor from
+   before causes catastrophe:
+
+   | chef 1                  | chef 2       |
+   |-------------------------+--------------|
+   | get bread               |              |
+   | apply jelly             |              |
+   |                         | check jelly  |
+   |                         | close halves |
+   | BAD apply peanut butter |              |
+   |                         |              |
+
+* Dekker's Mutex
+** explain the algorithm/code sample
+** show an example execution assuming SC
+
+   | P0        | P1          |
+   |-----------+-------------|
+   | ~flag0=1~ |             |
+   | ~flag1:0~ |             |
+   |           | ~flag1=1~   |
+   |           | ~flag0:1~   |
+   |           | return      |
+   | enter     |             |
+
+** example assuming store buffering
+
+   | P0        | P1          |
+   |-----------+-------------|
+   | ~flag0=1~ |             |
+   | ~flag1:0~ |             |
+   |           | ~flag1=1~   |
+   |           | ! ~flag0:0~ |
+   |           | enter       |
+   | enter     |             |
+
+** example assuming out of order execution
+
+   | P0          | P1        |
+   |-------------+-----------|
+   | ~flag1:0~   |           |
+   |             | ~flag1=1~ |
+   |             | ~flag0:0~ |
+   | ! ~flag0=1~ |           |
+   |             | enter     |
+   | enter       |           |
+
+** code sample with fences to show how to prevent this behavior
+
+* summarize the problem
+** what we want:
+   - SC semantics
+   - x-platform
+   - performance
+** what we don't want:
+   - actual SC (slow)
+   - user intervention
+** example of SC semantics that doesn't require it (critical section of dekker)
+** example of cross platform different fences/memory models)
+** example of cross platform fence selection
+** example of existing fences like compaire and swap
+
+* more complex example with TL2 TxCommit
+* our approach
+** describe order specification
+** examples with orders as graph lines or similar
+   - Dekker with orders
+   - TL2 STM with orders
+** value proposition
+   - declarative
+   - exact
+   - often included
+   - effective
+* experimental results
+** classic
+** STM algorithms
+* related work
+** semantics
+   - weak memory calculus from CMU
+** recovering sequential consistency
+   - Don't Sit on the Fence [Alglave]
+   - Hiding relaxed memory consistency with a compiler [Lee]
+   - all, whole program
+** enforcing arbitrary properties
+   - Automatic inference of memory fences [Kuperstein]
+   - Synthesis of memory fences via refinement propagation [Meshman]
+   - all, whole program
