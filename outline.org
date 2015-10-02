@@ -1,23 +1,57 @@
-#+REVEAL_HLEVEL: 10
-#+OPTIONS: num:nil toc:nil reveal_history:t reveal_control:nil reveal_mathjax:t
+* declarative orders
+** loose definition
+   #+BEGIN_QUOTE
+   The requirement that two instructions be seen to execute in program order.
+   #+END_QUOTE
 
-* high level example
-** Recipe for PB&J
-   | chef 1              |
-   |---------------------|
-   | get bread           |
-   | apply peanut butter |
-   | apply jelly         |
-   | close halves        |
+** the art of multiprocessor programming, 2.3.1 ~LockOne~ class
+   #+INCLUDE: "code/LockOne.java" src java
 
-   If a resource is delayed we can do other work
+   - notes
 
-   | chef 1                |
-   |-----------------------|
-   | get bread             |
-   | apply jelly           |
-   | ! apply peanut butter |
-   | close halves          |
+     Two threads only, waits for other thread's flag to be false.
+     Enters critical section when it is
+
+** mutual exclusion proof requires two orders
+   #+BEGIN_EXAMPLE
+   writeA(flag[A] = true)  -> readA(flag[B] == false) -> CSA (2.3.1)
+   writeB(flag[B] = true)  -> readB(flag[A] == false) -> CSB (2.3.2)
+   #+END_EXAMPLE
+
+   - notes
+
+     2.3.1 and 2.3.2 are assumed, which may not hold under weak memory
+     models in particular java's or if this were an unmanaged language
+     x86, arm, power.
+
+     for example on x86, the write to ~flag[A]~ or ~flag[B]~ may be
+     delayed in reaching the other thread allowing it to read ~false~
+
+** traditionally solved with fences or volatile class members
+
+   #+BEGIN_QUOTE
+   Pragma 2.3.1. In practice, the Boolean flag variables ... must all
+   be declared volatile to work properly.
+   #+END_QUOTE
+
+   - notes
+
+     fences and volatile variables are the implementation details of
+     more a precise tool: declarative orders.
+
+
+** algorithms code *and* orders
+
+   #+BEGIN_EXAMPLE
+   writeA(flag[A] = true) -> readA(flag[B] == false)
+   writeB(flag[B] = true) -> readB(flag[A] == false)
+   #+END_EXAMPLE
+
+   - notes
+
+   In our work we propose that these orders be specified as part of
+   the algorithm and that the responsibility for enforcing them be
+   delegated to the compiler.
 
 * Concurrent Failure
 ** A Delicate Activity

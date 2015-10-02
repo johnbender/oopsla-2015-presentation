@@ -1,0 +1,117 @@
+* TODO check alias analysis for Parry benchmarks
+  - runs to completion
+  - output is recognizable
+* TODO make a list of comparisons
+* TODO actual
+* TODO presentation
+** TODO find an example in multiprocessor programming where orders are implicit
+   - 2.3.1, LockOne, LockTwo and Peterson's Lock
+     #+BEGIN_EXAMPLE
+     Pragma 2.3.1. In practice, the Boolean flag variables in
+     Fig. 2.4, as well as the victim and label variables in later
+     algorithms must all be declared volatile to work properly.
+     #+END_EXAMPLE
+
+     This ~volatile~ type modifier forces writes to memory in the same
+     way a fence otherwise would. This ensures that store buffering
+     doesn't "move" writes to the flag array past reads.
+
+     #+BEGIN_SRC java
+class LockOne implements Lock {
+  private boolean[] flag = new boolean[2];
+  // thread-local index, 0 or 1
+  private static ThreadLocal<Integer> myIndex;
+  public void lock() {
+    int i = ThreadID.get();
+    int j = i-1;
+    flag[i] = true;
+    while (flag[j]) {}          // wait
+  }
+  public void unlock() {
+    int i = ThreadID.get();
+    flag[i] = false;
+  }
+}
+     #+END_SRC
+
+     The proof relies on the following assertions about the order that
+     the writes and reads are seen to happen in two threads (A, B).
+
+     #+BEGIN_EXAMPLE
+     writeA(flag[A] = true)  -> readA(flag[B] == false) -> CSA (2.3.1)
+     writeB(flag[B]=true)    -> readB(flag[A]==false)   -> CSB (2.3.2)
+     readA(flag[B] == false) -> writeB(flag[B] = true)         (2.3.3)
+     #+END_EXAMPLE
+
+     NOTE CSA -/-> CSB and CSB -/-> CSA implies that for either thread
+     ~unlock~ has not been called when the second of the two ~lock~
+     calls begins. This, in turn, means we can ignore the ~flag[i] =
+     false;~ in ~unlock~.
+
+     #+BEGIN_EXAMPLE
+     readA(flag[B] == false) -> writeB(flag[B] = true)         (2.3.3)
+     #+END_EXAMPLE
+
+     That means that the only way that thread A can read ~false~ for B's flag
+     is if it came before the ~flag[i] = true;~ in thread B:
+
+     #+BEGIN_EXAMPLE
+     Note that once flag[B] is set to true it remains true.
+     #+END_EXAMPLE
+
+     ... until unlock is called.
+
+     #+BEGIN_EXAMPLE
+     It follows that Eq. 2.3.3 holds, since otherwise thread A could
+     not have read flag[B] as false.
+     #+END_EXAMPLE
+
+     ... because that would mean that unlock had been called or the
+     alternate order of overlapping critical sections is taking place
+     (which is symmetric)
+
+     #+BEGIN_EXAMPLE
+     readB(flag[A] == false) -> writeA(flag[A] = true)         (2.3.3')
+     #+END_EXAMPLE
+
+     Using those three happens before orderings we can derive the following:
+
+     #+BEGIN_EXAMPLE
+     writeA(flag[A] = true) -> readA(flag[B] == false)
+       ->  writeB (flag[B] = true) -> readB (flag[A] == false) (by trans)
+     writeA(flag[A] = true) ->+ readB(flag[A] == false)        (by simpl)
+     #+END_EXAMPLE
+
+     The second is true without any intervening writes to ~flag[A]~,
+     which is a contradiction.
+
+     Without 2.3.1, and 2.3.2 there is no proof, thus the need for orders.<
+
+** notes
+   - purpose is motivation
+   - section two as most of the presentation
+   - algorithm = code + *orders*
+   - these orders exist in your proof or head anyway, the fences are an
+     implementation detail for orders and architecture
+   - other sections
+     - section 3
+       - paraphrase theorem
+       - no section 3
+       - state the algorithm at some point
+         - be quick
+     - slide with "Parry as a function"
+     - section 4
+       - one slide
+       - architecture diagram, revised
+       - keep the diagram simple
+     - section 5
+       - results are good, deserve some time
+       - we are the first to compare against what was done by hand
+       - specifying the order can be done without loss and possible gain
+     - related work
+       - three groups, one paper in each
+       - sc, spec, "other"
+       - cmu paper done concurrently
+* future
+  - think about sharing data structures with alias analysis
+  - think about how to avoid graph computation
