@@ -1,7 +1,8 @@
 * declarative orders
 ** loose definition
    #+BEGIN_QUOTE
-   The requirement that two instructions be seen to execute in program order.
+   The requirement that two instructions be seen to execute in the
+   order they appear in the program.
    #+END_QUOTE
 
 ** the art of multiprocessor programming, 2.3.1 ~LockOne~ class
@@ -20,12 +21,14 @@
 
    - notes
 
-     2.3.1 and 2.3.2 are assumed, which may not hold under weak memory
-     models in particular java's or if this were an unmanaged language
-     x86, arm, power.
+     2.3.1 and 2.3.2 are assumed in the proof of mutual exclusion,
+     which may not hold under weak memory models. In particular under
+     java's memory model or if this were an unmanaged language the
+     memory models of x86, arm, power.
 
      for example on x86, the write to ~flag[A]~ or ~flag[B]~ may be
-     delayed in reaching the other thread allowing it to read ~false~
+     delayed in reaching the other thread by store buffering, allowing
+     it to be read as ~false~.
 
 ** traditionally solved with fences or volatile class members
 
@@ -39,7 +42,6 @@
      fences and volatile variables are the implementation details of
      more a precise tool: declarative orders.
 
-
 ** algorithms code *and* orders
 
    #+BEGIN_EXAMPLE
@@ -52,6 +54,108 @@
    In our work we propose that these orders be specified as part of
    the algorithm and that the responsibility for enforcing them be
    delegated to the compiler.
+
+* section 2
+  Question: should we focus more on bad executions or why the problem
+  is complicated?
+
+** store buffering in LockOne
+   | Thread 0         | Thread 1          |                 |
+   |------------------+-------------------+-----------------|
+   | ~flag[0] = true~ |                   | buffered        |
+   | ~flag[1] : false |                   |                 |
+   |                  | ~flag[1] = true~  |                 |
+   |                  | ~flag[0] : false~ | unflushed value |
+   |                  | enter             |                 |
+   | enter            |                   | bad!            |
+
+** cross platform
+   #+BEGIN_SRC java
+   public void lock() {
+     int i = ThreadID.get();
+     int j = i-1;
+     flag[i] = true;
+
+     // for x86
+     __asm__ ("mfence");
+     // for arm
+     __asm__ ("dmb");
+
+     while (flag[j]) {} // wait
+   }
+   #+END_SRC
+
+   - notes
+
+     assuming we're programming at the level of C we need to use an
+     architecture appropriate fence instruction to ensure the two orders
+     defined in the proof
+
+** fence selection
+   #+BEGIN_SRC java
+   public void lock() {
+     int i = ThreadID.get();
+     int j = i-1;
+     flag[i] = true;
+
+     // either will work in *this* case
+     //  `dmb st` is "faster"
+     __asm__ ("dmb");
+     __asm__ ("dmb st");
+
+     while (flag[j]) {} // wait
+   }
+   #+END_SRC
+
+   - notes
+
+     different paired instructions may require different fences,
+     optimizing for performance
+
+** existing fence(-likes)
+   #+BEGIN_SRC java
+   public void lock() {
+     int i = ThreadID.get();
+     int j = i-1;
+
+     // x86 cmpxchg has fence-like semantics
+     CAS(flag[i], true);
+
+     while (flag[j]) {} // wait
+   }
+   #+END_SRC
+
+   - notes
+
+     there are other instructions like `cmpxhg` which have fence like
+     semantics that we should account for (by avoiding adding more fences).
+
+**
+
+* our approach
+** describe order specification
+** examples with orders as graph lines or similar
+   - Dekker with orders
+   - TL2 STM with orders
+** value proposition
+   - declarative
+   - exact
+   - often included
+   - effective
+* experimental results
+** classic
+** STM algorithms
+* related work
+** semantics
+   - weak memory calculus from CMU
+** recovering sequential consistency
+   - Don't Sit on the Fence [Alglave]
+   - Hiding relaxed memory consistency with a compiler [Lee]
+   - all, whole program
+** enforcing arbitrary properties
+   - Automatic inference of memory fences [Kuperstein]
+   - Synthesis of memory fences via refinement propagation [Meshman]
+   - all, whole program
 
 * Concurrent Failure
 ** A Delicate Activity
@@ -128,29 +232,3 @@
 ** example of cross platform different fences/memory models)
 ** example of cross platform fence selection
 ** example of existing fences like compaire and swap
-
-* more complex example with TL2 TxCommit
-* our approach
-** describe order specification
-** examples with orders as graph lines or similar
-   - Dekker with orders
-   - TL2 STM with orders
-** value proposition
-   - declarative
-   - exact
-   - often included
-   - effective
-* experimental results
-** classic
-** STM algorithms
-* related work
-** semantics
-   - weak memory calculus from CMU
-** recovering sequential consistency
-   - Don't Sit on the Fence [Alglave]
-   - Hiding relaxed memory consistency with a compiler [Lee]
-   - all, whole program
-** enforcing arbitrary properties
-   - Automatic inference of memory fences [Kuperstein]
-   - Synthesis of memory fences via refinement propagation [Meshman]
-   - all, whole program
