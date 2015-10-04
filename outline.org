@@ -78,8 +78,8 @@
      enter the critical section
 
 ** cross platform
-   #+BEGIN_SRC java
-   public void lock() {
+   #+BEGIN_SRC c++
+   void lock() {
      int i = ThreadID.get();
      int j = i-1;
      flag[i] = true;
@@ -95,13 +95,13 @@
 
    - notes
 
-     assuming we're programming at the level of C we need to use an
+     assuming we're programming at the level of C/C++ we need to use an
      architecture appropriate fence instruction to ensure the two orders
      defined in the proof
 
 ** fence selection
-   #+BEGIN_SRC java
-   public void lock() {
+   #+BEGIN_SRC c++
+   void lock() {
      int i = ThreadID.get();
      int j = i-1;
      flag[i] = true;
@@ -121,8 +121,8 @@
      optimizing for performance
 
 ** existing fence(-likes)
-   #+BEGIN_SRC java
-   public void lock() {
+   #+BEGIN_SRC c++
+   void lock() {
      int i = ThreadID.get();
      int j = i-1;
 
@@ -187,7 +187,6 @@ return 1;
      and the results convey very little information in the code
 
      we should use orders and delegate the work to the compiler!
-
 
 * section 3 (Algorithm)
 ** algorithm
