@@ -1,72 +1,84 @@
-#slide-sec-3-1 .org-src-container,
-#slide-sec-3-2 .org-src-container,
-#slide-sec-3-9 .org-src-container {
-  width: 30%;
-  float: left;
-  box-sizing: border-box;
+body {
+  padding: 20px;
 }
 
-#slide-sec-3-1 > div:nth-child(2),
-#slide-sec-3-2 > div:nth-child(2),
-#slide-sec-3-9 > div:nth-child(2) {
-  margin-left: 22.5%;
-}
-
-.org-src-container pre {
-  border: none;
-  box-shadow: none;
-}
-
-h3 > code {
-  text-transform: none;
-}
-
-#slide-sec-5-1 > ul,
-#slide-sec-5-2 > ul {
-  font-size: 0.75em;
-}
-
-#slide-sec-4-3 .org-src-container,
-#slide-sec-4-4 .org-src-container,
-#slide-sec-4-5 .org-src-container,
-#slide-sec-4-6 .org-src-container,
-#slide-sec-4-7 .org-src-container {
-  text-align: center;
-}
-
-#slide-sec-5-2 .org-src-container pre,
-#slide-sec-4-3 .org-src-container pre,
-#slide-sec-4-4 .org-src-container pre,
-#slide-sec-4-5 .org-src-container pre,
-#slide-sec-4-6 .org-src-container pre,
-#slide-sec-4-7 .org-src-container pre {
-  margin-left: auto;
+#content {
   margin-right: auto;
-  width: 35%;
-}
-
-#slide-sec-5-3 .org-src-container,
-#slide-sec-4-8 .org-src-container,
-#slide-sec-4-9 .org-src-container,
-#slide-sec-4-10 .org-src-container,
-#slide-sec-4-11 .org-src-container {
-  text-align: center;
-}
-
-#slide-sec-5-3 .org-src-container pre,
-#slide-sec-4-8 .org-src-container pre,
-#slide-sec-4-9 .org-src-container pre,
-#slide-sec-4-10 .org-src-container pre,
-#slide-sec-4-11 .org-src-container pre {
   margin-left: auto;
-  margin-right: auto;
-  width: 55%;
 }
 
-#slide-sec-5-4 ul {
-  list-style: none;
+#content, #right-content {
+  width: 650px;
+  margin-bottom: 20px;
+  font-size: 16px;
 }
 
-#slide-sec-5-4 li {
-  padding-left: 0;
+#postamble {
+  display: none;
+}
+
+h1 {
+  font-size: 3em;
+}
+
+h2 {
+  font-size: 2.75em;
+  margin-top: 1em;
+}
+
+ul {
+  padding-left: 1.5em;
+  margin-bottom: 10px;
+}
+
+li p {
+  margin-top: 0.5em;
+}
+
+table {
+  margin: 1em 0 1.5em 0;
+}
+
+code {
+  font-size: 14px;
+}
+
+pre, pre.src {
+  font-size: 12px;
+  margin-left: 0;
+  box-shadow: 0 0 0 black;
+  padding: 5px;
+  max-height: 400px;
+  overflow-y: scroll;
+  padding: 1em 0 1em 1em;
+
+}
+
+#text-2 pre {
+  margin-top: 8px;
+}
+
+.section-number-2,
+.section-number-3,
+.section-number-4 {
+  display: none;
+}
+
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,.5);
+}
+
+
+
+img {
+  max-width: 100%;
+}
+
+table th, table td {
+  padding: 2px 5px;
 }

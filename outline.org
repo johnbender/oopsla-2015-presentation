@@ -1,4 +1,7 @@
-* declarative orders
+#+HTML_HEAD:   <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/readable/bootstrap.min.css" rel="stylesheet">
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="assets/style.css" />
+#+OPTIONS: num:nil toc:nil reveal_history:t reveal_control:nil reveal_mathjax:t
+* section 1 (Introduction)
 ** loose definition
    #+BEGIN_QUOTE
    The requirement that two instructions be seen to execute in the
@@ -55,19 +58,24 @@
    the algorithm and that the responsibility for enforcing them be
    delegated to the compiler.
 
-* section 2
-  Question: should we focus more on bad executions or why the problem
-  is complicated?
+* section 2 (Problem)
+  TODO should we add more bad executions?
 
 ** store buffering in LockOne
-   | Thread 0         | Thread 1          |                 |
-   |------------------+-------------------+-----------------|
-   | ~flag[0] = true~ |                   | buffered        |
-   | ~flag[1] : false |                   |                 |
-   |                  | ~flag[1] = true~  |                 |
-   |                  | ~flag[0] : false~ | unflushed value |
-   |                  | enter             |                 |
-   | enter            |                   | bad!            |
+   | Thread 0          | Thread 1          |                 |
+   |-------------------+-------------------+-----------------|
+   | ~flag[0] = true~  |                   | buffered        |
+   | ~flag[1] : false~ |                   |                 |
+   |                   | ~flag[1] = true~  |                 |
+   |                   | ~flag[0] : false~ | unflushed value |
+   |                   | enter cs          |                 |
+   | enter cs          |                   | bad!            |
+
+   - notes
+
+     the write to ~flag[0]~ is mired in a store buffer so the read of
+     the same returns its previous value allowing both threads to
+     enter the critical section
 
 ** cross platform
    #+BEGIN_SRC java
@@ -98,8 +106,8 @@
      int j = i-1;
      flag[i] = true;
 
-     // either will work in *this* case
-     //  `dmb st` is "faster"
+     // either will work in this case
+     // `dmb st` is "faster"
      __asm__ ("dmb");
      __asm__ ("dmb st");
 
@@ -130,105 +138,165 @@
      there are other instructions like `cmpxhg` which have fence like
      semantics that we should account for (by avoiding adding more fences).
 
-**
+** TL2 STM Algorithm
+   #+BEGIN_SRC c
+...
+# ifndef TL2_EAGER
+#   ifdef TL2_OPTIM_HASHLOG
+for (wr = logs; wr != end; wr++)
+#   endif
+{
+  // write the deferred stores
+  WriteBackForward(wr);
+}
+# endif
 
-* our approach
-** describe order specification
-** examples with orders as graph lines or similar
-   - Dekker with orders
-   - TL2 STM with orders
-** value proposition
-   - declarative
-   - exact
-   - often included
-   - effective
-* experimental results
+// make stores visible before unlock
+MEMBARSTST();
+
+// release locks and increment version
+DropLocks(Self, wv);
+
+// ensure loads are from global writes
+MEMBARSTLD();
+
+return 1;
+...
+   #+END_SRC
+
+   - notes
+
+     TODO split up the following
+
+     commit procedure for the tl2 software transactional memory algorithm
+     writebackforward is where the actual writes to memory take place
+     droplocks releases locks for the memory addresses for other commit calls to write
+     macros provided for implementors to define arch appropriate fences
+
+     1. bad to put a fence right after writebackforward (loop)
+     2. bad to use a fence if ~TL2_EAGER~ is defined (will remove writebackforward)
+     3. bad to use a fence for ~MEMBARSTST~ on x86
+     4. fences/fence macros don't document their own reason for existence
+
+** orders not fences
+   Leave the details to the compiler!
+
+   - notes
+
+     determining the need for/placement/type of fences is difficult
+     and the results convey very little information in the code
+
+     we should use orders and delegate the work to the compiler!
+
+
+* section 3 (Algorithm)
+** algorithm
+   #+BEGIN_SRC python
+   # Insert : CFG x Arch x OrderSet -> CFG
+   def Insert(G1, A, O1):
+
+     # Elim : CFG x Arch x OrderSet -> OrderSet
+     O2 = O1 \ Elim(G, A, O1)
+
+     # Cut : CFG x OrderSet -> CutSet
+     K  = Cut(G, O2)
+
+     # Refine : CFG x CutSet -> CFG
+     G2 = Refine(G1, K)
+
+     return G2
+   end
+   #+END_SRC
+
+   - notes
+
+     1. We eliminate orders which are enforced on the target
+        architecture, e.g. a store -> store order on x86 is enforced
+        by the architecture
+
+     2. We find a multicut for the remaining orders and the control flow graph G
+
+     3. We use the cut to insert fences on the cut set edges
+
+** theorem 1
+
+   #+BEGIN_SRC
+   Insert(G, A, O), A |= O.
+   #+END_SRC
+
+   Removed the ~fany~ requirement for clarity
+
+   - notes
+
+     Intuitively, if we have at least one "big hammer fence" for A
+     that will work to keep any instructions we might pair from
+     trading places in execution then Insert will enforce the orders
+     we have defined.
+
+     We briefly discuss the subtlety introduced by fence selection in the paper
+
+* section 4 (Implementation)
+** diagram
+   [[file:./assets/images/impl-diagram.png]]
+
+   - notes
+
+     - Our tool Parry takes an architecture specification, source and
+       orders and provides source with fences to enforce those orders
+
+     - Parry is built on top of LLVM's IR and wraps both Clang and
+       LLVM's opt tool.
+
+     - Edge elimination shrinks the control flow graph to speed up
+       Elimination
+
+     - Order elimination corresponds with Elim
+
+     - Assigning cycle capacities ensures that we avoid placing fences
+       in loops unless otherwise completely necessary
+
+* section 5 (Experiments)
+  TODO include tables?
+** summary
+   - x86 arm
+   - two transaction memory algorithms
+   - four classic lock free algorithms
+   - match or better hand placed/selected fences
+** performance
+   - exponential time order elimination algorithm
+   - linear time order elimination algorithm
+   file:./assets/images/linear-perf.png
+
+   - notes
+
+     most of the time in processing is spent in generating the
+     modified control flow graph in Python, everything else appeals to
+     optimized C/C++ depedencies
+
 ** classic
-** STM algorithms
-* related work
+   - matched all hand placed fences
+** tl2
+   - one fence saved!
+** tl2 eager
+   - one fence saved!
+** rstm
+   - notes about cmpxchg
+
+* section 6 (Related)
 ** semantics
    - weak memory calculus from CMU
 ** recovering sequential consistency
    - Don't Sit on the Fence [Alglave]
    - Hiding relaxed memory consistency with a compiler [Lee]
-   - all, whole program
+
+   - notes
+
+     all whole program
+
 ** enforcing arbitrary properties
    - Automatic inference of memory fences [Kuperstein]
    - Synthesis of memory fences via refinement propagation [Meshman]
-   - all, whole program
 
-* Concurrent Failure
-** A Delicate Activity
+   - notes
 
-   Optimizing further by dividing the work amongst two actors, the
-   second actor checks for jelly before finishing the sandwich:
-
-   | chef 1              | chef 2       |
-   |---------------------+--------------|
-   | get bread           |              |
-   | apply peanut butter |              |
-   | apply jelly         |              |
-   |                     | check jelly  |
-   |                     | close halves |
-
-   Applying the same optimization to this division of labor from
-   before causes catastrophe:
-
-   | chef 1                  | chef 2       |
-   |-------------------------+--------------|
-   | get bread               |              |
-   | apply jelly             |              |
-   |                         | check jelly  |
-   |                         | close halves |
-   | BAD apply peanut butter |              |
-   |                         |              |
-
-* Dekker's Mutex
-** explain the algorithm/code sample
-** show an example execution assuming SC
-
-   | P0        | P1          |
-   |-----------+-------------|
-   | ~flag0=1~ |             |
-   | ~flag1:0~ |             |
-   |           | ~flag1=1~   |
-   |           | ~flag0:1~   |
-   |           | return      |
-   | enter     |             |
-
-** example assuming store buffering
-
-   | P0        | P1          |
-   |-----------+-------------|
-   | ~flag0=1~ |             |
-   | ~flag1:0~ |             |
-   |           | ~flag1=1~   |
-   |           | ! ~flag0:0~ |
-   |           | enter       |
-   | enter     |             |
-
-** example assuming out of order execution
-
-   | P0          | P1        |
-   |-------------+-----------|
-   | ~flag1:0~   |           |
-   |             | ~flag1=1~ |
-   |             | ~flag0:0~ |
-   | ! ~flag0=1~ |           |
-   |             | enter     |
-   | enter       |           |
-
-** code sample with fences to show how to prevent this behavior
-
-* summarize the problem
-** what we want:
-   - SC semantics
-   - x-platform
-   - performance
-** what we don't want:
-   - actual SC (slow)
-   - user intervention
-** example of SC semantics that doesn't require it (critical section of dekker)
-** example of cross platform different fences/memory models)
-** example of cross platform fence selection
-** example of existing fences like compaire and swap
+     all whole program
