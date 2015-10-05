@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>outline</title>
-<!-- 2015-10-03 Sat 21:54 -->
+<!-- 2015-10-04 Sun 22:06 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="John Bender" />
@@ -181,10 +181,15 @@ order they appear in the program.
 <ul class="org-ul">
 <li>notes
 
-<p>
-Two threads only, waits for other thread's flag to be false.
-Enters critical section when it is
-</p>
+<ul class="org-ul">
+<li>Two threads only
+</li>
+<li>shared instance of the lock
+</li>
+<li>each thread waits for the other thread's flag to be false then
+enters critical section
+</li>
+</ul>
 </li>
 </ul>
 </div>
@@ -202,16 +207,18 @@ writeB(flag[B] = true)  -&gt; readB(flag[A] == false) -&gt; CSB (2.3.2)
 <li>notes
 
 <p>
-2.3.1 and 2.3.2 are assumed in the proof of mutual exclusion,
-which may not hold under weak memory models. In particular under
-java's memory model or if this were an unmanaged language the
-memory models of x86, arm, power.
+proof by contradiction: CSA -/-&gt; CSB and CSB -/-&gt; CSA
 </p>
 
 <p>
-for example on x86, the write to <code>flag[A]</code> or <code>flag[B]</code> may be
-delayed in reaching the other thread by store buffering, allowing
-it to be read as <code>false</code>.
+ie they are concurrent
+</p>
+
+<p>
+2.3.1 and 2.3.2 are <b>assumed</b> in the proof of mutual exclusion,
+which may not hold under weak memory models. eg java's memory
+model or in an unmanaged language the memory models of
+x86, arm, power.
 </p>
 </li>
 </ul>
@@ -219,60 +226,8 @@ it to be read as <code>false</code>.
 </div>
 
 <div id="outline-container-sec-1-4" class="outline-3">
-<h3 id="sec-1-4">traditionally solved with fences or volatile class members</h3>
+<h3 id="sec-1-4">store buffering in LockOne</h3>
 <div class="outline-text-3" id="text-1-4">
-<blockquote>
-<p>
-Pragma 2.3.1. In practice, the Boolean flag variables &#x2026; must all
-be declared volatile to work properly.
-</p>
-</blockquote>
-
-<ul class="org-ul">
-<li>notes
-
-<p>
-fences and volatile variables are the implementation details of
-more a precise tool: declarative orders.
-</p>
-</li>
-</ul>
-</div>
-</div>
-
-<div id="outline-container-sec-1-5" class="outline-3">
-<h3 id="sec-1-5">algorithms code <b>and</b> orders</h3>
-<div class="outline-text-3" id="text-1-5">
-<pre class="example">
-writeA(flag[A] = true) -&gt; readA(flag[B] == false)
-writeB(flag[B] = true) -&gt; readB(flag[A] == false)
-</pre>
-
-<ul class="org-ul">
-<li>notes
-</li>
-</ul>
-
-<p>
-In our work we propose that these orders be specified as part of
-the algorithm and that the responsibility for enforcing them be
-delegated to the compiler.
-</p>
-</div>
-</div>
-</div>
-
-<div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2">section 2 (Problem)</h2>
-<div class="outline-text-2" id="text-2">
-<p>
-TODO should we add more bad executions?
-</p>
-</div>
-
-<div id="outline-container-sec-2-1" class="outline-3">
-<h3 id="sec-2-1">store buffering in LockOne</h3>
-<div class="outline-text-3" id="text-2-1">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -333,18 +288,81 @@ TODO should we add more bad executions?
 <li>notes
 
 <p>
-the write to <code>flag[0]</code> is mired in a store buffer so the read of
-the same returns its previous value allowing both threads to
-enter the critical section
+for example, in java the write to <code>flag[0]</code> might be delayed in a
+store buffer so the read in the other thread returns its previous
+value allowing both threads to enter the critical section
 </p>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-sec-2-2" class="outline-3">
-<h3 id="sec-2-2">cross platform</h3>
-<div class="outline-text-3" id="text-2-2">
+<div id="outline-container-sec-1-5" class="outline-3">
+<h3 id="sec-1-5">traditionally solved with fences or volatile variables/class members</h3>
+<div class="outline-text-3" id="text-1-5">
+<blockquote>
+<p>
+Pragma 2.3.1. In practice, the Boolean flag variables &#x2026; must all
+be declared volatile to work properly.
+</p>
+</blockquote>
+
+<ul class="org-ul">
+<li>notes
+
+<p>
+fences and volatile variables are the implementation details of
+more a precise tool: declarative orders.
+</p>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-1-6" class="outline-3">
+<h3 id="sec-1-6">algorithms code <b>and</b> orders</h3>
+<div class="outline-text-3" id="text-1-6">
+<pre class="example">
+writeA(flag[A] = true) -&gt; readA(flag[B] == false)
+writeB(flag[B] = true) -&gt; readB(flag[A] == false)
+</pre>
+
+<ul class="org-ul">
+<li>notes
+</li>
+</ul>
+
+<p>
+In our work we propose that these orders be specified as part of
+the algorithm and that the responsibility for enforcing them be
+delegated to the compiler.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2">section 2 (Problem)</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+TODO should we add more bad executions?
+</p>
+
+<ul class="org-ul">
+<li>notes
+
+<p>
+lets look at some subtleties that go along with using fences to
+get a better sense for why we think a compiler should handle this
+task
+</p>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1">cross platform</h3>
+<div class="outline-text-3" id="text-2-1">
 <div class="org-src-container">
 
 <pre class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
@@ -375,9 +393,9 @@ defined in the proof
 </div>
 </div>
 
-<div id="outline-container-sec-2-3" class="outline-3">
-<h3 id="sec-2-3">fence selection</h3>
-<div class="outline-text-3" id="text-2-3">
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2">fence selection</h3>
+<div class="outline-text-3" id="text-2-2">
 <div class="org-src-container">
 
 <pre class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
@@ -407,9 +425,9 @@ optimizing for performance
 </div>
 </div>
 
-<div id="outline-container-sec-2-4" class="outline-3">
-<h3 id="sec-2-4">existing fence(-likes)</h3>
-<div class="outline-text-3" id="text-2-4">
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3">existing fence(-likes)</h3>
+<div class="outline-text-3" id="text-2-3">
 <div class="org-src-container">
 
 <pre class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
@@ -436,12 +454,12 @@ semantics that we should account for (by avoiding adding more fences).
 </div>
 </div>
 
-<div id="outline-container-sec-2-5" class="outline-3">
-<h3 id="sec-2-5">TL2 STM Algorithm</h3>
-<div class="outline-text-3" id="text-2-5">
+<div id="outline-container-sec-2-4" class="outline-3">
+<h3 id="sec-2-4">TL2 STM Algorithm</h3>
+<div class="outline-text-3" id="text-2-4">
 <div class="org-src-container">
 
-<pre class="src src-c">...
+<pre class="src src-c++">...
 <span class="org-preprocessor"># if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
 <span class="org-preprocessor">#   ifdef</span> TL2_OPTIM_HASHLOG
 <span class="org-keyword">for</span> (wr = logs; wr != end; wr++)
@@ -495,9 +513,9 @@ macros provided for implementors to define arch appropriate fences
 </div>
 </div>
 
-<div id="outline-container-sec-2-6" class="outline-3">
-<h3 id="sec-2-6">orders not fences</h3>
-<div class="outline-text-3" id="text-2-6">
+<div id="outline-container-sec-2-5" class="outline-3">
+<h3 id="sec-2-5">orders not fences</h3>
+<div class="outline-text-3" id="text-2-5">
 <p>
 Leave the details to the compiler!
 </p>
@@ -522,7 +540,13 @@ we should use orders and delegate the work to the compiler!
 <div id="outline-container-sec-3" class="outline-2">
 <h2 id="sec-3">section 3 (Algorithm)</h2>
 <div class="outline-text-2" id="text-3">
-</div><div id="outline-container-sec-3-1" class="outline-3">
+<ul class="org-ul">
+<li>notes
+</li>
+</ul>
+</div>
+
+<div id="outline-container-sec-3-1" class="outline-3">
 <h3 id="sec-3-1">algorithm</h3>
 <div class="outline-text-3" id="text-3-1">
 <div class="org-src-container">
@@ -550,7 +574,7 @@ end
 <ol class="org-ol">
 <li>We eliminate orders which are enforced on the target
 architecture, e.g. a store -&gt; store order on x86 is enforced
-by the architecture
+by the architecture. <b>optimization</b>
 </li>
 
 <li>We find a multicut for the remaining orders and the control flow graph G
@@ -582,7 +606,8 @@ Removed the <code>fany</code> requirement for clarity
 Intuitively, if we have at least one "big hammer fence" for A
 that will work to keep any instructions we might pair from
 trading places in execution then Insert will enforce the orders
-we have defined.
+we have defined by getting a fence between them on all possible
+execution paths
 </p>
 
 <p>
@@ -776,7 +801,7 @@ all whole program
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: John Bender</p>
-<p class="date">Created: 2015-10-03 Sat 21:54</p>
+<p class="date">Created: 2015-10-04 Sun 22:06</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

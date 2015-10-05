@@ -89,7 +89,7 @@ pre.src:hover:before {
 }
 
 
-pre                                      {background-color:#FFFFFF;}
+pre                                      {background-color:#FFFFFF; border: none;}
 pre span.org-builtin                     {color:#006FE0;font-weight:bold;}
 pre span.org-string                      {color:#008000;}
 pre span.org-keyword                     {color:#0000FF;}
@@ -119,5 +119,3 @@ pre span.org-rainbow-delimiters-depth-7  {color:#858580;}
 pre span.org-rainbow-delimiters-depth-8  {color:#80a880;}
 pre span.org-rainbow-delimiters-depth-9  {color:#887070;}
 pre span.org-sh-quoted-exec              {color:#FF1493;}
-
-pre { border: none; }

@@ -13,8 +13,10 @@
 
    - notes
 
-     Two threads only, waits for other thread's flag to be false.
-     Enters critical section when it is
+     - Two threads only
+     - shared instance of the lock
+     - each thread waits for the other thread's flag to be false then
+       enters critical section
 
 ** mutual exclusion proof requires two orders
    #+BEGIN_EXAMPLE
@@ -24,16 +26,32 @@
 
    - notes
 
-     2.3.1 and 2.3.2 are assumed in the proof of mutual exclusion,
-     which may not hold under weak memory models. In particular under
-     java's memory model or if this were an unmanaged language the
-     memory models of x86, arm, power.
+     proof by contradiction: CSA -/-> CSB and CSB -/-> CSA
 
-     for example on x86, the write to ~flag[A]~ or ~flag[B]~ may be
-     delayed in reaching the other thread by store buffering, allowing
-     it to be read as ~false~.
+     ie they are concurrent
 
-** traditionally solved with fences or volatile class members
+     2.3.1 and 2.3.2 are *assumed* in the proof of mutual exclusion,
+     which may not hold under weak memory models. eg java's memory
+     model or in an unmanaged language the memory models of
+     x86, arm, power.
+
+** store buffering in LockOne
+   | Thread 0          | Thread 1          |                 |
+   |-------------------+-------------------+-----------------|
+   | ~flag[0] = true~  |                   | buffered        |
+   | ~flag[1] : false~ |                   |                 |
+   |                   | ~flag[1] = true~  |                 |
+   |                   | ~flag[0] : false~ | unflushed value |
+   |                   | enter cs          |                 |
+   | enter cs          |                   | bad!            |
+
+   - notes
+
+     for example, in java the write to ~flag[0]~ might be delayed in a
+     store buffer so the read in the other thread returns its previous
+     value allowing both threads to enter the critical section
+
+** traditionally solved with fences or volatile variables/class members
 
    #+BEGIN_QUOTE
    Pragma 2.3.1. In practice, the Boolean flag variables ... must all
@@ -61,21 +79,11 @@
 * section 2 (Problem)
   TODO should we add more bad executions?
 
-** store buffering in LockOne
-   | Thread 0          | Thread 1          |                 |
-   |-------------------+-------------------+-----------------|
-   | ~flag[0] = true~  |                   | buffered        |
-   | ~flag[1] : false~ |                   |                 |
-   |                   | ~flag[1] = true~  |                 |
-   |                   | ~flag[0] : false~ | unflushed value |
-   |                   | enter cs          |                 |
-   | enter cs          |                   | bad!            |
+  - notes
 
-   - notes
-
-     the write to ~flag[0]~ is mired in a store buffer so the read of
-     the same returns its previous value allowing both threads to
-     enter the critical section
+    lets look at some subtleties that go along with using fences to
+    get a better sense for why we think a compiler should handle this
+    task
 
 ** cross platform
    #+BEGIN_SRC c++
@@ -139,30 +147,7 @@
      semantics that we should account for (by avoiding adding more fences).
 
 ** TL2 STM Algorithm
-   #+BEGIN_SRC c
-...
-# ifndef TL2_EAGER
-#   ifdef TL2_OPTIM_HASHLOG
-for (wr = logs; wr != end; wr++)
-#   endif
-{
-  // write the deferred stores
-  WriteBackForward(wr);
-}
-# endif
-
-// make stores visible before unlock
-MEMBARSTST();
-
-// release locks and increment version
-DropLocks(Self, wv);
-
-// ensure loads are from global writes
-MEMBARSTLD();
-
-return 1;
-...
-   #+END_SRC
+   #+INCLUDE: "code/TxCommit.c" src c++
 
    - notes
 
@@ -189,6 +174,8 @@ return 1;
      we should use orders and delegate the work to the compiler!
 
 * section 3 (Algorithm)
+  - notes
+
 ** algorithm
    #+BEGIN_SRC python
    # Insert : CFG x Arch x OrderSet -> CFG
@@ -211,7 +198,7 @@ return 1;
 
      1. We eliminate orders which are enforced on the target
         architecture, e.g. a store -> store order on x86 is enforced
-        by the architecture
+        by the architecture. *optimization*
 
      2. We find a multicut for the remaining orders and the control flow graph G
 
@@ -230,7 +217,8 @@ return 1;
      Intuitively, if we have at least one "big hammer fence" for A
      that will work to keep any instructions we might pair from
      trading places in execution then Insert will enforce the orders
-     we have defined.
+     we have defined by getting a fence between them on all possible
+     execution paths
 
      We briefly discuss the subtlety introduced by fence selection in the paper
 
