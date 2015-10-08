@@ -54,7 +54,7 @@
 ** traditionally solved with fences or volatile variables/class members
 
    #+BEGIN_QUOTE
-   Pragma 2.3.1. In practice, the Boolean flag variables ... must all
+   In practice, the Boolean flag variables ... must all
    be declared volatile to work properly.
    #+END_QUOTE
 
@@ -287,3 +287,56 @@
    - notes
 
      all whole program
+
+* feedback
+** Jens
+   - section 1
+     - use a different arrow for happens before
+     - get rid of CSA/CSB or explain thoroughly
+     - use our notation for the happens before
+     - drop difference between happens before/orders
+     - if we read the code under seq consistency, then the proof goes
+       through but weaker memory models will work with some assistance
+     - these orders which are implied by seq consistency can be taken as
+       part of the spec
+     - orders and algorithms slide using our notation
+     - what would we do with weaker memory models
+
+     - traditionally solved
+       - runtime sequential consistency
+       - proof doesn't require SC!
+       - just those two instructions
+       - targeted SC
+       - quote about volatile
+       - code sample with fence
+       - big hammers
+       - instead lets just use the proof as a spec
+     - algorithms = code + orders
+       - Hurlehy should use orders
+   - section 2
+     - fence insertion problem
+     - related work?
+       - whole program, don't scale
+     - what do we get out of orders from the programmer
+       - per procedure
+     - so is there anything left to do at the procedure level
+       - show that it's hard
+     - algorithm is still 2^n
+     - problem input size are small
+   - section 3
+     - requires arch spec, discuss
+     - add dot graph from section 3 of the paper
+     - put graphs,orders,architectures to the right of the code and
+       step through transformations to both as the algorithm proceeds
+   - section 4
+     - methodology is key
+       - go into detail
+       - benchmarks come from other people
+       - stamp for stm
+     - first paper that does fence insertion for STM
+       - scalability
+     - say three stm algorithms
+     - discuss our approach
+       - removing fence macros
+     - performance of the algorithms with our placements
+     - one or at most two tables about output

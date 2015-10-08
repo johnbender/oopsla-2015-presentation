@@ -1,6 +1,6 @@
 #+REVEAL_HEAD_PREAMBLE: <link rel="stylesheet" type="text/css" href="assets/style.css" />
 #+REVEAL_ROOT: https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/
-#+REVEAL_THEME: solarized
+#+REVEAL_THEME: white
 #+REVEAL_TRANS: none
 #+REVEAL_SLIDE_NUMBER: t
 #+REVEAL_HLEVEL: 10
@@ -9,404 +9,284 @@
 #+AUTHOR:
 #+EMAIL: johnbender@cs.ucla.edu
 #+OPTIONS: num:nil toc:nil reveal_history:t reveal_control:nil reveal_mathjax:t
-* A Savage Optimization
-** Recipe for PB&J
-   | chef 1              |
-   |---------------------|
-   | get bread           |
-   | apply peanut butter |
-   | apply jelly         |
-   | close halves        |
+** mutex
 
-** Delayed PB? Optimize.
-   | chef 1                |
-   |-----------------------|
-   | get bread             |
-   | apply jelly           |
-   | ! apply peanut butter |
-   | close halves          |
+   The Art of Multiprocessor Programming, 2.3.1
 
-* Concurrent Failure
-** A Delicate Activity
-   | chef 1              | chef 2       |
-   |---------------------+--------------|
-   | get bread           |              |
-   | apply peanut butter |              |
-   | apply jelly         |              |
-   |                     | check jelly  |
-   |                     | close halves |
+   #+INCLUDE: "code/LockOne.java" src java
 
-** Delayed PB? Optim— oh.
-   | chef 1                | chef 2       |
-   |-----------------------+--------------|
-   | get bread             |              |
-   | apply jelly           |              |
-   |                       | check jelly  |
-   |                       | close halves |
-   | ! apply peanut butter |              |
+** mutual exclusion proof
 
-* Dekker's Mutex
-** Simple Implementation
-  #+BEGIN_SRC c
-bool p0() {
-  flag0 = 1;
-  if(flag1 == 1){
-    return false;
+   The Art of Multiprocessor Programming, 2.3.1
+
+   #+BEGIN_SRC java
+class LockOne implements Lock {
+  private boolean[] flag = new boolean[2];
+
+  public void lock() {
+    int i = ThreadID.get();
+    int j = i-1;
+>   flag[i] = true;
+>   while (flag[j]) {}
   }
-  // !! critical
-  return true;
-}
-  #+END_SRC
-  #+BEGIN_SRC c
-bool p1() {
-  flag1 = 1;
-  if(flag0 == 1){
-    return false;
-  }
-  // !! critical
-  return true;
-}
-  #+END_SRC
 
-** Simple Implementation
-  #+BEGIN_SRC c
-bool p0() {
-! flag0 = 1;
-! if(flag1 == 1){
-    return false;
+  public void unlock() {
+    int i = ThreadID.get();
+    flag[i] = false;
   }
-  // !! critical
-  return true;
 }
-  #+END_SRC
-  #+BEGIN_SRC c
-bool p1() {
-! flag1 = 1;
-! if(flag0 == 1){
-    return false;
-  }
-  // !! critical
-  return true;
-}
-  #+END_SRC
+   #+END_SRC
 
-** Sequential Consistency
-   | P0        | P1          |
-   |-----------+-------------|
-   | ~flag0=1~ |             |
-   | ~flag1:0~ |             |
-   |           | ~flag0=1~   |
-   |           | ! ~flag1:1~ |
-   |           | return      |
-   | enter     |             |
+** Bad execution
+   | Thread 0          | Thread 1          |      |
+   |-------------------+-------------------+------|
+   | ~flag[1] : false~ |                   |      |
+   |                   | ~flag[1] = true~  |      |
+   |                   | ~flag[0] : false~ |      |
+   | ~flag[0] = true~  |                   |      |
+   |                   | enter cs          |      |
+   | enter cs          |                   | bad! |
 
-** Buffered Store (~flag1~)
-   | P0        | P1          |
-   |-----------+-------------|
-   | ~flag0=1~ |             |
-   | ~flag0:0~ |             |
-   |           | ~flag1=1~   |
-   |           | ! ~flag0:0~ |
-   |           | enter       |
-   | enter     |             |
-** Buffered Store (~flag1~)
-   | P0          | P1        |
-   |-------------+-----------|
-   | ~flag0:0~   |           |
-   | ! ~flag0=1~ |           |
-   |             | ~flag1=1~ |
-   |             | ~flag0:1~  |
-   |             | return    |
-   | enter       |           |
-** Buffered Store (~flag1~)
-   | P0          | P1        |
-   |-------------+-----------|
-   | ~flag0:0~   |           |
-   |             | ~flag1=1~ |
-   | ! ~flag0=1~ |           |
-   |             | ~flag0:1~ |
-   |             | return    |
-   | enter       |           |
-** Buffered Store (~flag1~)
-   | P0          | P1        |
-   |-------------+-----------|
-   | ~flag0:0~   |           |
-   |             | ~flag1=1~ |
-   |             | ~flag0:0~ |
-   | ! ~flag0=1~ |           |
-   |             | ! enter   |
-   | enter       |           |
-** Buffered Store (~flag1~)
-   | P0          | P1        |
-   |-------------+-----------|
-   | ~flag0:0~   |           |
-   |             | ~flag1=1~ |
-   |             | ~flag0:0~ |
-   |             | ! enter   |
-   | ! ~flag0=1~ |           |
-   | enter       |           |
+** ensuring correctness
+   1. sequential consistency
+     - not required/expensive
+   2. ~volatile~ modifier
+     - imprecise
+   3. memory fences
+     - imprecise
 
-** Fixed
-  #+BEGIN_SRC c
-bool p0() {
-  flag0 = 1;
-! __asm__ ("mfence");
-  if(flag1 == 1){
-    return false;
-  }
-  // !! critical
-  return true;
-}
-  #+END_SRC
-  #+BEGIN_SRC c
-bool p1() {
-  flag1 = 1;
-! __asm__ ("mfence");
-  if(flag0 == 1){
-    return false;
-  }
-  // !! critical
-  return true;
-}
-  #+END_SRC
+   #+BEGIN_QUOTE
+   Pragma 2.3.1. In practice, the Boolean flag variables ... must all
+   be declared ~volatile~ to work properly.
+   #+END_QUOTE
 
-* The Problem
-** What we want:
-   - sc semantics
-   - x-platform
-   - performance
-** What we don't want:
-   - actual sc
-   - user intervention
-** Semantics != SC
-  #+BEGIN_SRC c
-bool p0() {
-  flag0 = 1;
-  __asm__ ("mfence");
-  if(flag0 == 1){
-    return false;
-  }
-  // !! no fences required
-  return true;
-}
-  #+END_SRC
+   #+BEGIN_NOTES
+   sequential consistency is expensive and not required by the proof
 
-** Cross Platform
-  #+BEGIN_SRC c
-bool p0() {
-  flag0 = 1;
-  __asm__ ("mfence");
-  if(flag0 == 1){
-    return false;
-  }
-  // !! critical
-  return true;
-}
-  #+END_SRC
+   volatile affects all writes to the modified variable, but we only
+   care about on write in particular
 
-** Cross Platform
-  #+BEGIN_SRC c
-bool p0() {
-  flag0 = 1;
-  __asm__ ("dmb");
-  if(flag0 == 1){
-    return false;
-  }
-  // !! critical
-  return true;
-}
-  #+END_SRC
+   in C/C++ memory fences relate many instructions before and after,
+   sacrificing information about the actual required behavior
 
-** Fence Selection
-  #+BEGIN_SRC c
-bool p0() {
-  flag0 = 1;
-  __asm__ ("dmb st");
-  if(flag0 == 1){
-    return false;
-  }
-  // !! critical
-  return true;
-}
-  #+END_SRC
+   All of these are implementation details of a higher level concept
+   #+END_NOTES
 
-** Existing Fences(-likes)
-  #+BEGIN_SRC c
-bool p0() {
-  CAS(&flag0, 0, 1);
-  // fence unnecessary
-  if(flag0 == 1){
-    return false;
+** execution order
+   #+BEGIN_QUOTE
+   The requirement that two instructions be seen to execute in the
+   order they appear in the program.
+   #+END_QUOTE
+
+** algorithms: code *and* orders
+   #+BEGIN_SRC java
+class LockOne implements Lock {
+  private boolean[] flag = new boolean[2];
+
+  public void lock() {
+    int i = ThreadID.get();
+    int j = i-1;
+>   flag[i] = true;
+>   while (flag[j]) {}
   }
-  // !! critical
-  return true;
+
+  public void unlock() {
+    int i = ThreadID.get();
+    flag[i] = false;
+  }
 }
-  #+END_SRC
+   #+END_SRC
+
+   ${st(\mathtt{flag[i]}) \rightarrow ld(\mathtt{flag[j]})}$
+
+* Problem Subtleties
+  #+BEGIN_NOTES
+  We have an idea of what we think algorithms should look like,
+  what's standing in our way?
+  #+END_NOTES
+** cross platform
+   #+BEGIN_SRC c++
+   void lock() {
+     int i = ThreadID.get();
+     int j = i-1;
+     flag[i] = true;
+
+     // for x86
+     __asm__ ("mfence");
+     // for arm
+     __asm__ ("dmb");
+
+     while (flag[j]) {} // wait
+   }
+   #+END_SRC
+
+   #+BEGIN_NOTES
+     assuming we're programming at the level of C/C++ we need to use an
+     architecture appropriate fence instruction to ensure the two orders
+     defined in the proof
+   #+END_NOTES
+
+** fence selection
+   #+BEGIN_SRC c++
+   void lock() {
+     int i = ThreadID.get();
+     int j = i-1;
+     flag[i] = true;
+
+     // either will work in this case
+     // `dmb st` is "faster"
+     __asm__ ("dmb");
+     __asm__ ("dmb st");
+
+     while (flag[j]) {} // wait
+   }
+   #+END_SRC
+
+   #+BEGIN_NOTES
+     different paired instructions may require different fences,
+     optimizing for performance
+   #+END_NOTES
+
+** existing fence(-likes)
+   #+BEGIN_SRC c++
+   void lock() {
+     int i = ThreadID.get();
+     int j = i-1;
+
+     // x86 cmpxchg has fence-like semantics
+     CAS(flag[i], true);
+
+     while (flag[j]) {} // wait
+   }
+   #+END_SRC
+
+   #+BEGIN_NOTES
+     there are other instructions like `cmpxhg` which have fence like
+     semantics that we should account for (by avoiding adding more fences).
+   #+END_NOTES
 
 ** TL2 STM Algorithm
-   #+BEGIN_SRC c
-...
-# ifndef TL2_EAGER
-#   ifdef TL2_OPTIM_HASHLOG
-for (wr = logs; wr != end; wr++)
-#   endif
-{
-  // write the deferred stores
-  WriteBackForward(wr);
-}
-# endif
+   #+INCLUDE: "code/TxCommit.c" src c++
 
-// make stores visible before unlock
-MEMBARSTST();
+   #+BEGIN_NOTES
+     TODO split up the following
 
-// release locks and increment version
-DropLocks(Self, wv);
+     commit procedure for the tl2 software transactional memory algorithm
+     writebackforward is where the actual writes to memory take place
+     droplocks releases locks for the memory addresses for other commit calls to write
+     macros provided for implementors to define arch appropriate fences
 
-// ensure loads are from global writes
-MEMBARSTLD();
+     1. bad to put a fence right after writebackforward (loop)
+     2. bad to use a fence if ~TL2_EAGER~ is defined (will remove writebackforward)
+     3. bad to use a fence for ~MEMBARSTST~ on x86
+     4. fences/fence macros don't document their own reason for existence
+   #+END_NOTES
 
-return 1;
-...
+** overlapping orders
+* Algorithm
+
+   #+BEGIN_SRC python
+   # Insert : CFG x Arch x OrderSet -> CFG
+   def Insert(G1, A, O1):
+
+     # Elim : CFG x Arch x OrderSet -> OrderSet
+     O2 = O1 \ Elim(G, A, O1)
+
+     # Cut : CFG x OrderSet -> CutSet
+     K  = Cut(G, O2)
+
+     # Refine : CFG x CutSet -> CFG
+     G2 = Refine(G1, K)
+
+     return G2
+   end
    #+END_SRC
 
-** Fence Macros
-   #+BEGIN_SRC c
-...
-# ifndef TL2_EAGER
-#   ifdef TL2_OPTIM_HASHLOG
-for (wr = logs; wr != end; wr++)
-#   endif
-{
-  // write the deferred stores
-  WriteBackForward(wr);
-}
-# endif
+   #+BEGIN_NOTES
+     1. We eliminate orders which are enforced on the target
+        architecture, e.g. a store -> store order on x86 is enforced
+        by the architecture. *optimization*
 
-// make stores visible before unlock
-> MEMBARSTST();
+     2. We find a multicut for the remaining orders and the control flow graph G
 
-// release locks and increment version
-DropLocks(Self, wv);
+     3. We use the cut to insert fences on the cut set edges
+   #+END_NOTES
 
-// ensure loads are from global writes
-> MEMBARSTLD();
+** main theorem
+   $\mathsf{Insert}(G, A, O), A \vDash O$
 
-return 1;
-...
-   #+END_SRC
-** Loops
-   #+BEGIN_SRC c
-...
-# ifndef TL2_EAGER
-#   ifdef TL2_OPTIM_HASHLOG
-for (wr = logs; wr != end; wr++)
-#   endif
-{
-  // write the deferred stores
-  > WriteBackForward(wr);
-  > // this might be bad place
-}
-# endif
+   #+BEGIN_NOTES
+     Intuitively, if we have at least one "big hammer fence" for A
+     that will work to keep any instructions we might pair from
+     trading places in execution then Insert will enforce the orders
+     we have defined by getting a fence between them on all possible
+     execution paths
 
-// make stores visible before unlock
-MEMBARSTST();
+     We briefly discuss the subtlety introduced by fence selection in the paper
+   #+END_NOTES
 
-// release locks and increment version
-DropLocks(Self, wv);
+* Implementation
+   [[file:./assets/images/impl-diagram.png]]
 
-// ensure loads are from global writes
-MEMBARSTLD();
+   #+BEGIN_NOTES
+     - Our tool Parry takes an architecture specification, source and
+       orders and provides source with fences to enforce those orders
 
-return 1;
-...
-   #+END_SRC
-** Unnecessary
-   #+BEGIN_SRC c
-...
-# ifndef TL2_EAGER
-#   ifdef TL2_OPTIM_HASHLOG
-for (wr = logs; wr != end; wr++)
-#   endif
-{
-  // write the deferred stores
-  WriteBackForward(wr);
-}
-# endif
+     - Parry is built on top of LLVM's IR and wraps both Clang and
+       LLVM's opt tool.
 
-// unnecessary ifdef TL2_EAGER
-> MEMBARSTST();
+     - Edge elimination shrinks the control flow graph to speed up
+       Elimination
 
-// release locks and increment version
-DropLocks(Self, wv);
+     - Order elimination corresponds with Elim
 
-// ensure loads are from global writes
-MEMBARSTLD();
+     - Assigning cycle capacities ensures that we avoid placing fences
+       in loops unless otherwise completely necessary
+   #+END_NOTES
 
-return 1;
-...
-   #+END_SRC
-* Our Approach
-** Order Specifications
-   - order: relation between instructions
-   - account for loops, overlaps, etc
-   - platform agnostic
-   - annotation vs inference
-** Dekker
-   ${st(\mathtt{flag0}) \rightarrow ld(\mathtt{flag1})}$
-   #+BEGIN_SRC c
-bool p0() {
-> flag0 = 1;
-|
-> if(flag1 == 1){
-    return false;
-  }
-  // !! critical
-  return true;
-}
-  #+END_SRC
-** TL2 STM
-  #+BEGIN_SRC c
-    ...
-    # ifndef TL2_EAGER
-    #   ifdef TL2_OPTIM_HASHLOG
-    for (wr = logs; wr != end; wr++)
-    #   endif
-    {
-      // write the deferred stores
-  >   WriteBackForward(wr);
-  | }
-  | # endif
-  |
-  | // unnecessary ifdef TL2_EAGER
-  | MEMBARSTST();
-  |
-  |  // release locks and increment version
-> > DropLocks(Self, wv);
-|
-|   // ensure loads are from global writes
-|   MEMBARSTLD();
-|
->   return 1;
-    ...
-   #+END_SRC
-** TL2 STM
-   - ${st(\mathtt{addr}) \rightarrow ld(\mathtt{lock_{addr}})}$
-   - ${st(\mathtt{lock_{addr}}) \rightarrow ld(*)}$
+* Results
+  TODO include tables?
+** summary
+   - x86 arm
+   - two transaction memory algorithms
+   - four classic lock free algorithms
+   - match or better hand placed/selected fences
+** performance
+   - exponential time order elimination algorithm
+   - linear time order elimination algorithm
+   file:./assets/images/linear-perf.png
 
-** Value
-   - declarative
-   - exact
-   - often included
-   - effective
-* Related Work
-** Recovering sequential consistency
+   - notes
+
+     most of the time in processing is spent in generating the
+     modified control flow graph in Python, everything else appeals to
+     optimized C/C++ depedencies
+
+** classic
+   - matched all hand placed fences
+** tl2
+   - one fence saved!
+** tl2 eager
+   - one fence saved!
+** rstm
+   - notes about cmpxchg
+
+* Related
+** semantics
+   - weak memory calculus from CMU
+** recovering sequential consistency
    - Don't Sit on the Fence [Alglave]
    - Hiding relaxed memory consistency with a compiler [Lee]
-   - all, whole program
-** Enforcing arbitrary properties
+
+   - notes
+
+     all whole program
+
+** enforcing arbitrary properties
    - Automatic inference of memory fences [Kuperstein]
    - Synthesis of memory fences via refinement propagation [Meshman]
-   - all, whole program
 
+   - notes
 
+     all whole program
 * Thanks!

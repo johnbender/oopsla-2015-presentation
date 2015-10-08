@@ -43,13 +43,20 @@ code {
   font-size: 14px;
 }
 
+.reveal h1 code,
+.reveal h2 code,
+.reveal h3 code,
+.reveal h4 code,
+.reveal h5 code,
+.reveal h6 code{
+  text-transform: none;
+}
+
 pre, pre.src {
-  font-size: 12px;
+  font-size: 22px;
   margin-left: 0;
   box-shadow: 0 0 0 black;
   padding: 5px;
-  max-height: 400px;
-  overflow-y: scroll;
   padding: 1em 0 1em 1em;
 
 }
@@ -83,13 +90,26 @@ table th, table td {
   padding: 2px 5px;
 }
 
+.reveal table th,
+.reveal table td {
+  font-size: 0.8em;
+}
+
+
 pre.src:hover:before {
   top: 5px;
   right: 0;
 }
 
+.reveal pre, .reveal code {
+  font-family: "Menlo", monospace;
+}
 
-pre                                      {background-color:#FFFFFF; border: none;}
+pre {
+  font-family: "Menlo", monospace;
+  background-color:#FFFFFF;
+  border: none;
+}
 pre span.org-builtin                     {color:#006FE0;font-weight:bold;}
 pre span.org-string                      {color:#008000;}
 pre span.org-keyword                     {color:#0000FF;}
@@ -119,3 +139,14 @@ pre span.org-rainbow-delimiters-depth-7  {color:#858580;}
 pre span.org-rainbow-delimiters-depth-8  {color:#80a880;}
 pre span.org-rainbow-delimiters-depth-9  {color:#887070;}
 pre span.org-sh-quoted-exec              {color:#FF1493;}
+
+.reveal blockquote {
+  text-align: left;
+  padding: 0em 1em;
+}
+
+.reveal section img {
+  border: 0;
+  box-shadow: none;
+  max-height: 500px;
+}

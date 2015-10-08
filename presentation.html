@@ -1,1147 +1,682 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
+<meta charset="utf-8"/>
 <title>Declarative Fence Insertion</title>
-<!-- 2015-09-24 Thu 16:05 -->
-<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
-<meta  name="generator" content="Org-mode" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
-  .title  { text-align: center; }
-  .todo   { font-family: monospace; color: red; }
-  .done   { color: green; }
-  .tag    { background-color: #eee; font-family: monospace;
-            padding: 2px; font-size: 80%; font-weight: normal; }
-  .timestamp { color: #bebebe; }
-  .timestamp-kwd { color: #5f9ea0; }
-  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .center { margin-left: auto; margin-right: auto; text-align: center; }
-  .underline { text-decoration: underline; }
-  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
-  p.verse { margin-left: 3%; }
-  pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
-    padding: 8pt;
-    font-family: monospace;
-    overflow: auto;
-    margin: 1.2em;
-  }
-  pre.src {
-    position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
-  }
-  pre.src:before {
-    display: none;
-    position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
-    padding: 3px;
-    border: 1px solid black;
-  }
-  pre.src:hover:before { display: inline;}
-  pre.src-sh:before    { content: 'sh'; }
-  pre.src-bash:before  { content: 'sh'; }
-  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
-  pre.src-R:before     { content: 'R'; }
-  pre.src-perl:before  { content: 'Perl'; }
-  pre.src-java:before  { content: 'Java'; }
-  pre.src-sql:before   { content: 'SQL'; }
 
-  table { border-collapse:collapse; }
-  caption.t-above { caption-side: top; }
-  caption.t-bottom { caption-side: bottom; }
-  td, th { vertical-align:top;  }
-  th.right  { text-align: center;  }
-  th.left   { text-align: center;   }
-  th.center { text-align: center; }
-  td.right  { text-align: right;  }
-  td.left   { text-align: left;   }
-  td.center { text-align: center; }
-  dt { font-weight: bold; }
-  .footpara:nth-child(2) { display: inline; }
-  .footpara { display: block; }
-  .footdef  { margin-bottom: 1em; }
-  .figure { padding: 1em; }
-  .figure p { text-align: center; }
-  .inlinetask {
-    padding: 10px;
-    border: 2px solid gray;
-    margin: 10px;
-    background: #ffffcc;
-  }
-  #org-div-home-and-up
-   { text-align: right; font-size: 70%; white-space: nowrap; }
-  textarea { overflow-x: auto; }
-  .linenr { font-size: smaller }
-  .code-highlighted { background-color: #ffff00; }
-  .org-info-js_info-navigation { border-style: none; }
-  #org-info-js_console-label
-    { font-size: 10px; font-weight: bold; white-space: nowrap; }
-  .org-info-js_search-highlight
-    { background-color: #ffff00; color: #000000; font-weight: bold; }
-  /*]]>*/-->
-</style>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/css/reveal.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/css/theme/white.css" id="theme"/>
 
-Copyright (C) 2012-2013 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
 </script>
-<script type="text/javascript" src="http://orgmode.org/mathjax/MathJax.js"></script>
-<script type="text/javascript">
-<!--/*--><![CDATA[/*><!--*/
-    MathJax.Hub.Config({
-        // Only one of the two following lines, depending on user settings
-        // First allows browser-native MathML display, second forces HTML/CSS
-        //  config: ["MMLorHTML.js"], jax: ["input/TeX"],
-            jax: ["input/TeX", "output/HTML-CSS"],
-        extensions: ["tex2jax.js","TeX/AMSmath.js","TeX/AMSsymbols.js",
-                     "TeX/noUndefined.js"],
-        tex2jax: {
-            inlineMath: [ ["\\(","\\)"] ],
-            displayMath: [ ['$$','$$'], ["\\[","\\]"], ["\\begin{displaymath}","\\end{displaymath}"] ],
-            skipTags: ["script","noscript","style","textarea","pre","code"],
-            ignoreClass: "tex2jax_ignore",
-            processEscapes: false,
-            processEnvironments: true,
-            preview: "TeX"
-        },
-        showProcessingMessages: true,
-        displayAlign: "center",
-        displayIndent: "2em",
-
-        "HTML-CSS": {
-             scale: 100,
-             availableFonts: ["STIX","TeX"],
-             preferredFont: "TeX",
-             webFont: "TeX",
-             imageFont: "TeX",
-             showMathMenu: true,
-        },
-        MMLorHTML: {
-             prefer: {
-                 MSIE:    "MML",
-                 Firefox: "MML",
-                 Opera:   "HTML",
-                 other:   "HTML"
-             }
-        }
-    });
-/*]]>*///-->
-</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<link rel="stylesheet" type="text/css" href="assets/style.css" />
 </head>
 <body>
-<div id="content">
-<h1 class="title">Declarative Fence Insertion</h1>
-<div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1">A Savage Optimization</h2>
-<div class="outline-text-2" id="text-1">
-</div><div id="outline-container-sec-1-1" class="outline-3">
-<h3 id="sec-1-1">Recipe for PB&amp;J</h3>
-<div class="outline-text-3" id="text-1-1">
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="left">chef 1</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="left">get bread</td>
-</tr>
-
-<tr>
-<td class="left">apply peanut butter</td>
-</tr>
-
-<tr>
-<td class="left">apply jelly</td>
-</tr>
-
-<tr>
-<td class="left">close halves</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-
-<div id="outline-container-sec-1-2" class="outline-3">
-<h3 id="sec-1-2">Delayed PB? Optimize.</h3>
-<div class="outline-text-3" id="text-1-2">
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="left">chef 1</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="left">get bread</td>
-</tr>
-
-<tr>
-<td class="left">apply jelly</td>
-</tr>
-
-<tr>
-<td class="left">! apply peanut butter</td>
-</tr>
-
-<tr>
-<td class="left">close halves</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-
-<div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2">Concurrent Failure</h2>
-<div class="outline-text-2" id="text-2">
-</div><div id="outline-container-sec-2-1" class="outline-3">
-<h3 id="sec-2-1">A Delicate Activity</h3>
-<div class="outline-text-3" id="text-2-1">
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-
-<col  class="left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="left">chef 1</th>
-<th scope="col" class="left">chef 2</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="left">get bread</td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left">apply peanut butter</td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left">apply jelly</td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">check jelly</td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">close halves</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-
-<div id="outline-container-sec-2-2" class="outline-3">
-<h3 id="sec-2-2">Delayed PB? Optim— oh.</h3>
-<div class="outline-text-3" id="text-2-2">
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-
-<col  class="left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="left">chef 1</th>
-<th scope="col" class="left">chef 2</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="left">get bread</td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left">apply jelly</td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">check jelly</td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">close halves</td>
-</tr>
-
-<tr>
-<td class="left">! apply peanut butter</td>
-<td class="left">&#xa0;</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-
-<div id="outline-container-sec-3" class="outline-2">
-<h2 id="sec-3">Dekker's Mutex</h2>
-<div class="outline-text-2" id="text-3">
-</div><div id="outline-container-sec-3-1" class="outline-3">
-<h3 id="sec-3-1">Simple Implementation</h3>
-<div class="outline-text-3" id="text-3-1">
-<div class="org-src-container">
-
-<pre class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p0</span>() {
-  flag0 = 1;
-  <span style="color: #00cd00;">if</span>(flag1 == 1){
-    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
-  }
-  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
-  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
-}
-</pre>
-</div>
-<div class="org-src-container">
-
-<pre class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p1</span>() {
-  flag1 = 1;
-  <span style="color: #00cd00;">if</span>(flag0 == 1){
-    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
-  }
-  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
-  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
-}
-</pre>
-</div>
-</div>
-</div>
-
-<div id="outline-container-sec-3-2" class="outline-3">
-<h3 id="sec-3-2">Simple Implementation</h3>
-<div class="outline-text-3" id="text-3-2">
-<div class="org-src-container">
-
-<pre class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p0</span>() {
-<span style="color: #cd0000;">!</span> flag0 = 1;
-<span style="color: #cd0000;">!</span> <span style="color: #00cd00;">if</span>(flag1 == 1){
-    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
-  }
-  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
-  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
-}
-</pre>
-</div>
-<div class="org-src-container">
-
-<pre class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p1</span>() {
-<span style="color: #cd0000;">!</span> flag1 = 1;
-<span style="color: #cd0000;">!</span> <span style="color: #00cd00;">if</span>(flag0 == 1){
-    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
-  }
-  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
-  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
-}
-</pre>
-</div>
-</div>
-</div>
-
-<div id="outline-container-sec-3-3" class="outline-3">
-<h3 id="sec-3-3">Sequential Consistency</h3>
-<div class="outline-text-3" id="text-3-3">
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-
-<col  class="left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="left">P0</th>
-<th scope="col" class="left">P1</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="left"><code>flag0=1</code></td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left"><code>flag1:0</code></td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left"><code>flag0=1</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">! <code>flag1:1</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">return</td>
-</tr>
-
-<tr>
-<td class="left">enter</td>
-<td class="left">&#xa0;</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-
-<div id="outline-container-sec-3-4" class="outline-3">
-<h3 id="sec-3-4">Buffered Store (<code>flag1</code>)</h3>
-<div class="outline-text-3" id="text-3-4">
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-
-<col  class="left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="left">P0</th>
-<th scope="col" class="left">P1</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="left"><code>flag0=1</code></td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left"><code>flag0:0</code></td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left"><code>flag1=1</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">! <code>flag0:0</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">enter</td>
-</tr>
-
-<tr>
-<td class="left">enter</td>
-<td class="left">&#xa0;</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div id="outline-container-sec-3-5" class="outline-3">
-<h3 id="sec-3-5">Buffered Store (<code>flag1</code>)</h3>
-<div class="outline-text-3" id="text-3-5">
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-
-<col  class="left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="left">P0</th>
-<th scope="col" class="left">P1</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="left"><code>flag0:0</code></td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left">! <code>flag0=1</code></td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left"><code>flag1=1</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left"><code>flag0:1</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">return</td>
-</tr>
-
-<tr>
-<td class="left">enter</td>
-<td class="left">&#xa0;</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div id="outline-container-sec-3-6" class="outline-3">
-<h3 id="sec-3-6">Buffered Store (<code>flag1</code>)</h3>
-<div class="outline-text-3" id="text-3-6">
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-
-<col  class="left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="left">P0</th>
-<th scope="col" class="left">P1</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="left"><code>flag0:0</code></td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left"><code>flag1=1</code></td>
-</tr>
-
-<tr>
-<td class="left">! <code>flag0=1</code></td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left"><code>flag0:1</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">return</td>
-</tr>
-
-<tr>
-<td class="left">enter</td>
-<td class="left">&#xa0;</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div id="outline-container-sec-3-7" class="outline-3">
-<h3 id="sec-3-7">Buffered Store (<code>flag1</code>)</h3>
-<div class="outline-text-3" id="text-3-7">
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-
-<col  class="left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="left">P0</th>
-<th scope="col" class="left">P1</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="left"><code>flag0:0</code></td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left"><code>flag1=1</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left"><code>flag0:0</code></td>
-</tr>
-
-<tr>
-<td class="left">! <code>flag0=1</code></td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">! enter</td>
-</tr>
-
-<tr>
-<td class="left">enter</td>
-<td class="left">&#xa0;</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div id="outline-container-sec-3-8" class="outline-3">
-<h3 id="sec-3-8">Buffered Store (<code>flag1</code>)</h3>
-<div class="outline-text-3" id="text-3-8">
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-
-<col  class="left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="left">P0</th>
-<th scope="col" class="left">P1</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="left"><code>flag0:0</code></td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left"><code>flag1=1</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left"><code>flag0:0</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">! enter</td>
-</tr>
-
-<tr>
-<td class="left">! <code>flag0=1</code></td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left">enter</td>
-<td class="left">&#xa0;</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-
-<div id="outline-container-sec-3-9" class="outline-3">
-<h3 id="sec-3-9">Fixed</h3>
-<div class="outline-text-3" id="text-3-9">
-<div class="org-src-container">
-
-<pre class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p0</span>() {
-  flag0 = 1;
-<span style="color: #cd0000;">!</span> <span style="color: #00cd00;">__asm__</span> (<span style="color: #00cdcd;">"mfence"</span>);
-  <span style="color: #00cd00;">if</span>(flag1 == 1){
-    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
-  }
-  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
-  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
-}
-</pre>
-</div>
-<div class="org-src-container">
-
-<pre class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p1</span>() {
-  flag1 = 1;
-<span style="color: #cd0000;">!</span> <span style="color: #00cd00;">__asm__</span> (<span style="color: #00cdcd;">"mfence"</span>);
-  <span style="color: #00cd00;">if</span>(flag0 == 1){
-    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
-  }
-  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
-  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
-}
-</pre>
-</div>
-</div>
-</div>
-</div>
-
-<div id="outline-container-sec-4" class="outline-2">
-<h2 id="sec-4">The Problem</h2>
-<div class="outline-text-2" id="text-4">
-</div><div id="outline-container-sec-4-1" class="outline-3">
-<h3 id="sec-4-1">What we want:</h3>
-<div class="outline-text-3" id="text-4-1">
-<ul class="org-ul">
-<li>sc semantics
-</li>
-<li>x-platform
-</li>
-<li>performance
-</li>
-</ul>
-</div>
-</div>
-<div id="outline-container-sec-4-2" class="outline-3">
-<h3 id="sec-4-2">What we don't want:</h3>
-<div class="outline-text-3" id="text-4-2">
-<ul class="org-ul">
-<li>actual sc
-</li>
-<li>user intervention
-</li>
-</ul>
-</div>
-</div>
-<div id="outline-container-sec-4-3" class="outline-3">
-<h3 id="sec-4-3">Semantics != SC</h3>
-<div class="outline-text-3" id="text-4-3">
-<div class="org-src-container">
-
-<pre class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p0</span>() {
-  flag0 = 1;
-  <span style="color: #00cd00;">__asm__</span> (<span style="color: #00cdcd;">"mfence"</span>);
-  <span style="color: #00cd00;">if</span>(flag0 == 1){
-    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
-  }
-  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! no fences required</span>
-  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
-}
-</pre>
-</div>
-</div>
-</div>
-
-<div id="outline-container-sec-4-4" class="outline-3">
-<h3 id="sec-4-4">Cross Platform</h3>
-<div class="outline-text-3" id="text-4-4">
-<div class="org-src-container">
-
-<pre class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p0</span>() {
-  flag0 = 1;
-  <span style="color: #00cd00;">__asm__</span> (<span style="color: #00cdcd;">"mfence"</span>);
-  <span style="color: #00cd00;">if</span>(flag0 == 1){
-    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
-  }
-  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
-  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
-}
-</pre>
-</div>
-</div>
-</div>
-
-<div id="outline-container-sec-4-5" class="outline-3">
-<h3 id="sec-4-5">Cross Platform</h3>
-<div class="outline-text-3" id="text-4-5">
-<div class="org-src-container">
-
-<pre class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p0</span>() {
-  flag0 = 1;
-  <span style="color: #00cd00;">__asm__</span> (<span style="color: #00cdcd;">"dmb"</span>);
-  <span style="color: #00cd00;">if</span>(flag0 == 1){
-    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
-  }
-  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
-  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
-}
-</pre>
-</div>
-</div>
-</div>
-
-<div id="outline-container-sec-4-6" class="outline-3">
-<h3 id="sec-4-6">Fence Selection</h3>
-<div class="outline-text-3" id="text-4-6">
-<div class="org-src-container">
-
-<pre class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p0</span>() {
-  flag0 = 1;
-  <span style="color: #00cd00;">__asm__</span> (<span style="color: #00cdcd;">"dmb st"</span>);
-  <span style="color: #00cd00;">if</span>(flag0 == 1){
-    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
-  }
-  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
-  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
-}
-</pre>
-</div>
-</div>
-</div>
-
-<div id="outline-container-sec-4-7" class="outline-3">
-<h3 id="sec-4-7">Existing Fences(-likes)</h3>
-<div class="outline-text-3" id="text-4-7">
-<div class="org-src-container">
-
-<pre class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p0</span>() {
-  CAS(&amp;flag0, 0, 1);
-  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">fence unnecessary</span>
-  <span style="color: #00cd00;">if</span>(flag0 == 1){
-    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
-  }
-  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
-  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
-}
-</pre>
-</div>
-</div>
-</div>
-
-<div id="outline-container-sec-4-8" class="outline-3">
-<h3 id="sec-4-8">TL2 STM Algorithm</h3>
-<div class="outline-text-3" id="text-4-8">
-<div class="org-src-container">
-
-<pre class="src src-c">...
-<span style="color: #ff0000;"># if</span><span style="color: #ff0000;">n</span><span style="color: #ff0000;">def</span> TL2_EAGER
-<span style="color: #ff0000;">#   ifdef</span> TL2_OPTIM_HASHLOG
-<span style="color: #00cd00;">for</span> (wr = logs; wr != end; wr++)
-<span style="color: #ff0000;">#   endif</span>
-{
-  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">write the deferred stores</span>
-  WriteBackForward(wr);
-}
-<span style="color: #ff0000;"># endif</span>
-
-<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">make stores visible before unlock</span>
-MEMBARSTST();
-
-<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">release locks and increment version</span>
-DropLocks(Self, wv);
-
-<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">ensure loads are from global writes</span>
-MEMBARSTLD();
-
-<span style="color: #00cd00;">return</span> 1;
-...
-</pre>
-</div>
-</div>
-</div>
-
-<div id="outline-container-sec-4-9" class="outline-3">
-<h3 id="sec-4-9">Fence Macros</h3>
-<div class="outline-text-3" id="text-4-9">
-<div class="org-src-container">
-
-<pre class="src src-c">...
-<span style="color: #ff0000;"># if</span><span style="color: #ff0000;">n</span><span style="color: #ff0000;">def</span> TL2_EAGER
-<span style="color: #ff0000;">#   ifdef</span> TL2_OPTIM_HASHLOG
-<span style="color: #00cd00;">for</span> (wr = logs; wr != end; wr++)
-<span style="color: #ff0000;">#   endif</span>
-{
-  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">write the deferred stores</span>
-  WriteBackForward(wr);
-}
-<span style="color: #ff0000;"># endif</span>
-
-<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">make stores visible before unlock</span>
-&gt; MEMBARSTST();
-
-<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">release locks and increment version</span>
-DropLocks(Self, wv);
-
-<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">ensure loads are from global writes</span>
-&gt; MEMBARSTLD();
-
-<span style="color: #00cd00;">return</span> 1;
-...
-</pre>
-</div>
-</div>
-</div>
-<div id="outline-container-sec-4-10" class="outline-3">
-<h3 id="sec-4-10">Loops</h3>
-<div class="outline-text-3" id="text-4-10">
-<div class="org-src-container">
-
-<pre class="src src-c">...
-<span style="color: #ff0000;"># if</span><span style="color: #ff0000;">n</span><span style="color: #ff0000;">def</span> TL2_EAGER
-<span style="color: #ff0000;">#   ifdef</span> TL2_OPTIM_HASHLOG
-<span style="color: #00cd00;">for</span> (wr = logs; wr != end; wr++)
-<span style="color: #ff0000;">#   endif</span>
-{
-  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">write the deferred stores</span>
-  &gt; WriteBackForward(wr);
-  &gt; <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">this might be bad place</span>
-}
-<span style="color: #ff0000;"># endif</span>
-
-<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">make stores visible before unlock</span>
-MEMBARSTST();
-
-<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">release locks and increment version</span>
-DropLocks(Self, wv);
-
-<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">ensure loads are from global writes</span>
-MEMBARSTLD();
-
-<span style="color: #00cd00;">return</span> 1;
-...
-</pre>
-</div>
-</div>
-</div>
-<div id="outline-container-sec-4-11" class="outline-3">
-<h3 id="sec-4-11">Unnecessary</h3>
-<div class="outline-text-3" id="text-4-11">
-<div class="org-src-container">
-
-<pre class="src src-c">...
-<span style="color: #ff0000;"># if</span><span style="color: #ff0000;">n</span><span style="color: #ff0000;">def</span> TL2_EAGER
-<span style="color: #ff0000;">#   ifdef</span> TL2_OPTIM_HASHLOG
-<span style="color: #00cd00;">for</span> (wr = logs; wr != end; wr++)
-<span style="color: #ff0000;">#   endif</span>
-{
-  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">write the deferred stores</span>
-  WriteBackForward(wr);
-}
-<span style="color: #ff0000;"># endif</span>
-
-<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">unnecessary ifdef TL2_EAGER</span>
-&gt; MEMBARSTST();
-
-<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">release locks and increment version</span>
-DropLocks(Self, wv);
-
-<span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">ensure loads are from global writes</span>
-MEMBARSTLD();
-
-<span style="color: #00cd00;">return</span> 1;
-...
-</pre>
-</div>
-</div>
-</div>
-</div>
-<div id="outline-container-sec-5" class="outline-2">
-<h2 id="sec-5">Our Approach</h2>
-<div class="outline-text-2" id="text-5">
-</div><div id="outline-container-sec-5-1" class="outline-3">
-<h3 id="sec-5-1">Order Specifications</h3>
-<div class="outline-text-3" id="text-5-1">
-<ul class="org-ul">
-<li>order: relation between instructions
-</li>
-<li>account for loops, overlaps, etc
-</li>
-<li>platform agnostic
-</li>
-<li>annotation vs inference
-</li>
-</ul>
-</div>
-</div>
-<div id="outline-container-sec-5-2" class="outline-3">
-<h3 id="sec-5-2">Dekker</h3>
-<div class="outline-text-3" id="text-5-2">
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1>Declarative Fence Insertion</h1>
+<h2></h2>
+<h2><a href="mailto:johnbender@cs.ucla.edu">johnbender@cs.ucla.edu</a></h2>
+<h2></h2>
+</section>
+</section>
+</section>
+<section>
+<section id="slide-sec-0-1">
+<h3 id="sec-0-1">mutex</h3>
 <p>
-\({st(\mathtt{flag0}) \rightarrow ld(\mathtt{flag1})}\)
+The Art of Multiprocessor Programming, 2.3.1
 </p>
+
 <div class="org-src-container">
 
-<pre class="src src-c"><span style="color: #cdcd00;">bool</span> <span style="color: #0000ee;">p0</span>() {
-&gt; flag0 = 1;
-|
-&gt; <span style="color: #00cd00;">if</span>(flag1 == 1){
-    <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">false</span>;
+<pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
+  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+
+  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
+    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+    <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
+    flag[i] = <span class="org-constant">true</span>;
+    <span class="org-keyword">while</span> (flag[j]) {}
   }
-  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">!! critical</span>
-  <span style="color: #00cd00;">return</span> <span style="color: #00cdcd;">true</span>;
+
+  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
+    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+    flag[i] = <span class="org-constant">false</span>;
+  }
 }
 </pre>
 </div>
-</div>
-</div>
-<div id="outline-container-sec-5-3" class="outline-3">
-<h3 id="sec-5-3">TL2 STM</h3>
-<div class="outline-text-3" id="text-5-3">
+
+</section>
+</section>
+<section>
+<section id="slide-sec-0-2">
+<h3 id="sec-0-2">mutual exclusion proof</h3>
+<p>
+The Art of Multiprocessor Programming, 2.3.1
+</p>
+
 <div class="org-src-container">
 
-<pre class="src src-c">    ...
-<span style="color: #ff0000;">    # if</span><span style="color: #ff0000;">n</span><span style="color: #ff0000;">def</span> TL2_EAGER
-<span style="color: #ff0000;">    #   ifdef</span> TL2_OPTIM_HASHLOG
-    <span style="color: #00cd00;">for</span> (wr = logs; wr != end; wr++)
-<span style="color: #ff0000;">    #   endif</span>
-    {
-      <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">write the deferred stores</span>
-  &gt;   WriteBackForward(wr);
-  | }
-  | # endif
-  |
-  | <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">unnecessary ifdef TL2_EAGER</span>
-  | MEMBARSTST();
-  |
-  |  <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">release locks and increment version</span>
-&gt; &gt; DropLocks(Self, wv);
-|
-|   <span style="color: #00ffff; font-style: italic;">// </span><span style="color: #00ffff; font-style: italic;">ensure loads are from global writes</span>
-|   MEMBARSTLD();
-|
-&gt;   <span style="color: #00cd00;">return</span> 1;
-    ...
+<pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
+  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+
+  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
+    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+    <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
+&gt;   flag[i] = <span class="org-constant">true</span>;
+&gt;   <span class="org-keyword">while</span> (flag[j]) {}
+  }
+
+  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
+    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+    flag[i] = <span class="org-constant">false</span>;
+  }
+}
 </pre>
 </div>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-0-3">
+<h3 id="sec-0-3">Bad execution</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">Thread 0</th>
+<th scope="col" class="left">Thread 1</th>
+<th scope="col" class="left">&#xa0;</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left"><code>flag[1] : false</code></td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><code>flag[1] = true</code></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><code>flag[0] : false</code></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left"><code>flag[0] = true</code></td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">enter cs</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">enter cs</td>
+<td class="left">&#xa0;</td>
+<td class="left">bad!</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-0-4">
+<h3 id="sec-0-4">ensuring correctness</h3>
+<ol>
+<li>sequential consistency
+<ul>
+<li>not required/expensive</li>
+
+</ul></li>
+<li><code>volatile</code> modifier
+<ul>
+<li>imprecise</li>
+
+</ul></li>
+<li>memory fences
+<ul>
+<li>imprecise</li>
+
+</ul></li>
+
+</ol>
+
+<blockquote nil>
+<p>
+Pragma 2.3.1. In practice, the Boolean flag variables &#x2026; must all
+be declared <code>volatile</code> to work properly.
+</p>
+</blockquote>
+
+<aside class="notes">
+<p>
+sequential consistency is expensive and not required by the proof
+</p>
+
+<p>
+volatile affects all writes to the modified variable, but we only
+care about on write in particular
+</p>
+
+<p>
+in C/C++ memory fences relate many instructions before and after,
+sacrificing information about the actual required behavior
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-0-5">
+<h3 id="sec-0-5">execution order</h3>
+<blockquote nil>
+<p>
+The requirement that two instructions be seen to execute in the
+order they appear in the program.
+</p>
+</blockquote>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-0-6">
+<h3 id="sec-0-6">algorithms: code <b>and</b> orders</h3>
+<div class="org-src-container">
+
+<pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
+  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+
+  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
+    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+    <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
+&gt;   flag[i] = <span class="org-constant">true</span>;
+&gt;   <span class="org-keyword">while</span> (flag[j]) {}
+  }
+
+  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
+    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+    flag[i] = <span class="org-constant">false</span>;
+  }
+}
+</pre>
 </div>
+
+<p>
+\({st(\mathtt{flag[i]}) \rightarrow ld(\mathtt{flag[j]})}\)
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-1">
+<h2 id="sec-1">Problem Subtleties</h2>
+<aside class="notes">
+<p>
+We have an idea of what we think algorithms should look like,
+what's standing in our way?
+</p>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-sec-1-1">
+<h3 id="sec-1-1">cross platform</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
+  <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+  <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
+  flag[i] = <span class="org-constant">true</span>;
+
+  <span class="org-comment-delimiter">// </span><span class="org-comment">for x86</span>
+  <span class="org-keyword">__asm__</span> (<span class="org-string">"mfence"</span>);
+  <span class="org-comment-delimiter">// </span><span class="org-comment">for arm</span>
+  <span class="org-keyword">__asm__</span> (<span class="org-string">"dmb"</span>);
+
+  <span class="org-keyword">while</span> (flag[j]) {} <span class="org-comment-delimiter">// </span><span class="org-comment">wait</span>
+}
+</pre>
 </div>
-<div id="outline-container-sec-5-4" class="outline-3">
-<h3 id="sec-5-4">TL2 STM</h3>
-<div class="outline-text-3" id="text-5-4">
-<ul class="org-ul">
-<li>\({st(\mathtt{addr}) \rightarrow ld(\mathtt{lock_{addr}})}\)
+
+<aside class="notes">
+<p>
+assuming we're programming at the level of C/C++ we need to use an
+architecture appropriate fence instruction to ensure the two orders
+defined in the proof
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-1-2">
+<h3 id="sec-1-2">fence selection</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
+  <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+  <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
+  flag[i] = <span class="org-constant">true</span>;
+
+  <span class="org-comment-delimiter">// </span><span class="org-comment">either will work in this case</span>
+  <span class="org-comment-delimiter">// </span><span class="org-comment">`dmb st` is "faster"</span>
+  <span class="org-keyword">__asm__</span> (<span class="org-string">"dmb"</span>);
+  <span class="org-keyword">__asm__</span> (<span class="org-string">"dmb st"</span>);
+
+  <span class="org-keyword">while</span> (flag[j]) {} <span class="org-comment-delimiter">// </span><span class="org-comment">wait</span>
+}
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+different paired instructions may require different fences,
+optimizing for performance
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-1-3">
+<h3 id="sec-1-3">existing fence(-likes)</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
+  <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+  <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
+
+  <span class="org-comment-delimiter">// </span><span class="org-comment">x86 cmpxchg has fence-like semantics</span>
+  CAS(flag[i], <span class="org-constant">true</span>);
+
+  <span class="org-keyword">while</span> (flag[j]) {} <span class="org-comment-delimiter">// </span><span class="org-comment">wait</span>
+}
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+there are other instructions like `cmpxhg` which have fence like
+semantics that we should account for (by avoiding adding more fences).
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-1-4">
+<h3 id="sec-1-4">TL2 STM Algorithm</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c++">...
+<span class="org-preprocessor"># if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
+<span class="org-preprocessor">#   ifdef</span> TL2_OPTIM_HASHLOG
+<span class="org-keyword">for</span> (wr = logs; wr != end; wr++)
+<span class="org-preprocessor">#   endif</span>
+{
+  <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
+  WriteBackForward(wr);
+}
+<span class="org-preprocessor"># endif</span>
+
+<span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
+MEMBARSTST();
+
+<span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
+DropLocks(Self, wv);
+
+<span class="org-comment-delimiter">// </span><span class="org-comment">ensure loads are from global writes</span>
+MEMBARSTLD();
+
+<span class="org-keyword">return</span> 1;
+...
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+TODO split up the following
+</p>
+
+<p>
+commit procedure for the tl2 software transactional memory algorithm
+writebackforward is where the actual writes to memory take place
+droplocks releases locks for the memory addresses for other commit calls to write
+macros provided for implementors to define arch appropriate fences
+</p>
+
+<ol class="org-ol">
+<li>bad to put a fence right after writebackforward (loop)
 </li>
-<li>\({st(\mathtt{lock_{addr}}) \rightarrow ld(*)}\)
+<li>bad to use a fence if <code>TL2_EAGER</code> is defined (will remove writebackforward)
+</li>
+<li>bad to use a fence for <code>MEMBARSTST</code> on x86
+</li>
+<li>fences/fence macros don't document their own reason for existence
+</li>
+</ol>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-1-5">
+<h3 id="sec-1-5">overlapping orders</h3>
+</section>
+</section>
+<section>
+<section id="slide-sec-2">
+<h2 id="sec-2">Algorithm</h2>
+<div class="org-src-container">
+
+<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x OrderSet -&gt; CFG</span>
+<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x OrderSet -&gt; OrderSet</span>
+  <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x OrderSet -&gt; CutSet</span>
+  <span class="org-variable-name">K</span>  = Cut(G, O2)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
+  <span class="org-variable-name">G2</span> = Refine(G1, K)
+
+  <span class="org-keyword">return</span> G2
+end
+</pre>
+</div>
+
+<aside class="notes">
+<ol class="org-ol">
+<li>We eliminate orders which are enforced on the target
+architecture, e.g. a store -&gt; store order on x86 is enforced
+by the architecture. <b>optimization</b>
+</li>
+
+<li>We find a multicut for the remaining orders and the control flow graph G
+</li>
+
+<li>We use the cut to insert fences on the cut set edges
+</li>
+</ol>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-2-1">
+<h3 id="sec-2-1">main theorem</h3>
+<p>
+\(\mathsf{Insert}(G, A, O), A \vDash O\)
+</p>
+
+<aside class="notes">
+<p>
+Intuitively, if we have at least one "big hammer fence" for A
+that will work to keep any instructions we might pair from
+trading places in execution then Insert will enforce the orders
+we have defined by getting a fence between them on all possible
+execution paths
+</p>
+
+<p>
+We briefly discuss the subtlety introduced by fence selection in the paper
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-3">
+<h2 id="sec-3">Implementation</h2>
+
+<div class="figure">
+<p><img src="./assets/images/impl-diagram.png" alt="impl-diagram.png" />
+</p>
+</div>
+
+<aside class="notes">
+<ul class="org-ul">
+<li>Our tool Parry takes an architecture specification, source and
+orders and provides source with fences to enforce those orders
+</li>
+
+<li>Parry is built on top of LLVM's IR and wraps both Clang and
+LLVM's opt tool.
+</li>
+
+<li>Edge elimination shrinks the control flow graph to speed up
+Elimination
+</li>
+
+<li>Order elimination corresponds with Elim
+</li>
+
+<li>Assigning cycle capacities ensures that we avoid placing fences
+in loops unless otherwise completely necessary
 </li>
 </ul>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-4">
+<h2 id="sec-4">Results</h2>
+<p>
+TODO include tables?
+</p>
+</section>
+</section>
+<section>
+<section id="slide-sec-4-1">
+<h3 id="sec-4-1">summary</h3>
+<ul>
+<li>x86 arm</li>
+<li>two transaction memory algorithms</li>
+<li>four classic lock free algorithms</li>
+<li>match or better hand placed/selected fences</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-sec-4-2">
+<h3 id="sec-4-2">performance</h3>
+<ul>
+<li>exponential time order elimination algorithm</li>
+<li>linear time order elimination algorithm</li>
+
+</ul>
+
+<div class="figure">
+<p><img src="./assets/images/linear-perf.png" alt="linear-perf.png" />
+</p>
+</div>
+
+<ul>
+<li>notes
+
+<p>
+most of the time in processing is spent in generating the
+modified control flow graph in Python, everything else appeals to
+optimized C/C++ depedencies
+</p></li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-4-3">
+<h3 id="sec-4-3">classic</h3>
+<ul>
+<li>matched all hand placed fences</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-sec-4-4">
+<h3 id="sec-4-4">tl2</h3>
+<ul>
+<li>one fence saved!</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-sec-4-5">
+<h3 id="sec-4-5">tl2 eager</h3>
+<ul>
+<li>one fence saved!</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-sec-4-6">
+<h3 id="sec-4-6">rstm</h3>
+<ul>
+<li>notes about cmpxchg</li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-5">
+<h2 id="sec-5">Related</h2>
+<div class="outline-text-2" id="text-5">
+</div></section>
+</section>
+<section>
+<section id="slide-sec-5-1">
+<h3 id="sec-5-1">semantics</h3>
+<ul>
+<li>weak memory calculus from CMU</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-sec-5-2">
+<h3 id="sec-5-2">recovering sequential consistency</h3>
+<ul>
+<li>Don't Sit on the Fence [Alglave]</li>
+<li>Hiding relaxed memory consistency with a compiler [Lee]</li>
+
+<li>notes
+
+<p>
+all whole program
+</p></li>
+
+</ul>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-5-3">
+<h3 id="sec-5-3">enforcing arbitrary properties</h3>
+<ul>
+<li>Automatic inference of memory fences [Kuperstein]</li>
+<li>Synthesis of memory fences via refinement propagation [Meshman]</li>
+
+<li>notes
+
+<p>
+all whole program
+</p></li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-sec-6">
+<h2 id="sec-6">Thanks!</h2>
+</section>
+</section>
 </div>
 </div>
 
-<div id="outline-container-sec-5-5" class="outline-3">
-<h3 id="sec-5-5">Value</h3>
-<div class="outline-text-3" id="text-5-5">
-<ul class="org-ul">
-<li>declarative
-</li>
-<li>exact
-</li>
-<li>often included
-</li>
-<li>effective
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div id="outline-container-sec-6" class="outline-2">
-<h2 id="sec-6">Related Work</h2>
-<div class="outline-text-2" id="text-6">
-</div><div id="outline-container-sec-6-1" class="outline-3">
-<h3 id="sec-6-1">Recovering sequential consistency</h3>
-<div class="outline-text-3" id="text-6-1">
-<ul class="org-ul">
-<li>Don't Sit on the Fence [Alglave]
-</li>
-<li>Hiding relaxed memory consistency with a compiler [Lee]
-</li>
-<li>all, whole program
-</li>
-</ul>
-</div>
-</div>
-<div id="outline-container-sec-6-2" class="outline-3">
-<h3 id="sec-6-2">Enforcing arbitrary properties</h3>
-<div class="outline-text-3" id="text-6-2">
-<ul class="org-ul">
-<li>Automatic inference of memory fences [Kuperstein]
-</li>
-<li>Synthesis of memory fences via refinement propagation [Meshman]
-</li>
-<li>all, whole program
-</li>
-</ul>
-</div>
-</div>
-</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/lib/js/head.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/js/reveal.js"></script>
 
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
 
-<div id="outline-container-sec-7" class="outline-2">
-<h2 id="sec-7">Thanks!</h2>
-</div>
-</div>
-<div id="postamble" class="status">
-<p class="date">Created: 2015-09-24 Thu 16:05</p>
-<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.4.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
-</div>
+controls: false,
+progress: true,
+history: true,
+center: true,
+slideNumber: true,
+rollingLinks: false,
+keyboard: true,
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'none', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+ { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+]
+});
+</script>
 </body>
 </html>
