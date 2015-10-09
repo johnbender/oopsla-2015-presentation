@@ -714,7 +714,7 @@ digraph a {
  2 [label="st(x)"]
  3 [label="st(y)"]
  4 [label="ld(z)"]
- 5 [label="fence" color="red"]
+ 5 [label="fany" color="red"]
 
  1 -> 2
  3 -> 4
