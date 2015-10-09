@@ -131,6 +131,30 @@ class LockOne implements Lock {
 
    ${st(\mathtt{flag[i]}) \rightarrow ld(\mathtt{flag[j]})}$
 
+* previous approaches
+  - recover sequential consistency
+  - recover an arbitrary specification
+
+  #+BEGIN_NOTES
+  Whole program
+
+  Don't scale well
+
+  Orders exist as fragments of proofs which can't easily
+  be translated into specifications
+
+  Can be thought of as "finding the orders" necessary to ensure properties
+  #+END_NOTES
+** our approach
+   Ask the programmer for the orders!
+
+   - per-procedure analysis
+   - algorithm is 2^n but inputs are small
+
+   #+BEGIN_NOTES
+   This places our analysis at the procedure level.
+   #+END_NOTES
+
 * Problem Subtleties
   #+BEGIN_NOTES
   We have an idea of what we think algorithms should look like,

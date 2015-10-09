@@ -302,7 +302,59 @@ order they appear in the program.
 </section>
 <section>
 <section id="slide-sec-1">
-<h2 id="sec-1">Problem Subtleties</h2>
+<h2 id="sec-1">previous approaches</h2>
+<ul>
+<li>recover sequential consistency</li>
+<li>recover an arbitrary specification</li>
+
+</ul>
+
+<aside class="notes">
+<p>
+Whole program
+</p>
+
+<p>
+Don't scale well
+</p>
+
+<p>
+Orders exist as fragments of proofs which can't easily
+be translated into specifications
+</p>
+
+<p>
+Can be thought of as "finding the orders" necessary to ensure properties
+</p>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-sec-1-1">
+<h3 id="sec-1-1">our approach</h3>
+<p>
+Ask the programmer for the orders!
+</p>
+
+<ul>
+<li>per-procedure analysis</li>
+<li>algorithm is 2<sup>n</sup> but inputs are small</li>
+
+</ul>
+
+<aside class="notes">
+<p>
+This places our analysis at the procedure level.
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-2">
+<h2 id="sec-2">Problem Subtleties</h2>
 <aside class="notes">
 <p>
 We have an idea of what we think algorithms should look like,
@@ -313,8 +365,8 @@ what's standing in our way?
 </section>
 </section>
 <section>
-<section id="slide-sec-1-1">
-<h3 id="sec-1-1">cross platform</h3>
+<section id="slide-sec-2-1">
+<h3 id="sec-2-1">cross platform</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
@@ -344,8 +396,8 @@ defined in the proof
 </section>
 </section>
 <section>
-<section id="slide-sec-1-2">
-<h3 id="sec-1-2">fence selection</h3>
+<section id="slide-sec-2-2">
+<h3 id="sec-2-2">fence selection</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
@@ -374,8 +426,8 @@ optimizing for performance
 </section>
 </section>
 <section>
-<section id="slide-sec-1-3">
-<h3 id="sec-1-3">existing fence(-likes)</h3>
+<section id="slide-sec-2-3">
+<h3 id="sec-2-3">existing fence(-likes)</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
@@ -401,8 +453,8 @@ semantics that we should account for (by avoiding adding more fences).
 </section>
 </section>
 <section>
-<section id="slide-sec-1-4">
-<h3 id="sec-1-4">TL2 STM Algorithm</h3>
+<section id="slide-sec-2-4">
+<h3 id="sec-2-4">TL2 STM Algorithm</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c++">...
@@ -439,8 +491,8 @@ macros provided for implementors to define arch appropriate fences
 </section>
 </section>
 <section>
-<section id="slide-sec-1-5">
-<h3 id="sec-1-5">loops</h3>
+<section id="slide-sec-2-5">
+<h3 id="sec-2-5">loops</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c">...
@@ -475,8 +527,8 @@ bad to put a fence right after writebackforward (loop)
 </section>
 </section>
 <section>
-<section id="slide-sec-1-6">
-<h3 id="sec-1-6">code transformations</h3>
+<section id="slide-sec-2-6">
+<h3 id="sec-2-6">code transformations</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c">...
@@ -511,8 +563,8 @@ bad to use a fence if <code>TL2_EAGER</code> is defined (will remove writebackfo
 </section>
 </section>
 <section>
-<section id="slide-sec-1-7">
-<h3 id="sec-1-7">unnecessary</h3>
+<section id="slide-sec-2-7">
+<h3 id="sec-2-7">unnecessary</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c">...
@@ -546,8 +598,8 @@ bad to use a fence for <code>MEMBARSTST</code> on x86
 </section>
 </section>
 <section>
-<section id="slide-sec-2">
-<h2 id="sec-2">Algorithm</h2>
+<section id="slide-sec-3">
+<h2 id="sec-3">Algorithm</h2>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -599,8 +651,8 @@ by the architecture. <b>optimization</b>
 </section>
 </section>
 <section>
-<section id="slide-sec-2-1">
-<h3 id="sec-2-1">order elimination</h3>
+<section id="slide-sec-3-1">
+<h3 id="sec-3-1">order elimination</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -636,8 +688,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-2">
-<h3 id="sec-2-2">order elimination</h3>
+<section id="slide-sec-3-2">
+<h3 id="sec-3-2">order elimination</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -673,8 +725,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-3">
-<h3 id="sec-2-3">multi-cut</h3>
+<section id="slide-sec-3-3">
+<h3 id="sec-3-3">multi-cut</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -710,8 +762,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-4">
-<h3 id="sec-2-4">multi-cut</h3>
+<section id="slide-sec-3-4">
+<h3 id="sec-3-4">multi-cut</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -747,8 +799,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-5">
-<h3 id="sec-2-5">place fences</h3>
+<section id="slide-sec-3-5">
+<h3 id="sec-3-5">place fences</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -784,8 +836,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-6">
-<h3 id="sec-2-6">place fences</h3>
+<section id="slide-sec-3-6">
+<h3 id="sec-3-6">place fences</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -820,8 +872,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-7">
-<h3 id="sec-2-7">main theorem</h3>
+<section id="slide-sec-3-7">
+<h3 id="sec-3-7">main theorem</h3>
 <p>
 \(\mathsf{Insert}(G, A, O), A \vDash O\)
 </p>
@@ -844,8 +896,8 @@ We briefly discuss the subtlety introduced by fence selection in the paper
 </section>
 </section>
 <section>
-<section id="slide-sec-3">
-<h2 id="sec-3">Implementation</h2>
+<section id="slide-sec-4">
+<h2 id="sec-4">Implementation</h2>
 
 <div class="figure">
 <p><img src="./assets/images/impl-diagram.png" alt="impl-diagram.png" />
@@ -879,16 +931,16 @@ in loops unless otherwise completely necessary
 </section>
 </section>
 <section>
-<section id="slide-sec-4">
-<h2 id="sec-4">Results</h2>
+<section id="slide-sec-5">
+<h2 id="sec-5">Results</h2>
 <p>
 TODO include tables?
 </p>
 </section>
 </section>
 <section>
-<section id="slide-sec-4-1">
-<h3 id="sec-4-1">summary</h3>
+<section id="slide-sec-5-1">
+<h3 id="sec-5-1">summary</h3>
 <ul>
 <li>x86 arm</li>
 <li>two transaction memory algorithms</li>
@@ -899,8 +951,8 @@ TODO include tables?
 </section>
 </section>
 <section>
-<section id="slide-sec-4-2">
-<h3 id="sec-4-2">performance</h3>
+<section id="slide-sec-5-2">
+<h3 id="sec-5-2">performance</h3>
 <ul>
 <li>exponential time order elimination algorithm</li>
 <li>linear time order elimination algorithm</li>
@@ -926,8 +978,8 @@ optimized C/C++ depedencies
 </section>
 </section>
 <section>
-<section id="slide-sec-4-3">
-<h3 id="sec-4-3">classic</h3>
+<section id="slide-sec-5-3">
+<h3 id="sec-5-3">classic</h3>
 <ul>
 <li>matched all hand placed fences</li>
 
@@ -935,8 +987,8 @@ optimized C/C++ depedencies
 </section>
 </section>
 <section>
-<section id="slide-sec-4-4">
-<h3 id="sec-4-4">tl2</h3>
+<section id="slide-sec-5-4">
+<h3 id="sec-5-4">tl2</h3>
 <ul>
 <li>one fence saved!</li>
 
@@ -944,8 +996,8 @@ optimized C/C++ depedencies
 </section>
 </section>
 <section>
-<section id="slide-sec-4-5">
-<h3 id="sec-4-5">tl2 eager</h3>
+<section id="slide-sec-5-5">
+<h3 id="sec-5-5">tl2 eager</h3>
 <ul>
 <li>one fence saved!</li>
 
@@ -953,8 +1005,8 @@ optimized C/C++ depedencies
 </section>
 </section>
 <section>
-<section id="slide-sec-4-6">
-<h3 id="sec-4-6">rstm</h3>
+<section id="slide-sec-5-6">
+<h3 id="sec-5-6">rstm</h3>
 <ul>
 <li>notes about cmpxchg</li>
 
@@ -963,14 +1015,14 @@ optimized C/C++ depedencies
 </section>
 </section>
 <section>
-<section id="slide-sec-5">
-<h2 id="sec-5">Related</h2>
-<div class="outline-text-2" id="text-5">
+<section id="slide-sec-6">
+<h2 id="sec-6">Related</h2>
+<div class="outline-text-2" id="text-6">
 </div></section>
 </section>
 <section>
-<section id="slide-sec-5-1">
-<h3 id="sec-5-1">semantics</h3>
+<section id="slide-sec-6-1">
+<h3 id="sec-6-1">semantics</h3>
 <ul>
 <li>weak memory calculus from CMU</li>
 
@@ -978,8 +1030,8 @@ optimized C/C++ depedencies
 </section>
 </section>
 <section>
-<section id="slide-sec-5-2">
-<h3 id="sec-5-2">recovering sequential consistency</h3>
+<section id="slide-sec-6-2">
+<h3 id="sec-6-2">recovering sequential consistency</h3>
 <ul>
 <li>Don't Sit on the Fence [Alglave]</li>
 <li>Hiding relaxed memory consistency with a compiler [Lee]</li>
@@ -995,8 +1047,8 @@ all whole program
 </section>
 </section>
 <section>
-<section id="slide-sec-5-3">
-<h3 id="sec-5-3">enforcing arbitrary properties</h3>
+<section id="slide-sec-6-3">
+<h3 id="sec-6-3">enforcing arbitrary properties</h3>
 <ul>
 <li>Automatic inference of memory fences [Kuperstein]</li>
 <li>Synthesis of memory fences via refinement propagation [Meshman]</li>
@@ -1011,8 +1063,8 @@ all whole program
 </section>
 </section>
 <section>
-<section id="slide-sec-6">
-<h2 id="sec-6">Thanks!</h2>
+<section id="slide-sec-7">
+<h2 id="sec-7">Thanks!</h2>
 </section>
 </section>
 </div>
