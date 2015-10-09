@@ -289,13 +289,13 @@ MEMBARSTLD();
 * Algorithm
 
    #+BEGIN_SRC python
-   # Insert : CFG x Arch x OrderSet -> CFG
+   # Insert : CFG x Arch x Orders -> CFG
    def Insert(G1, A, O1):
 
-     # Elim : CFG x Arch x OrderSet -> OrderSet
+     # Elim : CFG x Arch x Orders -> Orders
      O2 = O1 \ Elim(G, A, O1)
 
-     # Cut : CFG x OrderSet -> CutSet
+     # Cut : CFG x Orders -> CutSet
      K  = Cut(G, O2)
 
      # Refine : CFG x CutSet -> CFG
@@ -364,13 +364,13 @@ digraph a {
 
 ** order elimination
    #+BEGIN_SRC python
-   # Insert : CFG x Arch x OrderSet -> CFG
+   # Insert : CFG x Arch x Orders -> CFG
    def Insert(G1, A, O1):
 
-     # Elim : CFG x Arch x OrderSet -> OrderSet
+     # Elim : CFG x Arch x Orders -> Orders
    ▶ O2 = O1 \ Elim(G, A, O1)
 
-     # Cut : CFG x OrderSet -> CutSet
+     # Cut : CFG x Orders -> CutSet
      K  = Cut(G, O2)
 
      # Refine : CFG x CutSet -> CFG
@@ -429,13 +429,13 @@ digraph a {
 
 ** order elimination
    #+BEGIN_SRC python
-   # Insert : CFG x Arch x OrderSet -> CFG
+   # Insert : CFG x Arch x Orders -> CFG
    def Insert(G1, A, O1):
 
-     # Elim : CFG x Arch x OrderSet -> OrderSet
+     # Elim : CFG x Arch x Orders -> Orders
    ▶ O2 = O1 \ Elim(G, A, O1)
 
-     # Cut : CFG x OrderSet -> CutSet
+     # Cut : CFG x Orders -> CutSet
      K  = Cut(G, O2)
 
      # Refine : CFG x CutSet -> CFG
@@ -488,13 +488,13 @@ digraph a {
 
 ** multi-cut
    #+BEGIN_SRC python
-   # Insert : CFG x Arch x OrderSet -> CFG
+   # Insert : CFG x Arch x Orders -> CFG
    def Insert(G1, A, O1):
 
-     # Elim : CFG x Arch x OrderSet -> OrderSet
+     # Elim : CFG x Arch x Orders -> Orders
      O2 = O1 \ Elim(G, A, O1)
 
-     # Cut : CFG x OrderSet -> CutSet
+     # Cut : CFG x Orders -> CutSet
    ▶ K  = Cut(G, O2)
 
      # Refine : CFG x CutSet -> CFG
@@ -547,13 +547,13 @@ digraph a {
 
 ** multi-cut
    #+BEGIN_SRC python
-   # Insert : CFG x Arch x OrderSet -> CFG
+   # Insert : CFG x Arch x Orders -> CFG
    def Insert(G1, A, O1):
 
-     # Elim : CFG x Arch x OrderSet -> OrderSet
+     # Elim : CFG x Arch x Orders -> Orders
      O2 = O1 \ Elim(G, A, O1)
 
-     # Cut : CFG x OrderSet -> CutSet
+     # Cut : CFG x Orders -> CutSet
    ▶ K  = Cut(G, O2)
 
      # Refine : CFG x CutSet -> CFG
@@ -606,13 +606,13 @@ digraph a {
 
 ** place fences
    #+BEGIN_SRC python
-   # Insert : CFG x Arch x OrderSet -> CFG
+   # Insert : CFG x Arch x Orders -> CFG
    def Insert(G1, A, O1):
 
-     # Elim : CFG x Arch x OrderSet -> OrderSet
+     # Elim : CFG x Arch x Orders -> Orders
      O2 = O1 \ Elim(G, A, O1)
 
-     # Cut : CFG x OrderSet -> CutSet
+     # Cut : CFG x Orders -> CutSet
      K  = Cut(G, O2)
 
      # Refine : CFG x CutSet -> CFG
@@ -636,6 +636,25 @@ digraph a {
  2 -> 3 [color="red"]
  3 -> 4
 
+ node[shape=circle]
+
+ 9 [label="st(x)", color="gray"]
+ 10 [label="st(y)", color="gray"]
+
+ 6 [label="st(x)", color="gray"]
+ 8 [label="ld(z)", color="gray"]
+
+ node[shape=point style=invis]
+ splines=line
+ n -> 6 [style=invis]
+ 6 -> o [style=invis]
+ o -> 8 [style=invis]
+ p -> 9 [style=invis]
+
+
+ 9 -> 10 [color="gray"]
+
+ 6 -> 8 [color="gray"]
 }
    #+END_SRC
    # @@html: <div class="algo-arch-rules">@@
@@ -646,13 +665,13 @@ digraph a {
 
 ** place fences
    #+BEGIN_SRC python
-   # Insert : CFG x Arch x OrderSet -> CFG
+   # Insert : CFG x Arch x Orders -> CFG
    def Insert(G1, A, O1):
 
-     # Elim : CFG x Arch x OrderSet -> OrderSet
+     # Elim : CFG x Arch x Orders -> Orders
      O2 = O1 \ Elim(G, A, O1)
 
-     # Cut : CFG x OrderSet -> CutSet
+     # Cut : CFG x Orders -> CutSet
      K  = Cut(G, O2)
 
      # Refine : CFG x CutSet -> CFG
@@ -678,6 +697,25 @@ digraph a {
  2 -> 5 [color="red"]
  5 -> 3 [color="red"]
 
+ node[shape=circle]
+
+ 9 [label="st(x)", color="gray"]
+ 10 [label="st(y)", color="gray"]
+
+ 6 [label="st(x)", color="gray"]
+ 8 [label="ld(z)", color="gray"]
+
+ node[shape=point style=invis]
+ splines=line
+ n -> 6 [style=invis]
+ 6 -> o [style=invis]
+ o -> 8 [style=invis]
+ p -> 9 [style=invis]
+
+
+ 9 -> 10 [color="gray"]
+
+ 6 -> 8 [color="gray"]
 }
    #+END_SRC
    # @@html: <div class="algo-arch-rules">@@

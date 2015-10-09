@@ -550,13 +550,13 @@ bad to use a fence for <code>MEMBARSTST</code> on x86
 <h2 id="sec-2">Algorithm</h2>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x OrderSet -&gt; CFG</span>
+<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
 <span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x OrderSet -&gt; OrderSet</span>
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
   <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x OrderSet -&gt; CutSet</span>
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
   <span class="org-variable-name">K</span>  = Cut(G, O2)
 
   <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
@@ -603,13 +603,13 @@ by the architecture. <b>optimization</b>
 <h3 id="sec-2-1">order elimination</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x OrderSet -&gt; CFG</span>
+<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
 <span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x OrderSet -&gt; OrderSet</span>
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
 &#9654; <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x OrderSet -&gt; CutSet</span>
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
   <span class="org-variable-name">K</span>  = Cut(G, O2)
 
   <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
@@ -640,13 +640,13 @@ end
 <h3 id="sec-2-2">order elimination</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x OrderSet -&gt; CFG</span>
+<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
 <span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x OrderSet -&gt; OrderSet</span>
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
 &#9654; <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x OrderSet -&gt; CutSet</span>
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
   <span class="org-variable-name">K</span>  = Cut(G, O2)
 
   <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
@@ -677,13 +677,13 @@ end
 <h3 id="sec-2-3">multi-cut</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x OrderSet -&gt; CFG</span>
+<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
 <span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x OrderSet -&gt; OrderSet</span>
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
   <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x OrderSet -&gt; CutSet</span>
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
 &#9654; <span class="org-variable-name">K</span>  = Cut(G, O2)
 
   <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
@@ -714,13 +714,13 @@ end
 <h3 id="sec-2-4">multi-cut</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x OrderSet -&gt; CFG</span>
+<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
 <span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x OrderSet -&gt; OrderSet</span>
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
   <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x OrderSet -&gt; CutSet</span>
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
 &#9654; <span class="org-variable-name">K</span>  = Cut(G, O2)
 
   <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
@@ -751,13 +751,13 @@ end
 <h3 id="sec-2-5">place fences</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x OrderSet -&gt; CFG</span>
+<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
 <span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x OrderSet -&gt; OrderSet</span>
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
   <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x OrderSet -&gt; CutSet</span>
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
   <span class="org-variable-name">K</span>  = Cut(G, O2)
 
   <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
@@ -788,13 +788,13 @@ end
 <h3 id="sec-2-6">place fences</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x OrderSet -&gt; CFG</span>
+<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
 <span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x OrderSet -&gt; OrderSet</span>
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
   <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x OrderSet -&gt; CutSet</span>
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
   <span class="org-variable-name">K</span>  = Cut(G, O2)
 
   <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>

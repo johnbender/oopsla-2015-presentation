@@ -161,12 +161,12 @@ div.algo-graph, div.algo-arch-rules {
 }
 
 div.algo-graph {
-  right: 0;
+  right: -40px;
+  height: 550px;
+  width: 400px;
 }
 
 div.algo-graph img {
-  max-width: 325px;
-  max-height: 350px;
 }
 
 div.algo-arch-rules {
