@@ -1,9 +1,7 @@
 ...
+
 # ifndef TL2_EAGER
-#   ifdef TL2_OPTIM_HASHLOG
-for (wr = logs; wr != end; wr++)
-#   endif
-{
+for (wr = logs; wr != end; wr++) {
   // write the deferred stores
   WriteBackForward(wr);
 }
@@ -15,8 +13,7 @@ MEMBARSTST();
 // release locks and increment version
 DropLocks(Self, wv);
 
-// ensure loads are from global writes
+// ensure later loads from above writes
 MEMBARSTLD();
 
-return 1;
 ...

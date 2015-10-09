@@ -150,3 +150,26 @@ pre span.org-sh-quoted-exec              {color:#FF1493;}
   box-shadow: none;
   max-height: 500px;
 }
+
+.reveal h2, .reveal h3 {
+  font-size: 1.6em;
+}
+
+div.algo-graph, div.algo-arch-rules {
+  position: absolute;
+  top: 2em;
+}
+
+div.algo-graph {
+  right: 0;
+}
+
+div.algo-graph img {
+  max-width: 325px;
+  max-height: 350px;
+}
+
+div.algo-arch-rules {
+  right: -25px;
+  top: 150px;
+}

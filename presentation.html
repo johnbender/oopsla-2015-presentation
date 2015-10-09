@@ -5,8 +5,8 @@
 <meta charset="utf-8"/>
 <title>Declarative Fence Insertion</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/css/reveal.css"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/css/theme/white.css" id="theme"/>
+<link rel="stylesheet" href="assets/reveal/css/reveal.css"/>
+<link rel="stylesheet" href="assets/reveal/css/theme/white.css" id="theme"/>
 
 <!-- If the query includes 'print-pdf', include the PDF print sheet -->
 <script>
@@ -14,7 +14,7 @@
         var link = document.createElement( 'link' );
         link.rel = 'stylesheet';
         link.type = 'text/css';
-        link.href = 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/css/print/pdf.css';
+        link.href = 'assets/reveal/css/print/pdf.css';
         document.getElementsByTagName( 'head' )[0].appendChild( link );
     }
 </script>
@@ -59,6 +59,19 @@ The Art of Multiprocessor Programming, 2.3.1
 </pre>
 </div>
 
+<aside class="notes">
+<p>
+Here we have some example code from the art of multiproc
+programming
+</p>
+
+<p>
+It's lock that's intended to guarantee mutual exclusion for two
+threads
+</p>
+
+</aside>
+
 </section>
 </section>
 <section>
@@ -76,8 +89,8 @@ The Art of Multiprocessor Programming, 2.3.1
   <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
     <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
     <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
-&gt;   flag[i] = <span class="org-constant">true</span>;
-&gt;   <span class="org-keyword">while</span> (flag[j]) {}
+&#9654;   flag[i] = <span class="org-constant">true</span>;
+&#9654;   <span class="org-keyword">while</span> (flag[j]) {}
   }
 
   <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
@@ -87,6 +100,31 @@ The Art of Multiprocessor Programming, 2.3.1
 }
 </pre>
 </div>
+
+<aside class="notes">
+<p>
+These two lines are critical:
+</p>
+
+<ul class="org-ul">
+<li>the first records an intent to enter a critical section guarded by the lock
+at the flag index corresponding to the thread id
+</li>
+<li>the second checks the other thread's flag and spins until it's false (unlocked)
+</li>
+</ul>
+
+<p>
+The proof of mutual exclusion in the book requires that these two
+lines execute in program order
+</p>
+
+<p>
+More specifically, their interactions with memory must take effect
+in program order
+</p>
+
+</aside>
 
 </section>
 </section>
@@ -112,6 +150,12 @@ The Art of Multiprocessor Programming, 2.3.1
 </thead>
 <tbody>
 <tr>
+<td class="left"><code>flag[0] = true</code></td>
+<td class="left">&#xa0;</td>
+<td class="left">buffered</td>
+</tr>
+
+<tr>
 <td class="left"><code>flag[1] : false</code></td>
 <td class="left">&#xa0;</td>
 <td class="left">&#xa0;</td>
@@ -126,13 +170,7 @@ The Art of Multiprocessor Programming, 2.3.1
 <tr>
 <td class="left">&#xa0;</td>
 <td class="left"><code>flag[0] : false</code></td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left"><code>flag[0] = true</code></td>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
+<td class="left">bad!</td>
 </tr>
 
 <tr>
@@ -149,27 +187,41 @@ The Art of Multiprocessor Programming, 2.3.1
 </tbody>
 </table>
 
+<p>
+Possible under Java, x86, ARM, and Power
+</p>
+
+<aside class="notes">
+<p>
+For example if the write to flag<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup> in thread 0 is buffered, thread
+1 may read false in this execution allowing both threads to acquire
+the lock and enter the critical section
+</p>
+
+<p>
+Note that this is possible under extremely common memory models
+like Java, x86, ARM, and Power
+</p>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p>DEFINITION NOT FOUND.</p></div>
+
+
+</div>
+</div>
+</aside>
+
 </section>
 </section>
 <section>
 <section id="slide-sec-0-4">
 <h3 id="sec-0-4">ensuring correctness</h3>
 <ol>
-<li>sequential consistency
-<ul>
-<li>not required/expensive</li>
-
-</ul></li>
-<li><code>volatile</code> modifier
-<ul>
-<li>imprecise</li>
-
-</ul></li>
-<li>memory fences
-<ul>
-<li>imprecise</li>
-
-</ul></li>
+<li>sequential consistency</li>
+<li><code>volatile</code> modifier</li>
+<li>memory fences</li>
 
 </ol>
 
@@ -182,6 +234,10 @@ be declared <code>volatile</code> to work properly.
 
 <aside class="notes">
 <p>
+How do we prevent these kinds of issues?
+</p>
+
+<p>
 sequential consistency is expensive and not required by the proof
 </p>
 
@@ -193,6 +249,10 @@ care about on write in particular
 <p>
 in C/C++ memory fences relate many instructions before and after,
 sacrificing information about the actual required behavior
+</p>
+
+<p>
+All of these are implementation details of a higher level concept
 </p>
 
 </aside>
@@ -222,8 +282,8 @@ order they appear in the program.
   <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
     <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
     <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
-&gt;   flag[i] = <span class="org-constant">true</span>;
-&gt;   <span class="org-keyword">while</span> (flag[j]) {}
+&#9654;   flag[i] = <span class="org-constant">true</span>;
+&#9654;   <span class="org-keyword">while</span> (flag[j]) {}
   }
 
   <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
@@ -322,8 +382,8 @@ optimizing for performance
   <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
   <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">x86 cmpxchg has fence-like semantics</span>
-  CAS(flag[i], <span class="org-constant">true</span>);
+  <span class="org-comment-delimiter">// </span><span class="org-comment">x86 `cmpxchg` has fence-like semantics</span>
+  CAS(flag[i], <span class="org-constant">false</span>, <span class="org-constant">true</span>);
 
   <span class="org-keyword">while</span> (flag[j]) {} <span class="org-comment-delimiter">// </span><span class="org-comment">wait</span>
 }
@@ -346,11 +406,9 @@ semantics that we should account for (by avoiding adding more fences).
 <div class="org-src-container">
 
 <pre  class="src src-c++">...
+
 <span class="org-preprocessor"># if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
-<span class="org-preprocessor">#   ifdef</span> TL2_OPTIM_HASHLOG
-<span class="org-keyword">for</span> (wr = logs; wr != end; wr++)
-<span class="org-preprocessor">#   endif</span>
-{
+<span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
   <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
   WriteBackForward(wr);
 }
@@ -362,19 +420,13 @@ MEMBARSTST();
 <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
 DropLocks(Self, wv);
 
-<span class="org-comment-delimiter">// </span><span class="org-comment">ensure loads are from global writes</span>
+<span class="org-comment-delimiter">// </span><span class="org-comment">ensure later loads from above writes</span>
 MEMBARSTLD();
 
-<span class="org-keyword">return</span> 1;
 ...
 </pre>
 </div>
-
 <aside class="notes">
-<p>
-TODO split up the following
-</p>
-
 <p>
 commit procedure for the tl2 software transactional memory algorithm
 writebackforward is where the actual writes to memory take place
@@ -382,24 +434,115 @@ droplocks releases locks for the memory addresses for other commit calls to writ
 macros provided for implementors to define arch appropriate fences
 </p>
 
-<ol class="org-ol">
-<li>bad to put a fence right after writebackforward (loop)
-</li>
-<li>bad to use a fence if <code>TL2_EAGER</code> is defined (will remove writebackforward)
-</li>
-<li>bad to use a fence for <code>MEMBARSTST</code> on x86
-</li>
-<li>fences/fence macros don't document their own reason for existence
-</li>
-</ol>
-
 </aside>
 
 </section>
 </section>
 <section>
 <section id="slide-sec-1-5">
-<h3 id="sec-1-5">overlapping orders</h3>
+<h3 id="sec-1-5">loops</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c">...
+
+<span class="org-preprocessor"># if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
+<span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
+  <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
+  WriteBackForward(wr);
+
+  <span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
+  MEMBARSTST();
+}
+<span class="org-preprocessor"># endif</span>
+
+<span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
+DropLocks(Self, wv);
+
+<span class="org-comment-delimiter">// </span><span class="org-comment">ensure later loads from above writes</span>
+MEMBARSTLD();
+
+...
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+bad to put a fence right after writebackforward (loop)
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-1-6">
+<h3 id="sec-1-6">code transformations</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c">...
+
+<span class="org-preprocessor"># if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
+<span class="org-comment-delimiter">// </span><span class="org-comment">for (wr = logs; wr != end; wr++) {</span>
+<span class="org-comment-delimiter">//   </span><span class="org-comment">// write the deferred stores</span>
+<span class="org-comment-delimiter">//   </span><span class="org-comment">WriteBackForward(wr);</span>
+<span class="org-comment-delimiter">// </span><span class="org-comment">}</span>
+<span class="org-preprocessor"># endif</span>
+
+<span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
+MEMBARSTST();
+
+<span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
+DropLocks(Self, wv);
+
+<span class="org-comment-delimiter">// </span><span class="org-comment">ensure later loads from above writes</span>
+MEMBARSTLD();
+
+...
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+bad to use a fence if <code>TL2_EAGER</code> is defined (will remove writebackforward)
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-1-7">
+<h3 id="sec-1-7">unnecessary</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c">...
+
+<span class="org-preprocessor"># if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
+<span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
+  <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
+  WriteBackForward(wr);
+}
+<span class="org-preprocessor"># endif</span>
+
+<span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
+<span class="org-comment-delimiter">// </span><span class="org-comment">MEMBARSTST();</span>
+
+<span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
+DropLocks(Self, wv);
+
+<span class="org-comment-delimiter">// </span><span class="org-comment">ensure later loads from above writes</span>
+MEMBARSTLD();
+
+...
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+bad to use a fence for <code>MEMBARSTST</code> on x86
+</p>
+
+</aside>
 </section>
 </section>
 <section>
@@ -424,6 +567,19 @@ end
 </pre>
 </div>
 
+<p>
+ <div class="algo-graph">
+</p>
+
+<div class="figure">
+<p><img src="assets/images/full-graph.png" alt="full-graph.png" />
+</p>
+</div>
+
+<p>
+ </div>
+</p>
+
 <aside class="notes">
 <ol class="org-ol">
 <li>We eliminate orders which are enforced on the target
@@ -444,7 +600,228 @@ by the architecture. <b>optimization</b>
 </section>
 <section>
 <section id="slide-sec-2-1">
-<h3 id="sec-2-1">main theorem</h3>
+<h3 id="sec-2-1">order elimination</h3>
+<div class="org-src-container">
+
+<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x OrderSet -&gt; CFG</span>
+<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x OrderSet -&gt; OrderSet</span>
+&#9654; <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x OrderSet -&gt; CutSet</span>
+  <span class="org-variable-name">K</span>  = Cut(G, O2)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
+  <span class="org-variable-name">G2</span> = Refine(G1, K)
+
+  <span class="org-keyword">return</span> G2
+end
+</pre>
+</div>
+
+<p>
+ <div class="algo-graph">
+</p>
+
+<div class="figure">
+<p><img src="assets/images/full-graph-elim.png" alt="full-graph-elim.png" />
+</p>
+</div>
+
+<p>
+ </div>
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-2-2">
+<h3 id="sec-2-2">order elimination</h3>
+<div class="org-src-container">
+
+<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x OrderSet -&gt; CFG</span>
+<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x OrderSet -&gt; OrderSet</span>
+&#9654; <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x OrderSet -&gt; CutSet</span>
+  <span class="org-variable-name">K</span>  = Cut(G, O2)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
+  <span class="org-variable-name">G2</span> = Refine(G1, K)
+
+  <span class="org-keyword">return</span> G2
+end
+</pre>
+</div>
+
+<p>
+ <div class="algo-graph">
+</p>
+
+<div class="figure">
+<p><img src="assets/images/full-graph-elim-after.png" alt="full-graph-elim-after.png" />
+</p>
+</div>
+
+<p>
+ </div>
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-2-3">
+<h3 id="sec-2-3">multi-cut</h3>
+<div class="org-src-container">
+
+<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x OrderSet -&gt; CFG</span>
+<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x OrderSet -&gt; OrderSet</span>
+  <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x OrderSet -&gt; CutSet</span>
+&#9654; <span class="org-variable-name">K</span>  = Cut(G, O2)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
+  <span class="org-variable-name">G2</span> = Refine(G1, K)
+
+  <span class="org-keyword">return</span> G2
+end
+</pre>
+</div>
+
+<p>
+ <div class="algo-graph">
+</p>
+
+<div class="figure">
+<p><img src="assets/images/full-graph-cut.png" alt="full-graph-cut.png" />
+</p>
+</div>
+
+<p>
+ </div>
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-2-4">
+<h3 id="sec-2-4">multi-cut</h3>
+<div class="org-src-container">
+
+<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x OrderSet -&gt; CFG</span>
+<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x OrderSet -&gt; OrderSet</span>
+  <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x OrderSet -&gt; CutSet</span>
+&#9654; <span class="org-variable-name">K</span>  = Cut(G, O2)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
+  <span class="org-variable-name">G2</span> = Refine(G1, K)
+
+  <span class="org-keyword">return</span> G2
+end
+</pre>
+</div>
+
+<p>
+ <div class="algo-graph">
+</p>
+
+<div class="figure">
+<p><img src="assets/images/full-graph-cut-highlight.png" alt="full-graph-cut-highlight.png" />
+</p>
+</div>
+
+<p>
+ </div>
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-2-5">
+<h3 id="sec-2-5">place fences</h3>
+<div class="org-src-container">
+
+<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x OrderSet -&gt; CFG</span>
+<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x OrderSet -&gt; OrderSet</span>
+  <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x OrderSet -&gt; CutSet</span>
+  <span class="org-variable-name">K</span>  = Cut(G, O2)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
+&#9654; <span class="org-variable-name">G2</span> = Refine(G1, K)
+
+  <span class="org-keyword">return</span> G2
+end
+</pre>
+</div>
+
+<p>
+ <div class="algo-graph">
+</p>
+
+<div class="figure">
+<p><img src="assets/images/full-graph-refine.png" alt="full-graph-refine.png" />
+</p>
+</div>
+
+<p>
+ </div>
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-2-6">
+<h3 id="sec-2-6">place fences</h3>
+<div class="org-src-container">
+
+<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x OrderSet -&gt; CFG</span>
+<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x OrderSet -&gt; OrderSet</span>
+  <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x OrderSet -&gt; CutSet</span>
+  <span class="org-variable-name">K</span>  = Cut(G, O2)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
+&#9654; <span class="org-variable-name">G2</span> = Refine(G1, K)
+
+  <span class="org-keyword">return</span> G2
+end
+</pre>
+</div>
+
+<p>
+ <div class="algo-graph">
+</p>
+
+<div class="figure">
+<p><img src="assets/images/full-graph-refine-apply.png" alt="full-graph-refine-apply.png" />
+</p>
+</div>
+
+<p>
+ </div>
+</p>
+</section>
+</section>
+<section>
+<section id="slide-sec-2-7">
+<h3 id="sec-2-7">main theorem</h3>
 <p>
 \(\mathsf{Insert}(G, A, O), A \vDash O\)
 </p>
@@ -641,8 +1018,8 @@ all whole program
 </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/lib/js/head.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/js/reveal.js"></script>
+<script src="assets/reveal/lib/js/head.min.js"></script>
+<script src="assets/reveal/js/reveal.js"></script>
 
 <script>
 // Full list of configuration options available here:
@@ -669,12 +1046,12 @@ multiplex: {
 
 // Optional libraries used to extend on reveal.js
 dependencies: [
- { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/lib/js/classList.js', condition: function() { return !document.body.classList; } },
- { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
- { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
- { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
- { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
- { src: 'https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+ { src: 'assets/reveal/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: 'assets/reveal/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'assets/reveal/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'assets/reveal/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+ { src: 'assets/reveal/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'assets/reveal/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
 ]
 });
 </script>

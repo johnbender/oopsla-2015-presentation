@@ -1,5 +1,5 @@
 #+REVEAL_HEAD_PREAMBLE: <link rel="stylesheet" type="text/css" href="assets/style.css" />
-#+REVEAL_ROOT: https://cdnjs.cloudflare.com/ajax/libs/reveal.js/3.1.0/
+#+REVEAL_ROOT: assets/reveal/
 #+REVEAL_THEME: white
 #+REVEAL_TRANS: none
 #+REVEAL_SLIDE_NUMBER: t
@@ -10,10 +10,17 @@
 #+EMAIL: johnbender@cs.ucla.edu
 #+OPTIONS: num:nil toc:nil reveal_history:t reveal_control:nil reveal_mathjax:t
 ** mutex
-
    The Art of Multiprocessor Programming, 2.3.1
 
    #+INCLUDE: "code/LockOne.java" src java
+
+   #+BEGIN_NOTES
+   Here we have some example code from the art of multiproc
+   programming
+
+   It's lock that's intended to guarantee mutual exclusion for two
+   threads
+   #+END_NOTES
 
 ** mutual exclusion proof
 
@@ -26,8 +33,8 @@ class LockOne implements Lock {
   public void lock() {
     int i = ThreadID.get();
     int j = i-1;
->   flag[i] = true;
->   while (flag[j]) {}
+▶   flag[i] = true;
+▶   while (flag[j]) {}
   }
 
   public void unlock() {
@@ -37,23 +44,46 @@ class LockOne implements Lock {
 }
    #+END_SRC
 
+   #+BEGIN_NOTES
+   These two lines are critical:
+
+   - the first records an intent to enter a critical section guarded by the lock
+     at the flag index corresponding to the thread id
+   - the second checks the other thread's flag and spins until it's false (unlocked)
+
+   The proof of mutual exclusion in the book requires that these two
+   lines execute in program order
+
+   More specifically, their interactions with memory must take effect
+   in program order
+   #+END_NOTES
+
 ** Bad execution
-   | Thread 0          | Thread 1          |      |
-   |-------------------+-------------------+------|
-   | ~flag[1] : false~ |                   |      |
-   |                   | ~flag[1] = true~  |      |
-   |                   | ~flag[0] : false~ |      |
-   | ~flag[0] = true~  |                   |      |
-   |                   | enter cs          |      |
-   | enter cs          |                   | bad! |
+
+   | Thread 0          | Thread 1          |          |
+   |-------------------+-------------------+----------|
+   | ~flag[0] = true~  |                   | buffered |
+   | ~flag[1] : false~ |                   |          |
+   |                   | ~flag[1] = true~  |          |
+   |                   | ~flag[0] : false~ | bad!     |
+   |                   | enter cs          |          |
+   | enter cs          |                   | bad!     |
+
+   Possible under Java, x86, ARM, and Power
+
+   #+BEGIN_NOTES
+   For example if the write to flag[0] in thread 0 is buffered, thread
+   1 may read false in this execution allowing both threads to acquire
+   the lock and enter the critical section
+
+   Note that this is possible under extremely common memory models
+   like Java, x86, ARM, and Power
+   #+END_NOTES
 
 ** ensuring correctness
    1. sequential consistency
-     - not required/expensive
    2. ~volatile~ modifier
-     - imprecise
    3. memory fences
-     - imprecise
 
    #+BEGIN_QUOTE
    Pragma 2.3.1. In practice, the Boolean flag variables ... must all
@@ -61,6 +91,8 @@ class LockOne implements Lock {
    #+END_QUOTE
 
    #+BEGIN_NOTES
+   How do we prevent these kinds of issues?
+
    sequential consistency is expensive and not required by the proof
 
    volatile affects all writes to the modified variable, but we only
@@ -86,8 +118,8 @@ class LockOne implements Lock {
   public void lock() {
     int i = ThreadID.get();
     int j = i-1;
->   flag[i] = true;
->   while (flag[j]) {}
+▶   flag[i] = true;
+▶   while (flag[j]) {}
   }
 
   public void unlock() {
@@ -153,8 +185,8 @@ class LockOne implements Lock {
      int i = ThreadID.get();
      int j = i-1;
 
-     // x86 cmpxchg has fence-like semantics
-     CAS(flag[i], true);
+     // x86 `cmpxchg` has fence-like semantics
+     CAS(flag[i], false, true);
 
      while (flag[j]) {} // wait
    }
@@ -167,22 +199,93 @@ class LockOne implements Lock {
 
 ** TL2 STM Algorithm
    #+INCLUDE: "code/TxCommit.c" src c++
-
    #+BEGIN_NOTES
-     TODO split up the following
-
      commit procedure for the tl2 software transactional memory algorithm
      writebackforward is where the actual writes to memory take place
      droplocks releases locks for the memory addresses for other commit calls to write
      macros provided for implementors to define arch appropriate fences
-
-     1. bad to put a fence right after writebackforward (loop)
-     2. bad to use a fence if ~TL2_EAGER~ is defined (will remove writebackforward)
-     3. bad to use a fence for ~MEMBARSTST~ on x86
-     4. fences/fence macros don't document their own reason for existence
    #+END_NOTES
 
-** overlapping orders
+** loops
+   #+BEGIN_SRC c  :results value :exports both
+...
+
+# ifndef TL2_EAGER
+for (wr = logs; wr != end; wr++) {
+  // write the deferred stores
+  WriteBackForward(wr);
+
+  // make stores visible before unlock
+  MEMBARSTST();
+}
+# endif
+
+// release locks and increment version
+DropLocks(Self, wv);
+
+// ensure later loads from above writes
+MEMBARSTLD();
+
+...
+   #+END_SRC
+
+   #+BEGIN_NOTES
+   bad to put a fence right after writebackforward (loop)
+   #+END_NOTES
+
+** code transformations
+   #+BEGIN_SRC c :results value :exports both
+...
+
+# ifndef TL2_EAGER
+// for (wr = logs; wr != end; wr++) {
+//   // write the deferred stores
+//   WriteBackForward(wr);
+// }
+# endif
+
+// make stores visible before unlock
+MEMBARSTST();
+
+// release locks and increment version
+DropLocks(Self, wv);
+
+// ensure later loads from above writes
+MEMBARSTLD();
+
+...
+   #+END_SRC
+
+   #+BEGIN_NOTES
+   bad to use a fence if ~TL2_EAGER~ is defined (will remove writebackforward)
+   #+END_NOTES
+
+** unnecessary
+   #+BEGIN_SRC c :results value :exports both
+...
+
+# ifndef TL2_EAGER
+for (wr = logs; wr != end; wr++) {
+  // write the deferred stores
+  WriteBackForward(wr);
+}
+# endif
+
+// make stores visible before unlock
+// MEMBARSTST();
+
+// release locks and increment version
+DropLocks(Self, wv);
+
+// ensure later loads from above writes
+MEMBARSTLD();
+
+...
+   #+END_SRC
+
+   #+BEGIN_NOTES
+   bad to use a fence for ~MEMBARSTST~ on x86
+   #+END_NOTES
 * Algorithm
 
    #+BEGIN_SRC python
@@ -202,6 +305,53 @@ class LockOne implements Lock {
    end
    #+END_SRC
 
+   @@html: <div class="algo-graph">@@
+   #+BEGIN_SRC dot :file assets/images/full-graph.png :exports results
+digraph a {
+ splines=line
+ node [shape = circle];
+ 1 [label="ld(w)"]
+ 2 [label="st(x)"]
+ 3 [label="st(y)"]
+ 4 [label="ld(z)"]
+
+ 1 -> 2
+ 2 -> 3
+ 3 -> 4
+
+ node[shape=circle]
+ 5 [label="ld(w)", color="gray"]
+ 7 [label="st(y)", color="gray"]
+
+ 9 [label="st(x)", color="gray"]
+ 10 [label="st(y)", color="gray"]
+
+ 6 [label="st(x)", color="gray"]
+ 8 [label="ld(z)", color="gray"]
+
+ node[shape=point style=invis]
+ splines=line
+ 5 -> m [style=invis]
+ m -> 7 [style=invis]
+ n -> 6 [style=invis]
+ 6 -> o [style=invis]
+ o -> 8 [style=invis]
+ p -> 9 [style=invis]
+
+
+ 5 -> 7 [color="gray"]
+
+ 9 -> 10 [color="gray"]
+
+ 6 -> 8 [color="gray"]
+}
+   #+END_SRC
+   # @@html: <div class="algo-arch-rules">@@
+   # ${\mathsf{ld}(x) \rightarrow \mathsf{st}(y)}$
+   # @@html: </div>@@
+
+   @@html: </div>@@
+
    #+BEGIN_NOTES
      1. We eliminate orders which are enforced on the target
         architecture, e.g. a store -> store order on x86 is enforced
@@ -212,6 +362,329 @@ class LockOne implements Lock {
      3. We use the cut to insert fences on the cut set edges
    #+END_NOTES
 
+** order elimination
+   #+BEGIN_SRC python
+   # Insert : CFG x Arch x OrderSet -> CFG
+   def Insert(G1, A, O1):
+
+     # Elim : CFG x Arch x OrderSet -> OrderSet
+   ▶ O2 = O1 \ Elim(G, A, O1)
+
+     # Cut : CFG x OrderSet -> CutSet
+     K  = Cut(G, O2)
+
+     # Refine : CFG x CutSet -> CFG
+     G2 = Refine(G1, K)
+
+     return G2
+   end
+   #+END_SRC
+
+   @@html: <div class="algo-graph">@@
+   #+BEGIN_SRC dot :file assets/images/full-graph-elim.png :exports results
+digraph a {
+ splines=line
+ node [shape = circle];
+ 1 [label="ld(w)"]
+ 2 [label="st(x)"]
+ 3 [label="st(y)"]
+ 4 [label="ld(z)"]
+
+ 1 -> 2
+ 2 -> 3
+ 3 -> 4
+
+ node[shape=circle]
+ 5 [label="ld(w)", color="red"]
+ 7 [label="st(y)", color="red"]
+
+ 9 [label="st(x)", color="gray"]
+ 10 [label="st(y)", color="gray"]
+
+ 6 [label="st(x)", color="gray"]
+ 8 [label="ld(z)", color="gray"]
+
+ node[shape=point style=invis]
+ splines=line
+ 5 -> m [style=invis]
+ m -> 7 [style=invis]
+ n -> 6 [style=invis]
+ 6 -> o [style=invis]
+ o -> 8 [style=invis]
+ p -> 9 [style=invis]
+
+
+ 5 -> 7 [color="red"]
+
+ 9 -> 10 [color="gray"]
+
+ 6 -> 8 [color="gray"]
+}
+   #+END_SRC
+   # @@html: <div class="algo-arch-rules">@@
+   # ${\mathsf{ld}(x) \rightarrow \mathsf{st}(y)}$
+   # @@html: </div>@@
+
+   @@html: </div>@@
+
+** order elimination
+   #+BEGIN_SRC python
+   # Insert : CFG x Arch x OrderSet -> CFG
+   def Insert(G1, A, O1):
+
+     # Elim : CFG x Arch x OrderSet -> OrderSet
+   ▶ O2 = O1 \ Elim(G, A, O1)
+
+     # Cut : CFG x OrderSet -> CutSet
+     K  = Cut(G, O2)
+
+     # Refine : CFG x CutSet -> CFG
+     G2 = Refine(G1, K)
+
+     return G2
+   end
+   #+END_SRC
+
+   @@html: <div class="algo-graph">@@
+   #+BEGIN_SRC dot :file assets/images/full-graph-elim-after.png :exports results
+digraph a {
+ splines=line
+ node [shape = circle];
+ 1 [label="ld(w)"]
+ 2 [label="st(x)"]
+ 3 [label="st(y)"]
+ 4 [label="ld(z)"]
+
+ 1 -> 2
+ 2 -> 3
+ 3 -> 4
+
+ node[shape=circle]
+
+ 9 [label="st(x)", color="gray"]
+ 10 [label="st(y)", color="gray"]
+
+ 6 [label="st(x)", color="gray"]
+ 8 [label="ld(z)", color="gray"]
+
+ node[shape=point style=invis]
+ splines=line
+ n -> 6 [style=invis]
+ 6 -> o [style=invis]
+ o -> 8 [style=invis]
+ p -> 9 [style=invis]
+
+
+ 9 -> 10 [color="gray"]
+
+ 6 -> 8 [color="gray"]
+}
+   #+END_SRC
+   # @@html: <div class="algo-arch-rules">@@
+   # ${\mathsf{ld}(x) \rightarrow \mathsf{st}(y)}$
+   # @@html: </div>@@
+
+   @@html: </div>@@
+
+** multi-cut
+   #+BEGIN_SRC python
+   # Insert : CFG x Arch x OrderSet -> CFG
+   def Insert(G1, A, O1):
+
+     # Elim : CFG x Arch x OrderSet -> OrderSet
+     O2 = O1 \ Elim(G, A, O1)
+
+     # Cut : CFG x OrderSet -> CutSet
+   ▶ K  = Cut(G, O2)
+
+     # Refine : CFG x CutSet -> CFG
+     G2 = Refine(G1, K)
+
+     return G2
+   end
+   #+END_SRC
+
+   @@html: <div class="algo-graph">@@
+   #+BEGIN_SRC dot :file assets/images/full-graph-cut.png :exports results
+digraph a {
+ splines=line
+ node [shape = circle];
+ 1 [label="ld(w)"]
+ 2 [label="st(x)"]
+ 3 [label="st(y)"]
+ 4 [label="ld(z)"]
+
+ 1 -> 2
+ 2 -> 3
+ 3 -> 4
+
+ node[shape=circle]
+
+ 9 [label="st(x)", color="gray"]
+ 10 [label="st(y)", color="gray"]
+
+ 6 [label="st(x)", color="gray"]
+ 8 [label="ld(z)", color="gray"]
+
+ node[shape=point style=invis]
+ splines=line
+ n -> 6 [style=invis]
+ 6 -> o [style=invis]
+ o -> 8 [style=invis]
+ p -> 9 [style=invis]
+
+
+ 9 -> 10 [color="gray"]
+
+ 6 -> 8 [color="gray"]
+}
+   #+END_SRC
+   # @@html: <div class="algo-arch-rules">@@
+   # ${\mathsf{ld}(x) \rightarrow \mathsf{st}(y)}$
+   # @@html: </div>@@
+
+   @@html: </div>@@
+
+** multi-cut
+   #+BEGIN_SRC python
+   # Insert : CFG x Arch x OrderSet -> CFG
+   def Insert(G1, A, O1):
+
+     # Elim : CFG x Arch x OrderSet -> OrderSet
+     O2 = O1 \ Elim(G, A, O1)
+
+     # Cut : CFG x OrderSet -> CutSet
+   ▶ K  = Cut(G, O2)
+
+     # Refine : CFG x CutSet -> CFG
+     G2 = Refine(G1, K)
+
+     return G2
+   end
+   #+END_SRC
+
+   @@html: <div class="algo-graph">@@
+   #+BEGIN_SRC dot :file assets/images/full-graph-cut-highlight.png :exports results
+digraph a {
+ splines=line
+ node [shape = circle];
+ 1 [label="ld(w)"]
+ 2 [label="st(x)"]
+ 3 [label="st(y)"]
+ 4 [label="ld(z)"]
+
+ 1 -> 2
+ 2 -> 3 [color="red"]
+ 3 -> 4
+
+ node[shape=circle]
+
+ 9 [label="st(x)", color="gray"]
+ 10 [label="st(y)", color="gray"]
+
+ 6 [label="st(x)", color="gray"]
+ 8 [label="ld(z)", color="gray"]
+
+ node[shape=point style=invis]
+ splines=line
+ n -> 6 [style=invis]
+ 6 -> o [style=invis]
+ o -> 8 [style=invis]
+ p -> 9 [style=invis]
+
+
+ 9 -> 10 [color="gray"]
+
+ 6 -> 8 [color="gray"]
+}
+   #+END_SRC
+   # @@html: <div class="algo-arch-rules">@@
+   # ${\mathsf{ld}(x) \rightarrow \mathsf{st}(y)}$
+   # @@html: </div>@@
+
+   @@html: </div>@@
+
+** place fences
+   #+BEGIN_SRC python
+   # Insert : CFG x Arch x OrderSet -> CFG
+   def Insert(G1, A, O1):
+
+     # Elim : CFG x Arch x OrderSet -> OrderSet
+     O2 = O1 \ Elim(G, A, O1)
+
+     # Cut : CFG x OrderSet -> CutSet
+     K  = Cut(G, O2)
+
+     # Refine : CFG x CutSet -> CFG
+   ▶ G2 = Refine(G1, K)
+
+     return G2
+   end
+   #+END_SRC
+
+   @@html: <div class="algo-graph">@@
+   #+BEGIN_SRC dot :file assets/images/full-graph-refine.png :exports results
+digraph a {
+ splines=line
+ node [shape = circle];
+ 1 [label="ld(w)"]
+ 2 [label="st(x)"]
+ 3 [label="st(y)"]
+ 4 [label="ld(z)"]
+
+ 1 -> 2
+ 2 -> 3 [color="red"]
+ 3 -> 4
+
+}
+   #+END_SRC
+   # @@html: <div class="algo-arch-rules">@@
+   # ${\mathsf{ld}(x) \rightarrow \mathsf{st}(y)}$
+   # @@html: </div>@@
+
+   @@html: </div>@@
+
+** place fences
+   #+BEGIN_SRC python
+   # Insert : CFG x Arch x OrderSet -> CFG
+   def Insert(G1, A, O1):
+
+     # Elim : CFG x Arch x OrderSet -> OrderSet
+     O2 = O1 \ Elim(G, A, O1)
+
+     # Cut : CFG x OrderSet -> CutSet
+     K  = Cut(G, O2)
+
+     # Refine : CFG x CutSet -> CFG
+   ▶ G2 = Refine(G1, K)
+
+     return G2
+   end
+   #+END_SRC
+
+   @@html: <div class="algo-graph">@@
+   #+BEGIN_SRC dot :file assets/images/full-graph-refine-apply.png :exports results
+digraph a {
+ splines=line
+ node [shape = circle];
+ 1 [label="ld(w)"]
+ 2 [label="st(x)"]
+ 3 [label="st(y)"]
+ 4 [label="ld(z)"]
+ 5 [label="fence" color="red"]
+
+ 1 -> 2
+ 3 -> 4
+ 2 -> 5 [color="red"]
+ 5 -> 3 [color="red"]
+
+}
+   #+END_SRC
+   # @@html: <div class="algo-arch-rules">@@
+   # ${\mathsf{ld}(x) \rightarrow \mathsf{st}(y)}$
+   # @@html: </div>@@
+
+   @@html: </div>@@
 ** main theorem
    $\mathsf{Insert}(G, A, O), A \vDash O$
 
