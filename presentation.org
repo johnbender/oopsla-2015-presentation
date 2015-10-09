@@ -7,7 +7,7 @@
 #+EXPORT_FILE_NAME: index
 #+TITLE: Declarative Fence Insertion
 #+AUTHOR:
-#+EMAIL: johnbender@cs.ucla.edu
+#+EMAIL: (johnbender|palsberg)@cs.ucla.edu, lesani@csail.mit.edu
 #+OPTIONS: num:nil toc:nil reveal_history:t reveal_control:nil reveal_mathjax:t
 ** mutex
    The Art of Multiprocessor Programming, 2.3.1
