@@ -180,9 +180,11 @@ div.algo-arch-rules {
 }
 
 section.present > table td {
-  font-size: 0.5em;
+  font-size: 0.6em;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 section.present > table th {
-  font-size: 0.7em;
+  font-size: 0.8em;
 }

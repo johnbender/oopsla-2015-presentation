@@ -809,38 +809,40 @@ digraph a {
 #    #+END_NOTES
 
 ** classic
-   |            |                     | *x86*        | *ARMv7*      |
-   | *Dekker*   | \stldorder{8}{9}    | 8: ~mfence~  | 8: ~dmb st~  |
-   |            | \stldorder{13}{9}   | 13: ~mfence~ | 13: ~dmb st~ |
-   |            | \stldorder{25}{26}  | 25: ~mfence~ | 25: ~dmb st~ |
-   |            | \stldorder{30}{26}  | 30: ~mfence~ | 30: ~dmb st~ |
-   |            |                     |              |              |
-   | *Lamport*  | \stldorder{8}{9}    | 8: ~mfence~  | 8: ~dmb st~  |
-   |            | \stldorder{14}{15}  | 14: ~mfence~ | 14: ~dmb st~ |
-   |            | \stldorder{31}{32}  | 31: ~mfence~ | 31: ~dmb st~ |
-   |            | \stldorder{37}{38}  | 37: ~mfence~ | 37: ~dmb st~ |
-   |            |                     |              |              |
-   | *Parker*   | \stanyorder{44}{46} | 44: ~mfence~ | 44: ~dmb st~ |
-   |            |                     |              |              |
-   | *Peterson* | \stldorder{5}{7}    | 5: ~mfence~  | 5: ~dmb st~  |
-   |            | \stldorder{14}{16}  | 14: ~mfence~ | 14: ~dmb st~ |
+   |          |                             | *x86*        | *ARMv7*      |
+   | *Dekker* | 8 $\xrightarrow{st,ld}$ 9   | 8: ~mfence~  | 8: ~dmb st~  |
+   |          | 13 $\xrightarrow{st,ld}$ 9  | 13: ~mfence~ | 13: ~dmb st~ |
+   |          | 25 $\xrightarrow{st,ld}$ 26 | 25: ~mfence~ | 25: ~dmb st~ |
+   |          | 30 $\xrightarrow{st,ld}$ 26 | 30: ~mfence~ | 30: ~dmb st~ |
+   |          |                             |              |              |
+   | *Parker* | 44 $\xrightarrow{st,*}$ 46  | 44: ~mfence~ | 44: ~dmb st~ |
 
    #+BEGIN_NOTES
    For the classic algorithms we fences were placed in expected locations
 
-   Explain how to read the table.1
+   Explain how to read the table.
    #+END_NOTES
+
+** classic
+   |            |                             | *x86*        | *ARMv7*      |
+   | *Lamport*  | 8 $\xrightarrow{st,ld}$ 9   | 8: ~mfence~  | 8: ~dmb st~  |
+   |            | 14 $\xrightarrow{st,ld}$ 15 | 14: ~mfence~ | 14: ~dmb st~ |
+   |            | 31 $\xrightarrow{st,ld}$ 32 | 31: ~mfence~ | 31: ~dmb st~ |
+   |            | 37 $\xrightarrow{st,ld}$ 38 | 37: ~mfence~ | 37: ~dmb st~ |
+   |            |                             |              |              |
+   | *Peterson* | 5 $\xrightarrow{st,ld}$ 7   | 5: ~mfence~  | 5: ~dmb st~  |
+   |            | 14 $\xrightarrow{st,ld}$ 16 | 14: ~mfence~ | 14: ~dmb st~ |
 
 ** tl2
    |                        |                | *x86* |                         | *ARMv7*                |
-   | \ttf{TxStore}          | baseline       | ours  | baseline                | ours                   |
-   | \ldldorder{1886}{1923} | ---            | ---   | 1920: ~dmb~           | 1886: ~dmb~          |
+   | ~TxStore~              | baseline       | ours  | baseline                | ours                   |
+   | 1886 $\xrightarrow{ld,ld}$ 1923 | ---            | ---   | 1920: ~dmb~           | 1886: ~dmb~          |
    |                        |                |       |                         |                        |
-   | \ttf{TxCommit}         | baseline       | ours  | baseline                | ours                   |
-   | \ststorder{1555}{1625} | ---            | ---   | 1555: \ttf{ldrex/strex} | 1555:\ttf{ldrex/strex} |
-   | \ststorder{1596}{1625} | ---            | ---   | 1596: \ttf{ldrex/strex} | 1596:\ttf{ldrex/strex} |
-   | \ststorder{760}{1413}  | ---            | ---   | 1669: ~dmb st~          | 1669: ~dmb st~         |
-   | \stldorder{1413}{1679} | 1679: ~mfence~ | ---   | 1679: ~dmb st~          | 1416: ~dmb st~         |
+   | ~TxCommit~             | baseline       | ours  | baseline                | ours                   |
+   | 1555 $\xrightarrow{st,st}$ 1625 | ---            | ---   | 1555: ~ldrex/strex~     | 1555: ~ldrex/strex~    |
+   | 1596 $\xrightarrow{st,st}$ 1625 | ---            | ---   | 1596: ~ldrex/strex~     | 1596: ~ldrex/strex~    |
+   | 760 $\xrightarrow{st,st}$ 1413  | ---            | ---   | 1669: ~dmb st~          | 1669: ~dmb st~         |
+   | 1413 $\xrightarrow{st,ld}$ 1679 | 1679: ~mfence~ | ---   | 1679: ~dmb st~          | 1416: ~dmb st~         |
 
    #+BEGIN_NOTES
    just two methods from the tl2 algorithm
@@ -862,9 +864,9 @@ digraph a {
 ** tl2 eager
    |                        |                | *x86* |                | *ARMv7*        |
    |------------------------+----------------+-------+----------------+----------------|
-   | \ttf{TxCommit}         | baseline       | ours  | baseline       | ours           |
-   | \ststorder{760}{1413}  | ---            | ---   | 1669: ~dmb st~ | ---            |
-   | \stldorder{1413}{1679} | 1679: ~mfence~ | ---   | 1679: ~dmb st~ | 1679: ~dmb st~ |
+   | ~TxCommit~             | baseline       | ours  | baseline       | ours           |
+   | 760 $\xrightarrow{st,st}$ 1413  | ---            | ---   | 1669: ~dmb st~ | ---            |
+   | 1413 $\xrightarrow{st,ld}$ 1679 | 1679: ~mfence~ | ---   | 1679: ~dmb st~ | 1679: ~dmb st~ |
 
    #+BEGIN_NOTES
    Not that due to the ifdefs we saw in the example earlier we are
@@ -873,8 +875,8 @@ digraph a {
 
 ** rstm
    |                      |                | *x86*         |                       | *ARMv7*       |
-   | \ttf{read\_rw}       | baseline       | ours          | baseline              | ours          |
-   | \stldorder{163}{165} | 163:\ttf{xchg} | 163: ~mfence~ | 163:\ttf{ldrex/strex} | 163: ~dmb st~ |
+   | ~read_rw~            | baseline       | ours          | baseline              | ours          |
+   | 163 $\xrightarrow{st,ld}$ 165 | 163: ~xchg~    | 163: ~mfence~ | 163: ~ldrex/strex~    | 163: ~dmb st~ |
 
    #+BEGIN_NOTES
    in the ~read_rw~ method of the RSTM ByteEager algorithm they use a
