@@ -145,7 +145,7 @@ in program order
 <tr>
 <th scope="col" class="left">Thread 0</th>
 <th scope="col" class="left">Thread 1</th>
-<th scope="col" class="left">&#xa0;</th>
+<th scope="col" class="left">Notes</th>
 </tr>
 </thead>
 <tbody>
@@ -1168,7 +1168,7 @@ Explain how to read the table.
 </tr>
 
 <tr>
-<td class="left"><code>TxStore</code></td>
+<td class="left"><b><b><code>TxStore</code></b></b></td>
 <td class="left">baseline</td>
 <td class="left">ours</td>
 <td class="left">baseline</td>
@@ -1177,8 +1177,8 @@ Explain how to read the table.
 
 <tr>
 <td class="left">1886 \(\xrightarrow{ld,ld}\) 1923</td>
-<td class="left">---</td>
-<td class="left">---</td>
+<td class="left">—</td>
+<td class="left">—</td>
 <td class="left">1920: <code>dmb</code></td>
 <td class="left">1886: <code>dmb</code></td>
 </tr>
@@ -1192,7 +1192,7 @@ Explain how to read the table.
 </tr>
 
 <tr>
-<td class="left"><code>TxCommit</code></td>
+<td class="left"><b><code>TxCommit</code></b></td>
 <td class="left">baseline</td>
 <td class="left">ours</td>
 <td class="left">baseline</td>
@@ -1201,24 +1201,24 @@ Explain how to read the table.
 
 <tr>
 <td class="left">1555 \(\xrightarrow{st,st}\) 1625</td>
-<td class="left">---</td>
-<td class="left">---</td>
+<td class="left">—</td>
+<td class="left">—</td>
 <td class="left">1555: <code>ldrex/strex</code></td>
 <td class="left">1555: <code>ldrex/strex</code></td>
 </tr>
 
 <tr>
 <td class="left">1596 \(\xrightarrow{st,st}\) 1625</td>
-<td class="left">---</td>
-<td class="left">---</td>
+<td class="left">—</td>
+<td class="left">—</td>
 <td class="left">1596: <code>ldrex/strex</code></td>
 <td class="left">1596: <code>ldrex/strex</code></td>
 </tr>
 
 <tr>
 <td class="left">760 \(\xrightarrow{st,st}\) 1413</td>
-<td class="left">---</td>
-<td class="left">---</td>
+<td class="left">—</td>
+<td class="left">—</td>
 <td class="left">1669: <code>dmb st</code></td>
 <td class="left">1669: <code>dmb st</code></td>
 </tr>
@@ -1226,7 +1226,7 @@ Explain how to read the table.
 <tr>
 <td class="left">1413 \(\xrightarrow{st,ld}\) 1679</td>
 <td class="left">1679: <code>mfence</code></td>
-<td class="left">---</td>
+<td class="left">—</td>
 <td class="left">1679: <code>dmb st</code></td>
 <td class="left">1416: <code>dmb st</code></td>
 </tr>
@@ -1242,93 +1242,13 @@ just two methods from the tl2 algorithm
 baseline is where the original authors/implementors placed the fence
 </p>
 
-<p>
-TxStore: we placed our fence "further up" the control flow graph,
-this is dues to the way the multicut algorithm handles a sequence
-of similarly weighted edges, choosing the first
-</p>
-
-<p>
-TxCommit:
-under our architecture definition of x86 we were able to
-save one fence
-</p>
-
-<p>
-we also handle the compare and swap instruction pairs (ldrex/strex)
-which have fence-like semantics
-</p>
-
 </aside>
 
 </section>
 </section>
 <section>
-<section id="slide-sec-5-6">
-<h3 id="sec-5-6">tl2 eager</h3>
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-
-<col  class="left" />
-
-<col  class="left" />
-
-<col  class="left" />
-
-<col  class="left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="left">&#xa0;</th>
-<th scope="col" class="left">&#xa0;</th>
-<th scope="col" class="left"><b>x86</b></th>
-<th scope="col" class="left">&#xa0;</th>
-<th scope="col" class="left"><b>ARMv7</b></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="left"><code>TxCommit</code></td>
-<td class="left">baseline</td>
-<td class="left">ours</td>
-<td class="left">baseline</td>
-<td class="left">ours</td>
-</tr>
-
-<tr>
-<td class="left">760 \(\xrightarrow{st,st}\) 1413</td>
-<td class="left">---</td>
-<td class="left">---</td>
-<td class="left">1669: <code>dmb st</code></td>
-<td class="left">---</td>
-</tr>
-
-<tr>
-<td class="left">1413 \(\xrightarrow{st,ld}\) 1679</td>
-<td class="left">1679: <code>mfence</code></td>
-<td class="left">---</td>
-<td class="left">1679: <code>dmb st</code></td>
-<td class="left">1679: <code>dmb st</code></td>
-</tr>
-</tbody>
-</table>
-
-<aside class="notes">
-<p>
-Not that due to the ifdefs we saw in the example earlier we are
-able to eliminate the stst fence at line 1669 on arm
-</p>
-
-</aside>
-
-</section>
-</section>
-<section>
-<section id="slide-sec-5-7">
-<h3 id="sec-5-7">rstm</h3>
+<section id="slide-sec-6">
+<h2 id="sec-6">tl2</h2>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -1353,7 +1273,281 @@ able to eliminate the stst fence at line 1669 on arm
 </tr>
 
 <tr>
-<td class="left"><code>read_rw</code></td>
+<td class="left"><b><code>TxStore</code></b></td>
+<td class="left">baseline</td>
+<td class="left">ours</td>
+<td class="left">baseline</td>
+<td class="left">ours</td>
+</tr>
+
+<tr>
+<td class="left">1886 \(\xrightarrow{ld,ld}\) 1923</td>
+<td class="left">—</td>
+<td class="left">—</td>
+<td class="left"><span class="hlght"> 1920: <code>dmb</code> </span></td>
+<td class="left"><span class="hlght"> 1886: <code>dmb</code> </span></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left"><b><code>TxCommit</code></b></td>
+<td class="left">baseline</td>
+<td class="left">ours</td>
+<td class="left">baseline</td>
+<td class="left">ours</td>
+</tr>
+
+<tr>
+<td class="left">1555 \(\xrightarrow{st,st}\) 1625</td>
+<td class="left">—</td>
+<td class="left">—</td>
+<td class="left">1555: <code>ldrex/strex</code></td>
+<td class="left">1555: <code>ldrex/strex</code></td>
+</tr>
+
+<tr>
+<td class="left">1596 \(\xrightarrow{st,st}\) 1625</td>
+<td class="left">—</td>
+<td class="left">—</td>
+<td class="left">1596: <code>ldrex/strex</code></td>
+<td class="left">1596: <code>ldrex/strex</code></td>
+</tr>
+
+<tr>
+<td class="left">760 \(\xrightarrow{st,st}\) 1413</td>
+<td class="left">—</td>
+<td class="left">—</td>
+<td class="left">1669: <code>dmb st</code></td>
+<td class="left">1669: <code>dmb st</code></td>
+</tr>
+
+<tr>
+<td class="left">1413 \(\xrightarrow{st,ld}\) 1679</td>
+<td class="left">1679: <code>mfence</code></td>
+<td class="left">—</td>
+<td class="left"><span class="hlght"> 1679: <code>dmb st</code> </span></td>
+<td class="left"><span class="hlght"> 1416: <code>dmb st</code> </span></td>
+</tr>
+</tbody>
+</table>
+
+
+<aside class="notes">
+<p>
+TxStore: we placed our fence "further up" the control flow graph,
+this is dues to the way the multicut algorithm handles a sequence
+of similarly weighted edges, choosing the first
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-7">
+<h2 id="sec-7">tl2</h2>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left"><b>x86</b></td>
+<td class="left">&#xa0;</td>
+<td class="left"><b>ARMv7</b></td>
+</tr>
+
+<tr>
+<td class="left"><b><code>TxStore</code></b></td>
+<td class="left">baseline</td>
+<td class="left">ours</td>
+<td class="left">baseline</td>
+<td class="left">ours</td>
+</tr>
+
+<tr>
+<td class="left">1886 \(\xrightarrow{ld,ld}\) 1923</td>
+<td class="left">—</td>
+<td class="left">—</td>
+<td class="left">1920: <code>dmb</code></td>
+<td class="left">1886: <code>dmb</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left"><b><code>TxCommit</code></b></td>
+<td class="left">baseline</td>
+<td class="left">ours</td>
+<td class="left">baseline</td>
+<td class="left">ours</td>
+</tr>
+
+<tr>
+<td class="left">1555 \(\xrightarrow{st,st}\) 1625</td>
+<td class="left">—</td>
+<td class="left">—</td>
+<td class="left">1555: <code>ldrex/strex</code></td>
+<td class="left">1555: <code>ldrex/strex</code></td>
+</tr>
+
+<tr>
+<td class="left">1596 \(\xrightarrow{st,st}\) 1625</td>
+<td class="left">—</td>
+<td class="left">—</td>
+<td class="left">1596: <code>ldrex/strex</code></td>
+<td class="left">1596: <code>ldrex/strex</code></td>
+</tr>
+
+<tr>
+<td class="left">760 \(\xrightarrow{st,st}\) 1413</td>
+<td class="left">—</td>
+<td class="left">—</td>
+<td class="left">1669: <code>dmb st</code></td>
+<td class="left">1669: <code>dmb st</code></td>
+</tr>
+
+<tr>
+<td class="left">1413 \(\xrightarrow{st,ld}\) 1679</td>
+<td class="left"><span class="hlght"> 1679: <code>mfence</code> </span></td>
+<td class="left"><span class="hlght"> — </span></td>
+<td class="left">1679: <code>dmb st</code></td>
+<td class="left">1416: <code>dmb st</code></td>
+</tr>
+</tbody>
+</table>
+
+<aside class="notes">
+<p>
+TxCommit:
+under our architecture definition of x86 we were able to
+save one fence
+</p>
+
+<p>
+we also handle the compare and swap instruction pairs (ldrex/strex)
+which have fence-like semantics
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-7-1">
+<h3 id="sec-7-1">tl2 eager</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left"><b>x86</b></td>
+<td class="left">&#xa0;</td>
+<td class="left"><b>ARMv7</b></td>
+</tr>
+
+<tr>
+<td class="left"><b><code>TxCommit</code></b></td>
+<td class="left">baseline</td>
+<td class="left">ours</td>
+<td class="left">baseline</td>
+<td class="left">ours</td>
+</tr>
+
+<tr>
+<td class="left">760 \(\xrightarrow{st,st}\) 1413</td>
+<td class="left">—</td>
+<td class="left">—</td>
+<td class="left"><span class="hlght"> 1669: <code>dmb st</code> </span></td>
+<td class="left"><span class="hlght">  — </span></td>
+</tr>
+
+<tr>
+<td class="left">1413 \(\xrightarrow{st,ld}\) 1679</td>
+<td class="left">1679: <code>mfence</code></td>
+<td class="left">—</td>
+<td class="left">1679: <code>dmb st</code></td>
+<td class="left">1679: <code>dmb st</code></td>
+</tr>
+</tbody>
+</table>
+
+<aside class="notes">
+<p>
+Not that due to the ifdefs we saw in the example earlier we are
+able to eliminate the stst fence at line 1669 on arm
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-7-2">
+<h3 id="sec-7-2">rstm</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left"><b>x86</b></td>
+<td class="left">&#xa0;</td>
+<td class="left"><b>ARMv7</b></td>
+</tr>
+
+<tr>
+<td class="left"><b><code>read_rw</code></b></td>
 <td class="left">baseline</td>
 <td class="left">ours</td>
 <td class="left">baseline</td>
@@ -1381,8 +1575,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-5-8">
-<h3 id="sec-5-8">tl2 performance</h3>
+<section id="slide-sec-7-3">
+<h3 id="sec-7-3">tl2 performance</h3>
 
 <div class="figure">
 <p><img src="./assets/images/stamp-arm-tl2.png" alt="stamp-arm-tl2.png" />
@@ -1391,8 +1585,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-5-9">
-<h3 id="sec-5-9">rstm performance</h3>
+<section id="slide-sec-7-4">
+<h3 id="sec-7-4">rstm performance</h3>
 
 <div class="figure">
 <p><img src="./assets/images/stamp-x86-rstm.png" alt="stamp-x86-rstm.png" />
@@ -1401,8 +1595,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-5-10">
-<h3 id="sec-5-10">rstm performance</h3>
+<section id="slide-sec-7-5">
+<h3 id="sec-7-5">rstm performance</h3>
 
 <div class="figure">
 <p><img src="./assets/images/stamp-arm-rstm.png" alt="stamp-arm-rstm.png" />
@@ -1411,14 +1605,14 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-6">
-<h2 id="sec-6">Related</h2>
-<div class="outline-text-2" id="text-6">
+<section id="slide-sec-8">
+<h2 id="sec-8">Related</h2>
+<div class="outline-text-2" id="text-8">
 </div></section>
 </section>
 <section>
-<section id="slide-sec-6-1">
-<h3 id="sec-6-1">semantics</h3>
+<section id="slide-sec-8-1">
+<h3 id="sec-8-1">semantics</h3>
 <ul>
 <li>weak memory calculus from CMU</li>
 
@@ -1426,8 +1620,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-6-2">
-<h3 id="sec-6-2">recovering sequential consistency</h3>
+<section id="slide-sec-8-2">
+<h3 id="sec-8-2">recovering sequential consistency</h3>
 <ul>
 <li>Don't Sit on the Fence [Alglave]</li>
 <li>Hiding relaxed memory consistency with a compiler [Lee]</li>
@@ -1443,8 +1637,8 @@ all whole program
 </section>
 </section>
 <section>
-<section id="slide-sec-6-3">
-<h3 id="sec-6-3">enforcing arbitrary properties</h3>
+<section id="slide-sec-8-3">
+<h3 id="sec-8-3">enforcing arbitrary properties</h3>
 <ul>
 <li>Automatic inference of memory fences [Kuperstein]</li>
 <li>Synthesis of memory fences via refinement propagation [Meshman]</li>
@@ -1459,8 +1653,8 @@ all whole program
 </section>
 </section>
 <section>
-<section id="slide-sec-7">
-<h2 id="sec-7">Thanks!</h2>
+<section id="slide-sec-9">
+<h2 id="sec-9">Thanks!</h2>
 </section>
 </section>
 </div>

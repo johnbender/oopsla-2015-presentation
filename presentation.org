@@ -60,7 +60,7 @@ class LockOne implements Lock {
 
 ** Bad execution
 
-   | Thread 0          | Thread 1          |          |
+   | Thread 0          | Thread 1          | Notes    |
    |-------------------+-------------------+----------|
    | ~flag[0] = true~  |                   | buffered |
    | ~flag[1] : false~ |                   |          |
@@ -834,25 +834,52 @@ digraph a {
    |            | 14 $\xrightarrow{st,ld}$ 16 | 14: ~mfence~ | 14: ~dmb st~ |
 
 ** tl2
-   |                        |                | *x86* |                         | *ARMv7*                |
-   | ~TxStore~              | baseline       | ours  | baseline                | ours                   |
-   | 1886 $\xrightarrow{ld,ld}$ 1923 | ---            | ---   | 1920: ~dmb~           | 1886: ~dmb~          |
-   |                        |                |       |                         |                        |
-   | ~TxCommit~             | baseline       | ours  | baseline                | ours                   |
-   | 1555 $\xrightarrow{st,st}$ 1625 | ---            | ---   | 1555: ~ldrex/strex~     | 1555: ~ldrex/strex~    |
-   | 1596 $\xrightarrow{st,st}$ 1625 | ---            | ---   | 1596: ~ldrex/strex~     | 1596: ~ldrex/strex~    |
-   | 760 $\xrightarrow{st,st}$ 1413  | ---            | ---   | 1669: ~dmb st~          | 1669: ~dmb st~         |
-   | 1413 $\xrightarrow{st,ld}$ 1679 | 1679: ~mfence~ | ---   | 1679: ~dmb st~          | 1416: ~dmb st~         |
+   |                                 |                | *x86* |                     | *ARMv7*             |
+   | **~TxStore~**                     | baseline       | ours  | baseline            | ours                |
+   | 1886 $\xrightarrow{ld,ld}$ 1923 | —            | —   | 1920: ~dmb~         | 1886: ~dmb~         |
+   |                                 |                |       |                     |                     |
+   | *~TxCommit~*                      | baseline       | ours  | baseline            | ours                |
+   | 1555 $\xrightarrow{st,st}$ 1625 | —            | —   | 1555: ~ldrex/strex~ | 1555: ~ldrex/strex~ |
+   | 1596 $\xrightarrow{st,st}$ 1625 | —            | —   | 1596: ~ldrex/strex~ | 1596: ~ldrex/strex~ |
+   | 760 $\xrightarrow{st,st}$ 1413  | —            | —   | 1669: ~dmb st~      | 1669: ~dmb st~      |
+   | 1413 $\xrightarrow{st,ld}$ 1679 | 1679: ~mfence~ | —   | 1679: ~dmb st~      | 1416: ~dmb st~      |
 
    #+BEGIN_NOTES
    just two methods from the tl2 algorithm
 
    baseline is where the original authors/implementors placed the fence
+   #+END_NOTES
 
+* tl2
+   |                                 |                | *x86* |                                                               | *ARMv7*                                                       |
+   | *~TxStore~*                       | baseline       | ours  | baseline                                                      | ours                                                          |
+   | 1886 $\xrightarrow{ld,ld}$ 1923 | —              | —     | @@html:<span class="hlght">@@ 1920: ~dmb~ @@html:</span>@@    | @@html:<span class="hlght">@@ 1886: ~dmb~ @@html:</span>@@    |
+   |                                 |                |       |                                                               |                                                               |
+   | *~TxCommit~*                      | baseline       | ours  | baseline                                                      | ours                                                          |
+   | 1555 $\xrightarrow{st,st}$ 1625 | —              | —     | 1555: ~ldrex/strex~                                           | 1555: ~ldrex/strex~                                           |
+   | 1596 $\xrightarrow{st,st}$ 1625 | —              | —     | 1596: ~ldrex/strex~                                           | 1596: ~ldrex/strex~                                           |
+   | 760 $\xrightarrow{st,st}$ 1413  | —              | —     | 1669: ~dmb st~                                                | 1669: ~dmb st~                                                |
+   | 1413 $\xrightarrow{st,ld}$ 1679 | 1679: ~mfence~ | —     | @@html:<span class="hlght">@@ 1679: ~dmb st~ @@html:</span>@@ | @@html:<span class="hlght">@@ 1416: ~dmb st~ @@html:</span>@@ |
+
+
+   #+BEGIN_NOTES
    TxStore: we placed our fence "further up" the control flow graph,
    this is dues to the way the multicut algorithm handles a sequence
    of similarly weighted edges, choosing the first
+   #+END_NOTES
 
+* tl2
+   |                                 |                                                               | *x86*                                            |                     | *ARMv7*             |
+   | *~TxStore~*                       | baseline                                                      | ours                                             | baseline            | ours                |
+   | 1886 $\xrightarrow{ld,ld}$ 1923 | —                                                             | —                                                | 1920: ~dmb~         | 1886: ~dmb~         |
+   |                                 |                                                               |                                                  |                     |                     |
+   | *~TxCommit~*                      | baseline                                                      | ours                                             | baseline            | ours                |
+   | 1555 $\xrightarrow{st,st}$ 1625 | —                                                             | —                                                | 1555: ~ldrex/strex~ | 1555: ~ldrex/strex~ |
+   | 1596 $\xrightarrow{st,st}$ 1625 | —                                                             | —                                                | 1596: ~ldrex/strex~ | 1596: ~ldrex/strex~ |
+   | 760 $\xrightarrow{st,st}$ 1413  | —                                                             | —                                                | 1669: ~dmb st~      | 1669: ~dmb st~      |
+   | 1413 $\xrightarrow{st,ld}$ 1679 | @@html:<span class="hlght">@@ 1679: ~mfence~ @@html:</span>@@ | @@html:<span class="hlght">@@ — @@html:</span>@@ | 1679: ~dmb st~      | 1416: ~dmb st~      |
+
+   #+BEGIN_NOTES
    TxCommit:
    under our architecture definition of x86 we were able to
    save one fence
@@ -862,11 +889,10 @@ digraph a {
    #+END_NOTES
 
 ** tl2 eager
-   |                        |                | *x86* |                | *ARMv7*        |
-   |------------------------+----------------+-------+----------------+----------------|
-   | ~TxCommit~             | baseline       | ours  | baseline       | ours           |
-   | 760 $\xrightarrow{st,st}$ 1413  | ---            | ---   | 1669: ~dmb st~ | ---            |
-   | 1413 $\xrightarrow{st,ld}$ 1679 | 1679: ~mfence~ | ---   | 1679: ~dmb st~ | 1679: ~dmb st~ |
+   |                                 |                | *x86* |                                                               | *ARMv7*                                           |
+   | *~TxCommit~*                      | baseline       | ours  | baseline                                                      | ours                                              |
+   | 760 $\xrightarrow{st,st}$ 1413  | —              | —     | @@html:<span class="hlght">@@ 1669: ~dmb st~ @@html:</span>@@ | @@html:<span class="hlght">@@  — @@html:</span>@@ |
+   | 1413 $\xrightarrow{st,ld}$ 1679 | 1679: ~mfence~ | —     | 1679: ~dmb st~                                                | 1679: ~dmb st~                                    |
 
    #+BEGIN_NOTES
    Not that due to the ifdefs we saw in the example earlier we are
@@ -875,7 +901,7 @@ digraph a {
 
 ** rstm
    |                      |                | *x86*         |                       | *ARMv7*       |
-   | ~read_rw~            | baseline       | ours          | baseline              | ours          |
+   | *~read_rw~*          | baseline       | ours          | baseline              | ours          |
    | 163 $\xrightarrow{st,ld}$ 165 | 163: ~xchg~    | 163: ~mfence~ | 163: ~ldrex/strex~    | 163: ~dmb st~ |
 
    #+BEGIN_NOTES

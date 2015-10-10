@@ -188,3 +188,11 @@ section.present > table td {
 section.present > table th {
   font-size: 0.8em;
 }
+
+table td span.hlght {
+  color: red;
+}
+
+table {
+  width: 900px;
+}
