@@ -306,6 +306,7 @@ order they appear in the program.
 <ul>
 <li>recover sequential consistency</li>
 <li>recover an arbitrary specification</li>
+<li>whole program</li>
 
 </ul>
 
@@ -333,13 +334,10 @@ Can be thought of as "finding the orders" necessary to ensure properties
 <section>
 <section id="slide-sec-1-1">
 <h3 id="sec-1-1">our approach</h3>
-<p>
-Ask the programmer for the orders!
-</p>
-
 <ul>
+<li>ask the programmer for the orders</li>
 <li>per-procedure analysis</li>
-<li>algorithm is 2<sup>n</sup> but inputs are small</li>
+<li>still O(2<sup>n</sup>) but inputs are small</li>
 
 </ul>
 
@@ -600,6 +598,12 @@ bad to use a fence for <code>MEMBARSTST</code> on x86
 <section>
 <section id="slide-sec-3">
 <h2 id="sec-3">Algorithm</h2>
+<div class="outline-text-2" id="text-3">
+</div></section>
+</section>
+<section>
+<section id="slide-sec-3-1">
+<h3 id="sec-3-1">three steps</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -651,8 +655,8 @@ by the architecture. <b>optimization</b>
 </section>
 </section>
 <section>
-<section id="slide-sec-3-1">
-<h3 id="sec-3-1">order elimination</h3>
+<section id="slide-sec-3-2">
+<h3 id="sec-3-2">order elimination</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -688,8 +692,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-3-2">
-<h3 id="sec-3-2">order elimination</h3>
+<section id="slide-sec-3-3">
+<h3 id="sec-3-3">order elimination</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -715,43 +719,6 @@ end
 
 <div class="figure">
 <p><img src="assets/images/full-graph-elim-after.png" alt="full-graph-elim-after.png" />
-</p>
-</div>
-
-<p>
- </div>
-</p>
-
-</section>
-</section>
-<section>
-<section id="slide-sec-3-3">
-<h3 id="sec-3-3">multi-cut</h3>
-<div class="org-src-container">
-
-<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
-<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
-
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
-  <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
-
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
-&#9654; <span class="org-variable-name">K</span>  = Cut(G, O2)
-
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
-  <span class="org-variable-name">G2</span> = Refine(G1, K)
-
-  <span class="org-keyword">return</span> G2
-end
-</pre>
-</div>
-
-<p>
- <div class="algo-graph">
-</p>
-
-<div class="figure">
-<p><img src="assets/images/full-graph-cut.png" alt="full-graph-cut.png" />
 </p>
 </div>
 
@@ -788,7 +755,7 @@ end
 </p>
 
 <div class="figure">
-<p><img src="assets/images/full-graph-cut-highlight.png" alt="full-graph-cut-highlight.png" />
+<p><img src="assets/images/full-graph-cut.png" alt="full-graph-cut.png" />
 </p>
 </div>
 
@@ -800,7 +767,7 @@ end
 </section>
 <section>
 <section id="slide-sec-3-5">
-<h3 id="sec-3-5">place fences</h3>
+<h3 id="sec-3-5">multi-cut</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -810,10 +777,10 @@ end
   <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
   <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
-  <span class="org-variable-name">K</span>  = Cut(G, O2)
+&#9654; <span class="org-variable-name">K</span>  = Cut(G, O2)
 
   <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
-&#9654; <span class="org-variable-name">G2</span> = Refine(G1, K)
+  <span class="org-variable-name">G2</span> = Refine(G1, K)
 
   <span class="org-keyword">return</span> G2
 end
@@ -825,7 +792,7 @@ end
 </p>
 
 <div class="figure">
-<p><img src="assets/images/full-graph-refine.png" alt="full-graph-refine.png" />
+<p><img src="assets/images/full-graph-cut-highlight.png" alt="full-graph-cut-highlight.png" />
 </p>
 </div>
 
@@ -862,6 +829,43 @@ end
 </p>
 
 <div class="figure">
+<p><img src="assets/images/full-graph-refine.png" alt="full-graph-refine.png" />
+</p>
+</div>
+
+<p>
+ </div>
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-3-7">
+<h3 id="sec-3-7">place fences</h3>
+<div class="org-src-container">
+
+<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
+<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
+  <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
+  <span class="org-variable-name">K</span>  = Cut(G, O2)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
+&#9654; <span class="org-variable-name">G2</span> = Refine(G1, K)
+
+  <span class="org-keyword">return</span> G2
+end
+</pre>
+</div>
+
+<p>
+ <div class="algo-graph">
+</p>
+
+<div class="figure">
 <p><img src="assets/images/full-graph-refine-apply.png" alt="full-graph-refine-apply.png" />
 </p>
 </div>
@@ -872,8 +876,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-3-7">
-<h3 id="sec-3-7">main theorem</h3>
+<section id="slide-sec-3-8">
+<h3 id="sec-3-8">main theorem</h3>
 <p>
 \(\mathsf{Insert}(G, A, O), A \vDash O\)
 </p>
@@ -933,85 +937,457 @@ in loops unless otherwise completely necessary
 <section>
 <section id="slide-sec-5">
 <h2 id="sec-5">Results</h2>
-<p>
-TODO include tables?
-</p>
-</section>
+<div class="outline-text-2" id="text-5">
+</div></section>
 </section>
 <section>
 <section id="slide-sec-5-1">
-<h3 id="sec-5-1">summary</h3>
+<h3 id="sec-5-1">classic algorithms</h3>
 <ul>
-<li>x86 arm</li>
-<li>two transaction memory algorithms</li>
-<li>four classic lock free algorithms</li>
-<li>match or better hand placed/selected fences</li>
+<li>from Algave et al '14</li>
+<li>x86 and ARMv7</li>
+<li>4 lock free algorithms</li>
 
 </ul>
 </section>
 </section>
 <section>
 <section id="slide-sec-5-2">
-<h3 id="sec-5-2">performance</h3>
+<h3 id="sec-5-2">STM algorithms</h3>
 <ul>
-<li>exponential time order elimination algorithm</li>
-<li>linear time order elimination algorithm</li>
+<li>TL2/TL2 Eager</li>
+<li>Rochester ByteEager (TLRW)</li>
+<li>compared with hand placed fences (baseline)
+<ul>
+<li>fence placement and count</li>
+<li>STAMP performance benchmarks</li>
+
+</ul></li>
 
 </ul>
-
-<div class="figure">
-<p><img src="./assets/images/linear-perf.png" alt="linear-perf.png" />
-</p>
-</div>
-
-<ul>
-<li>notes
-
-<p>
-most of the time in processing is spent in generating the
-modified control flow graph in Python, everything else appeals to
-optimized C/C++ depedencies
-</p></li>
-
+<aside class="notes">
+<ul class="org-ul">
+<li>TL2/TL2 Eager
+<ul class="org-ul">
+<li>included with STAMP Benchmarks
+</li>
 </ul>
+</li>
+<li>RSTM ByteEager
+<ul class="org-ul">
+<li>part of Rochester STM Algorithm Suite
+</li>
+</ul>
+</li>
+</ul>
+
+</aside>
 
 </section>
 </section>
 <section>
 <section id="slide-sec-5-3">
 <h3 id="sec-5-3">classic</h3>
-<ul>
-<li>matched all hand placed fences</li>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
-</ul>
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left"><b>x86</b></td>
+<td class="left"><b>ARMv7</b></td>
+</tr>
+
+<tr>
+<td class="left"><b>Dekker</b></td>
+<td class="left">\stldorder{8}{9}</td>
+<td class="left">8: <code>mfence</code></td>
+<td class="left">8: <code>dmb st</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">\stldorder{13}{9}</td>
+<td class="left">13: <code>mfence</code></td>
+<td class="left">13: <code>dmb st</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">\stldorder{25}{26}</td>
+<td class="left">25: <code>mfence</code></td>
+<td class="left">25: <code>dmb st</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">\stldorder{30}{26}</td>
+<td class="left">30: <code>mfence</code></td>
+<td class="left">30: <code>dmb st</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left"><b>Lamport</b></td>
+<td class="left">\stldorder{8}{9}</td>
+<td class="left">8: <code>mfence</code></td>
+<td class="left">8: <code>dmb st</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">\stldorder{14}{15}</td>
+<td class="left">14: <code>mfence</code></td>
+<td class="left">14: <code>dmb st</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">\stldorder{31}{32}</td>
+<td class="left">31: <code>mfence</code></td>
+<td class="left">31: <code>dmb st</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">\stldorder{37}{38}</td>
+<td class="left">37: <code>mfence</code></td>
+<td class="left">37: <code>dmb st</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left"><b>Parker</b></td>
+<td class="left">\stanyorder{44}{46}</td>
+<td class="left">44: <code>mfence</code></td>
+<td class="left">44: <code>dmb st</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left"><b>Peterson</b></td>
+<td class="left">\stldorder{5}{7}</td>
+<td class="left">5: <code>mfence</code></td>
+<td class="left">5: <code>dmb st</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">\stldorder{14}{16}</td>
+<td class="left">14: <code>mfence</code></td>
+<td class="left">14: <code>dmb st</code></td>
+</tr>
+</tbody>
+</table>
+
+<aside class="notes">
+<p>
+For the classic algorithms we fences were placed in expected locations
+</p>
+
+<p>
+Explain how to read the table.1
+</p>
+
+</aside>
+
 </section>
 </section>
 <section>
 <section id="slide-sec-5-4">
 <h3 id="sec-5-4">tl2</h3>
-<ul>
-<li>one fence saved!</li>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
-</ul>
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left"><b>x86</b></td>
+<td class="left">&#xa0;</td>
+<td class="left"><b>ARMv7</b></td>
+</tr>
+
+<tr>
+<td class="left">\ttf{TxStore}</td>
+<td class="left">baseline</td>
+<td class="left">ours</td>
+<td class="left">baseline</td>
+<td class="left">ours</td>
+</tr>
+
+<tr>
+<td class="left">\ldldorder{1886}{1923}</td>
+<td class="left">---</td>
+<td class="left">---</td>
+<td class="left">1920: <code>dmb</code></td>
+<td class="left">1886: <code>dmb</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">\ttf{TxCommit}</td>
+<td class="left">baseline</td>
+<td class="left">ours</td>
+<td class="left">baseline</td>
+<td class="left">ours</td>
+</tr>
+
+<tr>
+<td class="left">\ststorder{1555}{1625}</td>
+<td class="left">---</td>
+<td class="left">---</td>
+<td class="left">1555: \ttf{ldrex/strex}</td>
+<td class="left">1555:\ttf{ldrex/strex}</td>
+</tr>
+
+<tr>
+<td class="left">\ststorder{1596}{1625}</td>
+<td class="left">---</td>
+<td class="left">---</td>
+<td class="left">1596: \ttf{ldrex/strex}</td>
+<td class="left">1596:\ttf{ldrex/strex}</td>
+</tr>
+
+<tr>
+<td class="left">\ststorder{760}{1413}</td>
+<td class="left">---</td>
+<td class="left">---</td>
+<td class="left">1669: <code>dmb st</code></td>
+<td class="left">1669: <code>dmb st</code></td>
+</tr>
+
+<tr>
+<td class="left">\stldorder{1413}{1679}</td>
+<td class="left">1679: <code>mfence</code></td>
+<td class="left">---</td>
+<td class="left">1679: <code>dmb st</code></td>
+<td class="left">1416: <code>dmb st</code></td>
+</tr>
+</tbody>
+</table>
+
+<aside class="notes">
+<p>
+just two methods from the tl2 algorithm
+</p>
+
+<p>
+baseline is where the original authors/implementors placed the fence
+</p>
+
+<p>
+TxStore: we placed our fence "further up" the control flow graph,
+this is dues to the way the multicut algorithm handles a sequence
+of similarly weighted edges, choosing the first
+</p>
+
+<p>
+TxCommit:
+under our architecture definition of x86 we were able to
+save one fence
+</p>
+
+<p>
+we also handle the compare and swap instruction pairs (ldrex/strex)
+which have fence-like semantics
+</p>
+
+</aside>
+
 </section>
 </section>
 <section>
 <section id="slide-sec-5-5">
 <h3 id="sec-5-5">tl2 eager</h3>
-<ul>
-<li>one fence saved!</li>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
-</ul>
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">&#xa0;</th>
+<th scope="col" class="left">&#xa0;</th>
+<th scope="col" class="left"><b>x86</b></th>
+<th scope="col" class="left">&#xa0;</th>
+<th scope="col" class="left"><b>ARMv7</b></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">\ttf{TxCommit}</td>
+<td class="left">baseline</td>
+<td class="left">ours</td>
+<td class="left">baseline</td>
+<td class="left">ours</td>
+</tr>
+
+<tr>
+<td class="left">\ststorder{760}{1413}</td>
+<td class="left">---</td>
+<td class="left">---</td>
+<td class="left">1669: <code>dmb st</code></td>
+<td class="left">---</td>
+</tr>
+
+<tr>
+<td class="left">\stldorder{1413}{1679}</td>
+<td class="left">1679: <code>mfence</code></td>
+<td class="left">---</td>
+<td class="left">1679: <code>dmb st</code></td>
+<td class="left">1679: <code>dmb st</code></td>
+</tr>
+</tbody>
+</table>
+
+<aside class="notes">
+<p>
+Not that due to the ifdefs we saw in the example earlier we are
+able to eliminate the stst fence at line 1669 on arm
+</p>
+
+</aside>
+
 </section>
 </section>
 <section>
 <section id="slide-sec-5-6">
 <h3 id="sec-5-6">rstm</h3>
-<ul>
-<li>notes about cmpxchg</li>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
-</ul>
 
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left"><b>x86</b></td>
+<td class="left">&#xa0;</td>
+<td class="left"><b>ARMv7</b></td>
+</tr>
+
+<tr>
+<td class="left">\ttf{read\_rw}</td>
+<td class="left">baseline</td>
+<td class="left">ours</td>
+<td class="left">baseline</td>
+<td class="left">ours</td>
+</tr>
+
+<tr>
+<td class="left">\stldorder{163}{165}</td>
+<td class="left">163:\ttf{xchg}</td>
+<td class="left">163: <code>mfence</code></td>
+<td class="left">163:\ttf{ldrex/strex}</td>
+<td class="left">163: <code>dmb st</code></td>
+</tr>
+</tbody>
+</table>
+
+<aside class="notes">
+<p>
+in the <code>read_rw</code> method of the RSTM ByteEager algorithm they use a
+compare and swap to enforce a store/store order
+</p>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-5-7">
+<h3 id="sec-5-7">tl2 performance</h3>
+
+<div class="figure">
+<p><img src="./assets/images/stamp-arm-tl2.png" alt="stamp-arm-tl2.png" />
+</p>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-sec-5-8">
+<h3 id="sec-5-8">rstm performance</h3>
+
+<div class="figure">
+<p><img src="./assets/images/stamp-x86-rstm.png" alt="stamp-x86-rstm.png" />
+</p>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-sec-5-9">
+<h3 id="sec-5-9">rstm performance</h3>
+
+<div class="figure">
+<p><img src="./assets/images/stamp-arm-rstm.png" alt="stamp-arm-rstm.png" />
+</p>
+</div>
 </section>
 </section>
 <section>

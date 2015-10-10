@@ -148,6 +148,7 @@ pre span.org-sh-quoted-exec              {color:#FF1493;}
 .reveal section img {
   border: 0;
   box-shadow: none;
+  max-height: 500px;
 }
 
 .reveal h2, .reveal h3 {
@@ -165,6 +166,10 @@ div.algo-graph {
   width: 480px;
 }
 
+div.algo-graph img {
+  max-height: 800px;
+}
+
 div.algo-arch-rules {
   right: -25px;
   top: 150px;
@@ -172,4 +177,12 @@ div.algo-arch-rules {
 
 #sec-title-slide h2 {
   font-size: 0.8em;
+}
+
+section.present > table td {
+  font-size: 0.5em;
+}
+
+section.present > table th {
+  font-size: 0.7em;
 }

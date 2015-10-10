@@ -328,7 +328,7 @@
      - add dot graph from section 3 of the paper
      - put graphs,orders,architectures to the right of the code and
        step through transformations to both as the algorithm proceeds
-   - section 4
+   - section 5
      - methodology is key
        - go into detail
        - benchmarks come from other people
