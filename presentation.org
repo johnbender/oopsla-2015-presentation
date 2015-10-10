@@ -917,20 +917,11 @@ digraph a {
    file:./assets/images/stamp-arm-rstm.png
 * Related
 ** semantics
-   - weak memory calculus from CMU
-** recovering sequential consistency
-   - Don't Sit on the Fence [Alglave]
-   - Hiding relaxed memory consistency with a compiler [Lee]
-
-   - notes
-
-     all whole program
-
-** enforcing arbitrary properties
-   - Automatic inference of memory fences [Kuperstein]
-   - Synthesis of memory fences via refinement propagation [Meshman]
-
-   - notes
-
-     all whole program
+   - A Calculus for Relaxed Memory, Crary and Sullivan
+** sequential consistency
+   - Don't Sit on the Fence, Alglave et al
+   - Hiding relaxed memory consistency with a compiler, Lee et al
+** specification
+   - Automatic Inference of Memory Fences, Kuperstein et al
+   - Synthesis of Memory Fences via Refinement Propagation, Meshman et al
 * Thanks!
