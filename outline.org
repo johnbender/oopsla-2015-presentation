@@ -340,3 +340,33 @@
        - removing fence macros
      - performance of the algorithms with our placements
      - one or at most two tables about output
+** Jens 2
+   - names and affiliations
+   - add maurice herlihy/shavit and year
+   - work on execution order definition, simplify, reduce verbs
+   - previous approaches, add paper
+     - "insert fences to..." (two approaches)
+     - e.g. first name et al, conf year
+     - recover vs enforce, check papers
+     - whole program is 0(2^n)
+   - our approach
+     - insert fences to enforce orders
+     - reference to CMU paper
+     - we do the work, they have the semantics PLDI etc
+   - make clear that the problem is fence insertion
+   - problem subt
+     - arrows to highlight code to look at
+   - place fences
+     - make sure to highlight orders
+   - Classic Algorithms => Benchmarks: Classic Algorithms
+   - STM Algorithms => Benchmark: STM Algorithms
+     - much much harder!
+     - notable for difficulty
+   - maybe remove classic
+   - results, focus on arm
+   - maybe the semantics
+   - move related work to "previous approaches
+     - has to be fast
+     - conference and year
+   - conclusion with take home message
+     - "stop writing your lock free algorithms without orders", only positive
