@@ -1123,8 +1123,7 @@ digraph a {
 #    | *Peterson* | 5 $\xrightarrow{st,ld}$ 7   | 5: ~mfence~  | 5: ~dmb st~  |
 #    |            | 14 $\xrightarrow{st,ld}$ 16 | 14: ~mfence~ | 14: ~dmb st~ |
 
-** tl2
-   |                                 |                     | *ARMv7*             |
+** tl2 - ARMv7
    | **~TxStore~**                   | baseline            | ours                |
    | 1886 $\xrightarrow{ld,ld}$ 1923 | 1920: ~dmb~         | 1886: ~dmb~         |
    |                                 |                     |                     |
@@ -1138,8 +1137,7 @@ digraph a {
 
    #+END_NOTES
 
-* tl2
-   |                                 |                                                               | *ARMv7*                                                       |
+* tl2 - ARMv7
    | *~TxStore~*                     | baseline                                                      | ours                                                          |
    | 1886 $\xrightarrow{ld,ld}$ 1923 | @@html:<span class="hlght">@@ 1920: ~dmb~ @@html:</span>@@    | @@html:<span class="hlght">@@ 1886: ~dmb~ @@html:</span>@@    |
    |                                 |                                                               |                                                               |
@@ -1156,8 +1154,7 @@ digraph a {
    of similarly weighted edges, choosing the first
    #+END_NOTES
 
-** tl2 eager
-   |                                 |                                                               | *ARMv7*                                           |
+** tl2 eager - ARMv7
    | *~TxCommit~*                    | baseline                                                      | ours                                              |
    | 760 $\xrightarrow{st,st}$ 1413  | @@html:<span class="hlght">@@ 1669: ~dmb st~ @@html:</span>@@ | @@html:<span class="hlght">@@  — @@html:</span>@@ |
    | 1413 $\xrightarrow{st,ld}$ 1679 | 1679: ~dmb st~                                                | 1679: ~dmb st~                                    |
@@ -1167,8 +1164,7 @@ digraph a {
    able to eliminate the stst fence at line 1669 on arm
    #+END_NOTES
 
-** rstm
-   |                               |                    | *ARMv7*       |
+** rstm - ARMv7
    | *~read_rw~*                   | baseline           | ours          |
    | 163 $\xrightarrow{st,ld}$ 165 | 163: ~ldrex/strex~ | 163: ~dmb st~ |
 
