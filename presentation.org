@@ -1069,11 +1069,11 @@ digraph a {
    #+END_NOTES
 
 * Results
-** classic algorithms
+** benchmark: classic algorithms
    - from Algave et al '14
    - x86 and ARMv7
    - 4 lock free algorithms
-** STM algorithms
+** benchmark: STM algorithms
    - TL2/TL2 Eager
    - Rochester ByteEager (TLRW)
    - x86 and ARMv7

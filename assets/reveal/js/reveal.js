@@ -35,15 +35,15 @@
 
 			// The "normal" size of the presentation, aspect ratio will be preserved
 			// when the presentation is scaled to fit different resolutions
-			width: 960,
-			height: 700,
+			width: 1024,
+			height: 768,
 
 			// Factor of the display size that should remain empty around the content
-			margin: 0.1,
+			margin: 0,
 
 			// Bounds for smallest/largest possible scale to apply to content
-			minScale: 0.2,
-			maxScale: 1.5,
+			minScale: 1,
+			maxScale: 1,
 
 			// Display controls in the bottom right corner
 			controls: true,
@@ -543,7 +543,7 @@
 			if( slide.classList.contains( 'stack' ) === false ) {
 				// Center the slide inside of the page, giving the slide some margin
 				var left = ( pageWidth - slideWidth ) / 2,
-					top = ( pageHeight - slideHeight ) / 2;
+					  top = 0;//( pageHeight - slideHeight ) / 2;
 
 				var contentHeight = getAbsoluteHeight( slide );
 				var numberOfPages = Math.max( Math.ceil( contentHeight / pageHeight ), 1 );
@@ -553,6 +553,7 @@
 					top = Math.max( ( pageHeight - contentHeight ) / 2, 0 );
 				}
 
+        top = 0;
 				// Position the slide inside of the page
 				slide.style.left = left + 'px';
 				slide.style.top = top + 'px';
@@ -1519,6 +1520,8 @@
 			// Respect max/min scale settings
 			scale = Math.max( scale, config.minScale );
 			scale = Math.min( scale, config.maxScale );
+
+      scale = 1;
 
 			// Don't apply any scaling styles if scale is 1
 			if( scale === 1 ) {

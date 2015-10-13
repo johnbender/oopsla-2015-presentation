@@ -55,7 +55,7 @@ code {
 pre, pre.src {
   font-size: 22px;
   margin-left: 0;
-  box-shadow: 0 0 0 black;
+  box-shadow: none;
   padding: 5px;
   padding: 1em 0 1em 1em;
 
