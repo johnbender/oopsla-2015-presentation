@@ -1324,6 +1324,7 @@ in loops unless otherwise completely necessary
 <ul>
 <li>TL2/TL2 Eager</li>
 <li>Rochester ByteEager (TLRW)</li>
+<li>x86 and ARMv7</li>
 <li>compared with hand placed fences (baseline)
 <ul>
 <li>fence placement and count</li>
@@ -1364,16 +1365,10 @@ in loops unless otherwise completely necessary
 <col  class="left" />
 
 <col  class="left" />
-
-<col  class="left" />
-
-<col  class="left" />
 </colgroup>
 <tbody>
 <tr>
 <td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left"><b>x86</b></td>
 <td class="left">&#xa0;</td>
 <td class="left"><b>ARMv7</b></td>
 </tr>
@@ -1382,21 +1377,15 @@ in loops unless otherwise completely necessary
 <td class="left"><b><b><code>TxStore</code></b></b></td>
 <td class="left">baseline</td>
 <td class="left">ours</td>
-<td class="left">baseline</td>
-<td class="left">ours</td>
 </tr>
 
 <tr>
 <td class="left">1886 \(\xrightarrow{ld,ld}\) 1923</td>
-<td class="left">—</td>
-<td class="left">—</td>
 <td class="left">1920: <code>dmb</code></td>
 <td class="left">1886: <code>dmb</code></td>
 </tr>
 
 <tr>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
 <td class="left">&#xa0;</td>
 <td class="left">&#xa0;</td>
 <td class="left">&#xa0;</td>
@@ -1406,38 +1395,28 @@ in loops unless otherwise completely necessary
 <td class="left"><b><code>TxCommit</code></b></td>
 <td class="left">baseline</td>
 <td class="left">ours</td>
-<td class="left">baseline</td>
-<td class="left">ours</td>
 </tr>
 
 <tr>
 <td class="left">1555 \(\xrightarrow{st,st}\) 1625</td>
-<td class="left">—</td>
-<td class="left">—</td>
 <td class="left">1555: <code>ldrex/strex</code></td>
 <td class="left">1555: <code>ldrex/strex</code></td>
 </tr>
 
 <tr>
 <td class="left">1596 \(\xrightarrow{st,st}\) 1625</td>
-<td class="left">—</td>
-<td class="left">—</td>
 <td class="left">1596: <code>ldrex/strex</code></td>
 <td class="left">1596: <code>ldrex/strex</code></td>
 </tr>
 
 <tr>
 <td class="left">760 \(\xrightarrow{st,st}\) 1413</td>
-<td class="left">—</td>
-<td class="left">—</td>
 <td class="left">1669: <code>dmb st</code></td>
 <td class="left">1669: <code>dmb st</code></td>
 </tr>
 
 <tr>
 <td class="left">1413 \(\xrightarrow{st,ld}\) 1679</td>
-<td class="left">1679: <code>mfence</code></td>
-<td class="left">—</td>
 <td class="left">1679: <code>dmb st</code></td>
 <td class="left">1416: <code>dmb st</code></td>
 </tr>
@@ -1445,14 +1424,7 @@ in loops unless otherwise completely necessary
 </table>
 
 <aside class="notes">
-<p>
-just two methods from the tl2 algorithm
-</p>
-
-<p>
-baseline is where the original authors/implementors placed the fence
-</p>
-
+nil
 </aside>
 
 </section>
@@ -1469,16 +1441,10 @@ baseline is where the original authors/implementors placed the fence
 <col  class="left" />
 
 <col  class="left" />
-
-<col  class="left" />
-
-<col  class="left" />
 </colgroup>
 <tbody>
 <tr>
 <td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left"><b>x86</b></td>
 <td class="left">&#xa0;</td>
 <td class="left"><b>ARMv7</b></td>
 </tr>
@@ -1487,21 +1453,15 @@ baseline is where the original authors/implementors placed the fence
 <td class="left"><b><code>TxStore</code></b></td>
 <td class="left">baseline</td>
 <td class="left">ours</td>
-<td class="left">baseline</td>
-<td class="left">ours</td>
 </tr>
 
 <tr>
 <td class="left">1886 \(\xrightarrow{ld,ld}\) 1923</td>
-<td class="left">—</td>
-<td class="left">—</td>
 <td class="left"><span class="hlght"> 1920: <code>dmb</code> </span></td>
 <td class="left"><span class="hlght"> 1886: <code>dmb</code> </span></td>
 </tr>
 
 <tr>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
 <td class="left">&#xa0;</td>
 <td class="left">&#xa0;</td>
 <td class="left">&#xa0;</td>
@@ -1511,38 +1471,28 @@ baseline is where the original authors/implementors placed the fence
 <td class="left"><b><code>TxCommit</code></b></td>
 <td class="left">baseline</td>
 <td class="left">ours</td>
-<td class="left">baseline</td>
-<td class="left">ours</td>
 </tr>
 
 <tr>
 <td class="left">1555 \(\xrightarrow{st,st}\) 1625</td>
-<td class="left">—</td>
-<td class="left">—</td>
 <td class="left">1555: <code>ldrex/strex</code></td>
 <td class="left">1555: <code>ldrex/strex</code></td>
 </tr>
 
 <tr>
 <td class="left">1596 \(\xrightarrow{st,st}\) 1625</td>
-<td class="left">—</td>
-<td class="left">—</td>
 <td class="left">1596: <code>ldrex/strex</code></td>
 <td class="left">1596: <code>ldrex/strex</code></td>
 </tr>
 
 <tr>
 <td class="left">760 \(\xrightarrow{st,st}\) 1413</td>
-<td class="left">—</td>
-<td class="left">—</td>
 <td class="left">1669: <code>dmb st</code></td>
 <td class="left">1669: <code>dmb st</code></td>
 </tr>
 
 <tr>
 <td class="left">1413 \(\xrightarrow{st,ld}\) 1679</td>
-<td class="left">1679: <code>mfence</code></td>
-<td class="left">—</td>
 <td class="left"><span class="hlght"> 1679: <code>dmb st</code> </span></td>
 <td class="left"><span class="hlght"> 1416: <code>dmb st</code> </span></td>
 </tr>
@@ -1562,16 +1512,12 @@ of similarly weighted edges, choosing the first
 </section>
 </section>
 <section>
-<section id="slide-sec-7">
-<h2 id="sec-7">tl2</h2>
+<section id="slide-sec-6-1">
+<h3 id="sec-6-1">tl2 eager</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
-<col  class="left" />
-
-<col  class="left" />
-
 <col  class="left" />
 
 <col  class="left" />
@@ -1582,116 +1528,6 @@ of similarly weighted edges, choosing the first
 <tr>
 <td class="left">&#xa0;</td>
 <td class="left">&#xa0;</td>
-<td class="left"><b>x86</b></td>
-<td class="left">&#xa0;</td>
-<td class="left"><b>ARMv7</b></td>
-</tr>
-
-<tr>
-<td class="left"><b><code>TxStore</code></b></td>
-<td class="left">baseline</td>
-<td class="left">ours</td>
-<td class="left">baseline</td>
-<td class="left">ours</td>
-</tr>
-
-<tr>
-<td class="left">1886 \(\xrightarrow{ld,ld}\) 1923</td>
-<td class="left">—</td>
-<td class="left">—</td>
-<td class="left">1920: <code>dmb</code></td>
-<td class="left">1886: <code>dmb</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left"><b><code>TxCommit</code></b></td>
-<td class="left">baseline</td>
-<td class="left">ours</td>
-<td class="left">baseline</td>
-<td class="left">ours</td>
-</tr>
-
-<tr>
-<td class="left">1555 \(\xrightarrow{st,st}\) 1625</td>
-<td class="left">—</td>
-<td class="left">—</td>
-<td class="left">1555: <code>ldrex/strex</code></td>
-<td class="left">1555: <code>ldrex/strex</code></td>
-</tr>
-
-<tr>
-<td class="left">1596 \(\xrightarrow{st,st}\) 1625</td>
-<td class="left">—</td>
-<td class="left">—</td>
-<td class="left">1596: <code>ldrex/strex</code></td>
-<td class="left">1596: <code>ldrex/strex</code></td>
-</tr>
-
-<tr>
-<td class="left">760 \(\xrightarrow{st,st}\) 1413</td>
-<td class="left">—</td>
-<td class="left">—</td>
-<td class="left">1669: <code>dmb st</code></td>
-<td class="left">1669: <code>dmb st</code></td>
-</tr>
-
-<tr>
-<td class="left">1413 \(\xrightarrow{st,ld}\) 1679</td>
-<td class="left"><span class="hlght"> 1679: <code>mfence</code> </span></td>
-<td class="left"><span class="hlght"> — </span></td>
-<td class="left">1679: <code>dmb st</code></td>
-<td class="left">1416: <code>dmb st</code></td>
-</tr>
-</tbody>
-</table>
-
-<aside class="notes">
-<p>
-TxCommit:
-under our architecture definition of x86 we were able to
-save one fence
-</p>
-
-<p>
-we also handle the compare and swap instruction pairs (ldrex/strex)
-which have fence-like semantics
-</p>
-
-</aside>
-
-</section>
-</section>
-<section>
-<section id="slide-sec-7-1">
-<h3 id="sec-7-1">tl2 eager</h3>
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-
-<col  class="left" />
-
-<col  class="left" />
-
-<col  class="left" />
-
-<col  class="left" />
-</colgroup>
-<tbody>
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left"><b>x86</b></td>
-<td class="left">&#xa0;</td>
 <td class="left"><b>ARMv7</b></td>
 </tr>
 
@@ -1699,22 +1535,16 @@ which have fence-like semantics
 <td class="left"><b><code>TxCommit</code></b></td>
 <td class="left">baseline</td>
 <td class="left">ours</td>
-<td class="left">baseline</td>
-<td class="left">ours</td>
 </tr>
 
 <tr>
 <td class="left">760 \(\xrightarrow{st,st}\) 1413</td>
-<td class="left">—</td>
-<td class="left">—</td>
 <td class="left"><span class="hlght"> 1669: <code>dmb st</code> </span></td>
 <td class="left"><span class="hlght">  — </span></td>
 </tr>
 
 <tr>
 <td class="left">1413 \(\xrightarrow{st,ld}\) 1679</td>
-<td class="left">1679: <code>mfence</code></td>
-<td class="left">—</td>
 <td class="left">1679: <code>dmb st</code></td>
 <td class="left">1679: <code>dmb st</code></td>
 </tr>
@@ -1732,16 +1562,12 @@ able to eliminate the stst fence at line 1669 on arm
 </section>
 </section>
 <section>
-<section id="slide-sec-7-2">
-<h3 id="sec-7-2">rstm</h3>
+<section id="slide-sec-6-2">
+<h3 id="sec-6-2">rstm</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
-<col  class="left" />
-
-<col  class="left" />
-
 <col  class="left" />
 
 <col  class="left" />
@@ -1752,8 +1578,6 @@ able to eliminate the stst fence at line 1669 on arm
 <tr>
 <td class="left">&#xa0;</td>
 <td class="left">&#xa0;</td>
-<td class="left"><b>x86</b></td>
-<td class="left">&#xa0;</td>
 <td class="left"><b>ARMv7</b></td>
 </tr>
 
@@ -1761,14 +1585,10 @@ able to eliminate the stst fence at line 1669 on arm
 <td class="left"><b><code>read_rw</code></b></td>
 <td class="left">baseline</td>
 <td class="left">ours</td>
-<td class="left">baseline</td>
-<td class="left">ours</td>
 </tr>
 
 <tr>
 <td class="left">163 \(\xrightarrow{st,ld}\) 165</td>
-<td class="left">163: <code>xchg</code></td>
-<td class="left">163: <code>mfence</code></td>
 <td class="left">163: <code>ldrex/strex</code></td>
 <td class="left">163: <code>dmb st</code></td>
 </tr>
@@ -1786,8 +1606,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-7-3">
-<h3 id="sec-7-3">tl2 performance</h3>
+<section id="slide-sec-6-3">
+<h3 id="sec-6-3">tl2 performance</h3>
 
 <div class="figure">
 <p><img src="./assets/images/stamp-arm-tl2.png" alt="stamp-arm-tl2.png" />
@@ -1796,8 +1616,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-7-4">
-<h3 id="sec-7-4">rstm performance</h3>
+<section id="slide-sec-6-4">
+<h3 id="sec-6-4">rstm performance</h3>
 
 <div class="figure">
 <p><img src="./assets/images/stamp-arm-rstm.png" alt="stamp-arm-rstm.png" />
@@ -1806,14 +1626,14 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-8">
-<h2 id="sec-8">Related</h2>
-<div class="outline-text-2" id="text-8">
+<section id="slide-sec-7">
+<h2 id="sec-7">Related</h2>
+<div class="outline-text-2" id="text-7">
 </div></section>
 </section>
 <section>
-<section id="slide-sec-8-1">
-<h3 id="sec-8-1">semantics</h3>
+<section id="slide-sec-7-1">
+<h3 id="sec-7-1">semantics</h3>
 <ul>
 <li>A Calculus for Relaxed Memory, Crary and Sullivan</li>
 
@@ -1821,8 +1641,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-8-2">
-<h3 id="sec-8-2">sequential consistency</h3>
+<section id="slide-sec-7-2">
+<h3 id="sec-7-2">sequential consistency</h3>
 <ul>
 <li>Don't Sit on the Fence, Alglave et al</li>
 <li>Hiding relaxed memory consistency with a compiler, Lee et al</li>
@@ -1831,18 +1651,24 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-8-3">
-<h3 id="sec-8-3">specification</h3>
+<section id="slide-sec-7-3">
+<h3 id="sec-7-3">specification</h3>
 <ul>
 <li>Automatic Inference of Memory Fences, Kuperstein et al</li>
 <li>Synthesis of Memory Fences via Refinement Propagation, Meshman et al</li>
 
 </ul>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-8">
+<h2 id="sec-8">Orders, not fences!</h2>
 </section>
 </section>
 <section>
 <section id="slide-sec-9">
-<h2 id="sec-9">Thanks!</h2>
+<h2 id="sec-9">Thanks</h2>
 </section>
 </section>
 </div>
