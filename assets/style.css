@@ -196,3 +196,24 @@ table td span.hlght {
 table {
   width: 900px;
 }
+
+#slide-sec-0-1 p:nth-child(2),
+#slide-sec-0-2 p:nth-child(2),
+#slide-sec-0-3 p:nth-child(2),
+#slide-sec-0-4 p:nth-child(2),
+#slide-sec-0-5 p:nth-child(2),
+#slide-sec-0-6 p:nth-child(2),
+#slide-sec-0-7 p:nth-child(2) {
+  margin-bottom: 5px;
+}
+
+#slide-sec-0-1 p:nth-child(3),
+#slide-sec-0-2 p:nth-child(3),
+#slide-sec-0-3 p:nth-child(3),
+#slide-sec-0-4 p:nth-child(3),
+#slide-sec-0-5 p:nth-child(3),
+#slide-sec-0-6 p:nth-child(3),
+#slide-sec-0-7 p:nth-child(3) {
+  font-size: 0.7em;
+  margin-top: 0px;
+}

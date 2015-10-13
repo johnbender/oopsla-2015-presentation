@@ -4,6 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <title>Declarative Fence Insertion</title>
+<meta name="author" content="(John Bender, Jens Palsberg - UCLA  (export-snippet (:back-end html :value  <br/>  :begin 35 :end 52 :post-blank 1 :parent #0)) Mohsen Lesani - MIT)"/>
 
 <link rel="stylesheet" href="assets/reveal/css/reveal.css"/>
 <link rel="stylesheet" href="assets/reveal/css/theme/white.css" id="theme"/>
@@ -26,8 +27,8 @@
 <div class="slides">
 <section id="sec-title-slide">
 <h1>Declarative Fence Insertion</h1>
-<h2></h2>
-<h2><a href="mailto:(johnbender|palsberg)@cs.ucla.edu">(johnbender|palsberg)@cs.ucla.edu</a>, <a href="mailto:lesani@csail.mit.edu">lesani@csail.mit.edu</a></h2>
+<h2>John Bender, Jens Palsberg - UCLA  <br/>  Mohsen Lesani - MIT</h2>
+<h2><a href="mailto:"></a></h2>
 <h2></h2>
 </section>
 </section>
@@ -37,6 +38,10 @@
 <h3 id="sec-0-1">mutex</h3>
 <p>
 The Art of Multiprocessor Programming, 2.3.1
+</p>
+
+<p>
+Maurice Herlihy &amp; Nir Shavit, 2012
 </p>
 
 <div class="org-src-container">
@@ -76,9 +81,239 @@ threads
 </section>
 <section>
 <section id="slide-sec-0-2">
-<h3 id="sec-0-2">mutual exclusion proof</h3>
+<h3 id="sec-0-2">mutex</h3>
 <p>
 The Art of Multiprocessor Programming, 2.3.1
+</p>
+
+<p>
+Maurice Herlihy &amp; Nir Shavit, 2012
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
+  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+                                       &#9650;
+  <span class="org-keyword">public</span> <span class="org-type">void</span> lock() {
+    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+    <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
+    flag[i] = <span class="org-constant">true</span>;
+    <span class="org-keyword">while</span> (flag[j]) {}
+  }
+
+  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
+    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+    flag[i] = <span class="org-constant">false</span>;
+  }
+}
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+Here we have some example code from the art of multiproc
+programming
+</p>
+
+<p>
+It's lock that's intended to guarantee mutual exclusion for two
+threads
+</p>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-sec-0-3">
+<h3 id="sec-0-3">mutex</h3>
+<p>
+The Art of Multiprocessor Programming, 2.3.1
+</p>
+
+<p>
+Maurice Herlihy &amp; Nir Shavit, 2012
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
+  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+
+  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
+&#9654;   <span class="org-type">int</span> i = ThreadID.get();
+    <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
+    flag[i] = <span class="org-constant">true</span>;
+    <span class="org-keyword">while</span> (flag[j]) {}
+  }
+
+  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
+    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+    flag[i] = <span class="org-constant">false</span>;
+  }
+}
+</pre>
+</div>
+
+
+<aside class="notes">
+<p>
+Here we have some example code from the art of multiproc
+programming
+</p>
+
+<p>
+It's lock that's intended to guarantee mutual exclusion for two
+threads
+</p>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-sec-0-4">
+<h3 id="sec-0-4">mutex</h3>
+<p>
+The Art of Multiprocessor Programming, 2.3.1
+</p>
+
+<p>
+Maurice Herlihy &amp; Nir Shavit, 2012
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
+  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+
+  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
+    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+&#9654;   <span class="org-type">int</span> j = i-1;
+    flag[i] = <span class="org-constant">true</span>;
+    <span class="org-keyword">while</span> (flag[j]) {}
+  }
+
+  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
+    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+    flag[i] = <span class="org-constant">false</span>;
+  }
+}
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+Here we have some example code from the art of multiproc
+programming
+</p>
+
+<p>
+It's lock that's intended to guarantee mutual exclusion for two
+threads
+</p>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-sec-0-5">
+<h3 id="sec-0-5">mutex</h3>
+<p>
+The Art of Multiprocessor Programming, 2.3.1
+</p>
+
+<p>
+Maurice Herlihy &amp; Nir Shavit, 2012
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
+  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+
+  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
+    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+    <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
+&#9654;   flag[i] = <span class="org-constant">true</span>;
+    <span class="org-keyword">while</span> (flag[j]) {}
+  }
+
+  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
+    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+    flag[i] = <span class="org-constant">false</span>;
+  }
+}
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+Here we have some example code from the art of multiproc
+programming
+</p>
+
+<p>
+It's lock that's intended to guarantee mutual exclusion for two
+threads
+</p>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-sec-0-6">
+<h3 id="sec-0-6">mutex</h3>
+<p>
+The Art of Multiprocessor Programming, 2.3.1
+</p>
+
+<p>
+Maurice Herlihy &amp; Nir Shavit, 2012
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
+  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+
+  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
+    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+    <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
+    flag[i] = <span class="org-constant">true</span>;
+&#9654;   <span class="org-keyword">while</span> (flag[j]) {}
+  }
+
+  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
+    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+    flag[i] = <span class="org-constant">false</span>;
+  }
+}
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+Here we have some example code from the art of multiproc
+programming
+</p>
+
+<p>
+It's lock that's intended to guarantee mutual exclusion for two
+threads
+</p>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-sec-0-7">
+<h3 id="sec-0-7">mutual exclusion proof</h3>
+<p>
+The Art of Multiprocessor Programming, 2.3.1
+</p>
+
+<p>
+Maurice Herlihy &amp; Nir Shavit, 2012
 </p>
 
 <div class="org-src-container">
@@ -129,8 +364,8 @@ in program order
 </section>
 </section>
 <section>
-<section id="slide-sec-0-3">
-<h3 id="sec-0-3">Bad execution</h3>
+<section id="slide-sec-0-8">
+<h3 id="sec-0-8">bad execution</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -216,8 +451,8 @@ like Java, x86, ARM, and Power
 </section>
 </section>
 <section>
-<section id="slide-sec-0-4">
-<h3 id="sec-0-4">ensuring correctness</h3>
+<section id="slide-sec-0-9">
+<h3 id="sec-0-9">ensuring correctness</h3>
 <ol>
 <li>sequential consistency</li>
 <li><code>volatile</code> modifier</li>
@@ -260,20 +495,20 @@ All of these are implementation details of a higher level concept
 </section>
 </section>
 <section>
-<section id="slide-sec-0-5">
-<h3 id="sec-0-5">execution order</h3>
+<section id="slide-sec-0-10">
+<h3 id="sec-0-10">execution order</h3>
 <blockquote nil>
 <p>
-The requirement that two instructions be seen to execute in the
-order they appear in the program.
+The requirement that two instructions appear to execute in the
+program order.
 </p>
 </blockquote>
 
 </section>
 </section>
 <section>
-<section id="slide-sec-0-6">
-<h3 id="sec-0-6">algorithms: code <b>and</b> orders</h3>
+<section id="slide-sec-0-11">
+<h3 id="sec-0-11">algorithms: code <b>and</b> orders</h3>
 <div class="org-src-container">
 
 <pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
@@ -304,9 +539,13 @@ order they appear in the program.
 <section id="slide-sec-1">
 <h2 id="sec-1">previous approaches</h2>
 <ul>
-<li>recover sequential consistency</li>
-<li>recover an arbitrary specification</li>
-<li>whole program</li>
+<li>Insert fences to&#x2026;
+<ul>
+<li>enforce sequential consistency</li>
+<li>enforce a specification</li>
+
+</ul></li>
+<li>Whole program, O(2<sup>n</sup>)</li>
 
 </ul>
 
@@ -335,15 +574,31 @@ Can be thought of as "finding the orders" necessary to ensure properties
 <section id="slide-sec-1-1">
 <h3 id="sec-1-1">our approach</h3>
 <ul>
-<li>ask the programmer for the orders</li>
-<li>per-procedure analysis</li>
+<li>Insert fences to&#x2026;
+<ul>
+<li>enforce orders</li>
+
+</ul></li>
+<li>Ask the programmer for the orders
+<ul>
+<li>Calculus for Relaxed Memory, Crary et al</li>
+
+</ul></li>
+<li>Per-procedure
+<ul>
 <li>still O(2<sup>n</sup>) but inputs are small</li>
+
+</ul></li>
 
 </ul>
 
 <aside class="notes">
 <p>
 This places our analysis at the procedure level.
+</p>
+
+<p>
+CMU paper: PLDI 2015 has semantics, we've built the tool
 </p>
 
 </aside>
@@ -368,14 +623,13 @@ what's standing in our way?
 <div class="org-src-container">
 
 <pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
-  <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+  <span class="org-type">int</span> <span class="org-variable-name">i</span> = get_thread_id();
   <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
   flag[i] = <span class="org-constant">true</span>;
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">for x86</span>
-  <span class="org-keyword">__asm__</span> (<span class="org-string">"mfence"</span>);
-  <span class="org-comment-delimiter">// </span><span class="org-comment">for arm</span>
-  <span class="org-keyword">__asm__</span> (<span class="org-string">"dmb"</span>);
+  <span class="org-comment-delimiter">// </span><span class="org-comment">one x86, one for ARMv7</span>
+&#9654; <span class="org-keyword">__asm__</span> (<span class="org-string">"mfence"</span>);
+&#9654; <span class="org-keyword">__asm__</span> (<span class="org-string">"dmb"</span>);
 
   <span class="org-keyword">while</span> (flag[j]) {} <span class="org-comment-delimiter">// </span><span class="org-comment">wait</span>
 }
@@ -399,14 +653,13 @@ defined in the proof
 <div class="org-src-container">
 
 <pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
-  <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+  <span class="org-type">int</span> <span class="org-variable-name">i</span> = get_thread_id();
   <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
   flag[i] = <span class="org-constant">true</span>;
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">either will work in this case</span>
-  <span class="org-comment-delimiter">// </span><span class="org-comment">`dmb st` is "faster"</span>
-  <span class="org-keyword">__asm__</span> (<span class="org-string">"dmb"</span>);
-  <span class="org-keyword">__asm__</span> (<span class="org-string">"dmb st"</span>);
+  <span class="org-comment-delimiter">// </span><span class="org-comment">`dmb st` may be faster</span>
+&#9654; <span class="org-keyword">__asm__</span> (<span class="org-string">"dmb"</span>);
+&#9654; <span class="org-keyword">__asm__</span> (<span class="org-string">"dmb st"</span>);
 
   <span class="org-keyword">while</span> (flag[j]) {} <span class="org-comment-delimiter">// </span><span class="org-comment">wait</span>
 }
@@ -429,11 +682,11 @@ optimizing for performance
 <div class="org-src-container">
 
 <pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
-  <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+  <span class="org-type">int</span> <span class="org-variable-name">i</span> = get_thread_id();
   <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">x86 `cmpxchg` has fence-like semantics</span>
-  CAS(flag[i], <span class="org-constant">false</span>, <span class="org-constant">true</span>);
+  <span class="org-comment-delimiter">// </span><span class="org-comment">x86 `cmpxchg`, ARMv7 ldrex/strex</span>
+&#9654; CAS(flag[i], <span class="org-constant">false</span>, <span class="org-constant">true</span>);
 
   <span class="org-keyword">while</span> (flag[j]) {} <span class="org-comment-delimiter">// </span><span class="org-comment">wait</span>
 }
@@ -455,27 +708,28 @@ semantics that we should account for (by avoiding adding more fences).
 <h3 id="sec-2-4">TL2 STM Algorithm</h3>
 <div class="org-src-container">
 
-<pre  class="src src-c++">...
+<pre  class="src src-c">  ...
 
-<span class="org-preprocessor"># if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
-<span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
-  <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
-  WriteBackForward(wr);
-}
-<span class="org-preprocessor"># endif</span>
+<span class="org-preprocessor">  # if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
+  <span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
+    <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
+&#9654;   WriteBackForward(wr);
+  }
+<span class="org-preprocessor">  # endif</span>
 
-<span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
-MEMBARSTST();
+  <span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
+  MEMBARSTST();
 
-<span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
-DropLocks(Self, wv);
+  <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
+  DropLocks(Self, wv);
 
-<span class="org-comment-delimiter">// </span><span class="org-comment">ensure later loads from above writes</span>
-MEMBARSTLD();
+  <span class="org-comment-delimiter">// </span><span class="org-comment">ensure later loads from above writes</span>
+  MEMBARSTLD();
 
-...
+  ...
 </pre>
 </div>
+
 <aside class="notes">
 <p>
 commit procedure for the tl2 software transactional memory algorithm
@@ -490,28 +744,104 @@ macros provided for implementors to define arch appropriate fences
 </section>
 <section>
 <section id="slide-sec-2-5">
-<h3 id="sec-2-5">loops</h3>
+<h3 id="sec-2-5">TL2 STM Algorithm</h3>
 <div class="org-src-container">
 
-<pre  class="src src-c">...
+<pre  class="src src-c">  ...
 
-<span class="org-preprocessor"># if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
-<span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
-  <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
-  WriteBackForward(wr);
+<span class="org-preprocessor">  # if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
+  <span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
+    <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
+    WriteBackForward(wr);
+  }
+<span class="org-preprocessor">  # endif</span>
 
   <span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
   MEMBARSTST();
-}
-<span class="org-preprocessor"># endif</span>
 
-<span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
-DropLocks(Self, wv);
+  <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
+&#9654; DropLocks(Self, wv);
 
-<span class="org-comment-delimiter">// </span><span class="org-comment">ensure later loads from above writes</span>
-MEMBARSTLD();
+  <span class="org-comment-delimiter">// </span><span class="org-comment">ensure later loads from above writes</span>
+  MEMBARSTLD();
 
-...
+  ...
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+commit procedure for the tl2 software transactional memory algorithm
+writebackforward is where the actual writes to memory take place
+droplocks releases locks for the memory addresses for other commit calls to write
+macros provided for implementors to define arch appropriate fences
+</p>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-sec-2-6">
+<h3 id="sec-2-6">TL2 STM Algorithm</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c">  ...
+
+<span class="org-preprocessor">  # if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
+  <span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
+    <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
+    WriteBackForward(wr);
+  }
+<span class="org-preprocessor">  # endif</span>
+
+  <span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
+&#9654; MEMBARSTST();
+
+  <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
+  DropLocks(Self, wv);
+
+  <span class="org-comment-delimiter">// </span><span class="org-comment">ensure later loads from above writes</span>
+&#9654; MEMBARSTLD();
+
+  ...
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+commit procedure for the tl2 software transactional memory algorithm
+writebackforward is where the actual writes to memory take place
+droplocks releases locks for the memory addresses for other commit calls to write
+macros provided for implementors to define arch appropriate fences
+</p>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-sec-2-7">
+<h3 id="sec-2-7">loops</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c">  ...
+
+<span class="org-preprocessor">  # if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
+  <span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
+    <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
+    WriteBackForward(wr);
+
+    <span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
+&#9654;   MEMBARSTST();
+  }
+<span class="org-preprocessor">  # endif</span>
+
+  <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
+  DropLocks(Self, wv);
+
+  <span class="org-comment-delimiter">// </span><span class="org-comment">ensure later loads from above writes</span>
+  MEMBARSTLD();
+
+  ...
 </pre>
 </div>
 
@@ -525,29 +855,29 @@ bad to put a fence right after writebackforward (loop)
 </section>
 </section>
 <section>
-<section id="slide-sec-2-6">
-<h3 id="sec-2-6">code transformations</h3>
+<section id="slide-sec-2-8">
+<h3 id="sec-2-8">code transformations</h3>
 <div class="org-src-container">
 
-<pre  class="src src-c">...
+<pre  class="src src-c">  ...
 
-<span class="org-preprocessor"># if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
-<span class="org-comment-delimiter">// </span><span class="org-comment">for (wr = logs; wr != end; wr++) {</span>
-<span class="org-comment-delimiter">//   </span><span class="org-comment">// write the deferred stores</span>
-<span class="org-comment-delimiter">//   </span><span class="org-comment">WriteBackForward(wr);</span>
-<span class="org-comment-delimiter">// </span><span class="org-comment">}</span>
-<span class="org-preprocessor"># endif</span>
+<span class="org-preprocessor">  # if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
+&#9654; <span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
+&#9654;   <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
+&#9654;   WriteBackForward(wr);
+&#9654; }
+<span class="org-preprocessor">  # endif</span>
 
-<span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
-MEMBARSTST();
+  <span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
+  MEMBARSTST();
 
-<span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
-DropLocks(Self, wv);
+  <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
+  DropLocks(Self, wv);
 
-<span class="org-comment-delimiter">// </span><span class="org-comment">ensure later loads from above writes</span>
-MEMBARSTLD();
+  <span class="org-comment-delimiter">// </span><span class="org-comment">ensure later loads from above writes</span>
+  MEMBARSTLD();
 
-...
+  ...
 </pre>
 </div>
 
@@ -561,29 +891,29 @@ bad to use a fence if <code>TL2_EAGER</code> is defined (will remove writebackfo
 </section>
 </section>
 <section>
-<section id="slide-sec-2-7">
-<h3 id="sec-2-7">unnecessary</h3>
+<section id="slide-sec-2-9">
+<h3 id="sec-2-9">unnecessary</h3>
 <div class="org-src-container">
 
-<pre  class="src src-c">...
+<pre  class="src src-c">  ...
 
-<span class="org-preprocessor"># if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
-<span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
-  <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
-  WriteBackForward(wr);
-}
-<span class="org-preprocessor"># endif</span>
+<span class="org-preprocessor">  # if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
+  <span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
+    <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
+    WriteBackForward(wr);
+  }
+<span class="org-preprocessor">  # endif</span>
 
-<span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
-<span class="org-comment-delimiter">// </span><span class="org-comment">MEMBARSTST();</span>
+  <span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
+&#9654; MEMBARSTST();
 
-<span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
-DropLocks(Self, wv);
+  <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
+  DropLocks(Self, wv);
 
-<span class="org-comment-delimiter">// </span><span class="org-comment">ensure later loads from above writes</span>
-MEMBARSTLD();
+  <span class="org-comment-delimiter">// </span><span class="org-comment">ensure later loads from above writes</span>
+  MEMBARSTLD();
 
-...
+  ...
 </pre>
 </div>
 
@@ -804,7 +1134,7 @@ end
 </section>
 <section>
 <section id="slide-sec-3-6">
-<h3 id="sec-3-6">place fences</h3>
+<h3 id="sec-3-6">multi-cut</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -814,10 +1144,10 @@ end
   <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
   <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
-  <span class="org-variable-name">K</span>  = Cut(G, O2)
+&#9654; <span class="org-variable-name">K</span>  = Cut(G, O2)
 
   <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
-&#9654; <span class="org-variable-name">G2</span> = Refine(G1, K)
+  <span class="org-variable-name">G2</span> = Refine(G1, K)
 
   <span class="org-keyword">return</span> G2
 end
@@ -829,7 +1159,7 @@ end
 </p>
 
 <div class="figure">
-<p><img src="assets/images/full-graph-refine.png" alt="full-graph-refine.png" />
+<p><img src="assets/images/full-graph-cut-highlight-2.png" alt="full-graph-cut-highlight-2.png" />
 </p>
 </div>
 
@@ -866,6 +1196,43 @@ end
 </p>
 
 <div class="figure">
+<p><img src="assets/images/full-graph-refine.png" alt="full-graph-refine.png" />
+</p>
+</div>
+
+<p>
+ </div>
+</p>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-3-8">
+<h3 id="sec-3-8">place fences</h3>
+<div class="org-src-container">
+
+<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
+<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
+  <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
+  <span class="org-variable-name">K</span>  = Cut(G, O2)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
+&#9654; <span class="org-variable-name">G2</span> = Refine(G1, K)
+
+  <span class="org-keyword">return</span> G2
+end
+</pre>
+</div>
+
+<p>
+ <div class="algo-graph">
+</p>
+
+<div class="figure">
 <p><img src="assets/images/full-graph-refine-apply.png" alt="full-graph-refine-apply.png" />
 </p>
 </div>
@@ -876,8 +1243,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-3-8">
-<h3 id="sec-3-8">main theorem</h3>
+<section id="slide-sec-3-9">
+<h3 id="sec-3-9">main theorem</h3>
 <p>
 \(\mathsf{Insert}(G, A, O), A \vDash O\)
 </p>
@@ -987,163 +1354,7 @@ in loops unless otherwise completely necessary
 </section>
 <section>
 <section id="slide-sec-5-3">
-<h3 id="sec-5-3">classic</h3>
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-
-<col  class="left" />
-
-<col  class="left" />
-
-<col  class="left" />
-</colgroup>
-<tbody>
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left"><b>x86</b></td>
-<td class="left"><b>ARMv7</b></td>
-</tr>
-
-<tr>
-<td class="left"><b>Dekker</b></td>
-<td class="left">8 \(\xrightarrow{st,ld}\) 9</td>
-<td class="left">8: <code>mfence</code></td>
-<td class="left">8: <code>dmb st</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">13 \(\xrightarrow{st,ld}\) 9</td>
-<td class="left">13: <code>mfence</code></td>
-<td class="left">13: <code>dmb st</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">25 \(\xrightarrow{st,ld}\) 26</td>
-<td class="left">25: <code>mfence</code></td>
-<td class="left">25: <code>dmb st</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">30 \(\xrightarrow{st,ld}\) 26</td>
-<td class="left">30: <code>mfence</code></td>
-<td class="left">30: <code>dmb st</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left"><b>Parker</b></td>
-<td class="left">44 \(\xrightarrow{st,*}\) 46</td>
-<td class="left">44: <code>mfence</code></td>
-<td class="left">44: <code>dmb st</code></td>
-</tr>
-</tbody>
-</table>
-
-<aside class="notes">
-<p>
-For the classic algorithms we fences were placed in expected locations
-</p>
-
-<p>
-Explain how to read the table.
-</p>
-
-</aside>
-
-</section>
-</section>
-<section>
-<section id="slide-sec-5-4">
-<h3 id="sec-5-4">classic</h3>
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-
-<col  class="left" />
-
-<col  class="left" />
-
-<col  class="left" />
-</colgroup>
-<tbody>
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left"><b>x86</b></td>
-<td class="left"><b>ARMv7</b></td>
-</tr>
-
-<tr>
-<td class="left"><b>Lamport</b></td>
-<td class="left">8 \(\xrightarrow{st,ld}\) 9</td>
-<td class="left">8: <code>mfence</code></td>
-<td class="left">8: <code>dmb st</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">14 \(\xrightarrow{st,ld}\) 15</td>
-<td class="left">14: <code>mfence</code></td>
-<td class="left">14: <code>dmb st</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">31 \(\xrightarrow{st,ld}\) 32</td>
-<td class="left">31: <code>mfence</code></td>
-<td class="left">31: <code>dmb st</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">37 \(\xrightarrow{st,ld}\) 38</td>
-<td class="left">37: <code>mfence</code></td>
-<td class="left">37: <code>dmb st</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left"><b>Peterson</b></td>
-<td class="left">5 \(\xrightarrow{st,ld}\) 7</td>
-<td class="left">5: <code>mfence</code></td>
-<td class="left">5: <code>dmb st</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">14 \(\xrightarrow{st,ld}\) 16</td>
-<td class="left">14: <code>mfence</code></td>
-<td class="left">14: <code>dmb st</code></td>
-</tr>
-</tbody>
-</table>
-
-</section>
-</section>
-<section>
-<section id="slide-sec-5-5">
-<h3 id="sec-5-5">tl2</h3>
+<h3 id="sec-5-3">tl2</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 

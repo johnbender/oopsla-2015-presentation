@@ -6,11 +6,13 @@
 #+REVEAL_HLEVEL: 10
 #+EXPORT_FILE_NAME: index
 #+TITLE: Declarative Fence Insertion
-#+AUTHOR:
-#+EMAIL: (johnbender|palsberg)@cs.ucla.edu, lesani@csail.mit.edu
+#+AUTHOR: John Bender, Jens Palsberg - UCLA @@html: <br/> @@ Mohsen Lesani - MIT
+#+EMAIL:
 #+OPTIONS: num:nil toc:nil reveal_history:t reveal_control:nil reveal_mathjax:t
 ** mutex
    The Art of Multiprocessor Programming, 2.3.1
+
+   Maurice Herlihy & Nir Shavit, 2012
 
    #+INCLUDE: "code/LockOne.java" src java
 
@@ -22,9 +24,161 @@
    threads
    #+END_NOTES
 
-** mutual exclusion proof
-
+** mutex
    The Art of Multiprocessor Programming, 2.3.1
+
+   Maurice Herlihy & Nir Shavit, 2012
+
+   #+BEGIN_SRC java
+class LockOne implements Lock {
+  private boolean[] flag = new boolean[2];
+                                       ▲
+  public void lock() {
+    int i = ThreadID.get();
+    int j = i-1;
+    flag[i] = true;
+    while (flag[j]) {}
+  }
+
+  public void unlock() {
+    int i = ThreadID.get();
+    flag[i] = false;
+  }
+}
+   #+END_SRC
+
+   #+BEGIN_NOTES
+   Here we have some example code from the art of multiproc
+   programming
+
+   It's lock that's intended to guarantee mutual exclusion for two
+   threads
+   #+END_NOTES
+** mutex
+   The Art of Multiprocessor Programming, 2.3.1
+
+   Maurice Herlihy & Nir Shavit, 2012
+
+   #+BEGIN_SRC java
+class LockOne implements Lock {
+  private boolean[] flag = new boolean[2];
+
+  public void lock() {
+▶   int i = ThreadID.get();
+    int j = i-1;
+    flag[i] = true;
+    while (flag[j]) {}
+  }
+
+  public void unlock() {
+    int i = ThreadID.get();
+    flag[i] = false;
+  }
+}
+   #+END_SRC
+
+
+   #+BEGIN_NOTES
+   Here we have some example code from the art of multiproc
+   programming
+
+   It's lock that's intended to guarantee mutual exclusion for two
+   threads
+   #+END_NOTES
+** mutex
+   The Art of Multiprocessor Programming, 2.3.1
+
+   Maurice Herlihy & Nir Shavit, 2012
+
+   #+BEGIN_SRC java
+class LockOne implements Lock {
+  private boolean[] flag = new boolean[2];
+
+  public void lock() {
+    int i = ThreadID.get();
+▶   int j = i-1;
+    flag[i] = true;
+    while (flag[j]) {}
+  }
+
+  public void unlock() {
+    int i = ThreadID.get();
+    flag[i] = false;
+  }
+}
+   #+END_SRC
+
+   #+BEGIN_NOTES
+   Here we have some example code from the art of multiproc
+   programming
+
+   It's lock that's intended to guarantee mutual exclusion for two
+   threads
+   #+END_NOTES
+** mutex
+   The Art of Multiprocessor Programming, 2.3.1
+
+   Maurice Herlihy & Nir Shavit, 2012
+
+   #+BEGIN_SRC java
+class LockOne implements Lock {
+  private boolean[] flag = new boolean[2];
+
+  public void lock() {
+    int i = ThreadID.get();
+    int j = i-1;
+▶   flag[i] = true;
+    while (flag[j]) {}
+  }
+
+  public void unlock() {
+    int i = ThreadID.get();
+    flag[i] = false;
+  }
+}
+   #+END_SRC
+
+   #+BEGIN_NOTES
+   Here we have some example code from the art of multiproc
+   programming
+
+   It's lock that's intended to guarantee mutual exclusion for two
+   threads
+   #+END_NOTES
+** mutex
+   The Art of Multiprocessor Programming, 2.3.1
+
+   Maurice Herlihy & Nir Shavit, 2012
+
+   #+BEGIN_SRC java
+class LockOne implements Lock {
+  private boolean[] flag = new boolean[2];
+
+  public void lock() {
+    int i = ThreadID.get();
+    int j = i-1;
+    flag[i] = true;
+▶   while (flag[j]) {}
+  }
+
+  public void unlock() {
+    int i = ThreadID.get();
+    flag[i] = false;
+  }
+}
+   #+END_SRC
+
+   #+BEGIN_NOTES
+   Here we have some example code from the art of multiproc
+   programming
+
+   It's lock that's intended to guarantee mutual exclusion for two
+   threads
+   #+END_NOTES
+** mutual exclusion proof
+   The Art of Multiprocessor Programming, 2.3.1
+
+   Maurice Herlihy & Nir Shavit, 2012
 
    #+BEGIN_SRC java
 class LockOne implements Lock {
@@ -58,7 +212,7 @@ class LockOne implements Lock {
    in program order
    #+END_NOTES
 
-** Bad execution
+** bad execution
 
    | Thread 0          | Thread 1          | Notes    |
    |-------------------+-------------------+----------|
@@ -106,8 +260,8 @@ class LockOne implements Lock {
 
 ** execution order
    #+BEGIN_QUOTE
-   The requirement that two instructions be seen to execute in the
-   order they appear in the program.
+   The requirement that two instructions appear to execute in the
+   program order.
    #+END_QUOTE
 
 ** algorithms: code *and* orders
@@ -132,9 +286,10 @@ class LockOne implements Lock {
    ${st(\mathtt{flag[i]}) \rightarrow ld(\mathtt{flag[j]})}$
 
 * previous approaches
-  - enforce sequential consistency
-  - enforce some specification
-  - whole program
+  - Insert fences to...
+    - enforce sequential consistency
+    - enforce a specification
+  - Whole program, O(2^n)
 
   #+BEGIN_NOTES
   Whole program
@@ -147,12 +302,17 @@ class LockOne implements Lock {
   Can be thought of as "finding the orders" necessary to ensure properties
   #+END_NOTES
 ** our approach
-   - ask the programmer for the orders
-   - per-procedure analysis
-   - still O(2^n) but inputs are small
+   - Insert fences to...
+     - enforce orders
+   - Ask the programmer for the orders
+     - Calculus for Relaxed Memory, Crary et al
+   - Per-procedure
+     - still O(2^n) but inputs are small
 
    #+BEGIN_NOTES
    This places our analysis at the procedure level.
+
+   CMU paper: PLDI 2015 has semantics, we've built the tool
    #+END_NOTES
 
 * Problem Subtleties
@@ -163,14 +323,13 @@ class LockOne implements Lock {
 ** cross platform
    #+BEGIN_SRC c++
    void lock() {
-     int i = ThreadID.get();
+     int i = get_thread_id();
      int j = i-1;
      flag[i] = true;
 
-     // for x86
-     __asm__ ("mfence");
-     // for arm
-     __asm__ ("dmb");
+     // one x86, one for ARMv7
+   ▶ __asm__ ("mfence");
+   ▶ __asm__ ("dmb");
 
      while (flag[j]) {} // wait
    }
@@ -185,14 +344,13 @@ class LockOne implements Lock {
 ** fence selection
    #+BEGIN_SRC c++
    void lock() {
-     int i = ThreadID.get();
+     int i = get_thread_id();
      int j = i-1;
      flag[i] = true;
 
-     // either will work in this case
-     // `dmb st` is "faster"
-     __asm__ ("dmb");
-     __asm__ ("dmb st");
+     // `dmb st` may be faster
+   ▶ __asm__ ("dmb");
+   ▶ __asm__ ("dmb st");
 
      while (flag[j]) {} // wait
    }
@@ -206,11 +364,11 @@ class LockOne implements Lock {
 ** existing fence(-likes)
    #+BEGIN_SRC c++
    void lock() {
-     int i = ThreadID.get();
+     int i = get_thread_id();
      int j = i-1;
 
-     // x86 `cmpxchg` has fence-like semantics
-     CAS(flag[i], false, true);
+     // x86 `cmpxchg`, ARMv7 ldrex/strex
+   ▶ CAS(flag[i], false, true);
 
      while (flag[j]) {} // wait
    }
@@ -222,7 +380,28 @@ class LockOne implements Lock {
    #+END_NOTES
 
 ** TL2 STM Algorithm
-   #+INCLUDE: "code/TxCommit.c" src c++
+   #+BEGIN_SRC c :results value :exports both
+  ...
+
+  # ifndef TL2_EAGER
+  for (wr = logs; wr != end; wr++) {
+    // write the deferred stores
+▶   WriteBackForward(wr);
+  }
+  # endif
+
+  // make stores visible before unlock
+  MEMBARSTST();
+
+  // release locks and increment version
+  DropLocks(Self, wv);
+
+  // ensure later loads from above writes
+  MEMBARSTLD();
+
+  ...
+   #+END_SRC
+
    #+BEGIN_NOTES
      commit procedure for the tl2 software transactional memory algorithm
      writebackforward is where the actual writes to memory take place
@@ -230,27 +409,85 @@ class LockOne implements Lock {
      macros provided for implementors to define arch appropriate fences
    #+END_NOTES
 
-** loops
-   #+BEGIN_SRC c  :results value :exports both
-...
+** TL2 STM Algorithm
+   #+BEGIN_SRC c :results value :exports both
+  ...
 
-# ifndef TL2_EAGER
-for (wr = logs; wr != end; wr++) {
-  // write the deferred stores
-  WriteBackForward(wr);
+  # ifndef TL2_EAGER
+  for (wr = logs; wr != end; wr++) {
+    // write the deferred stores
+    WriteBackForward(wr);
+  }
+  # endif
 
   // make stores visible before unlock
   MEMBARSTST();
-}
-# endif
 
-// release locks and increment version
-DropLocks(Self, wv);
+  // release locks and increment version
+▶ DropLocks(Self, wv);
 
-// ensure later loads from above writes
-MEMBARSTLD();
+  // ensure later loads from above writes
+  MEMBARSTLD();
 
-...
+  ...
+   #+END_SRC
+
+   #+BEGIN_NOTES
+     commit procedure for the tl2 software transactional memory algorithm
+     writebackforward is where the actual writes to memory take place
+     droplocks releases locks for the memory addresses for other commit calls to write
+     macros provided for implementors to define arch appropriate fences
+   #+END_NOTES
+** TL2 STM Algorithm
+   #+BEGIN_SRC c :results value :exports both
+  ...
+
+  # ifndef TL2_EAGER
+  for (wr = logs; wr != end; wr++) {
+    // write the deferred stores
+    WriteBackForward(wr);
+  }
+  # endif
+
+  // make stores visible before unlock
+▶ MEMBARSTST();
+
+  // release locks and increment version
+  DropLocks(Self, wv);
+
+  // ensure later loads from above writes
+▶ MEMBARSTLD();
+
+  ...
+   #+END_SRC
+
+   #+BEGIN_NOTES
+     commit procedure for the tl2 software transactional memory algorithm
+     writebackforward is where the actual writes to memory take place
+     droplocks releases locks for the memory addresses for other commit calls to write
+     macros provided for implementors to define arch appropriate fences
+   #+END_NOTES
+** loops
+   #+BEGIN_SRC c  :results value :exports both
+  ...
+
+  # ifndef TL2_EAGER
+  for (wr = logs; wr != end; wr++) {
+    // write the deferred stores
+    WriteBackForward(wr);
+
+    // make stores visible before unlock
+▶   MEMBARSTST();
+  }
+  # endif
+
+  // release locks and increment version
+  DropLocks(Self, wv);
+
+  // ensure later loads from above writes
+  MEMBARSTLD();
+
+  ...
    #+END_SRC
 
    #+BEGIN_NOTES
@@ -258,26 +495,26 @@ MEMBARSTLD();
    #+END_NOTES
 
 ** code transformations
-   #+BEGIN_SRC c :results value :exports both
-...
+     #+BEGIN_SRC c :results value :exports both
+  ...
 
-# ifndef TL2_EAGER
-// for (wr = logs; wr != end; wr++) {
-//   // write the deferred stores
-//   WriteBackForward(wr);
-// }
-# endif
+  # ifndef TL2_EAGER
+▶ for (wr = logs; wr != end; wr++) {
+▶   // write the deferred stores
+▶   WriteBackForward(wr);
+▶ }
+  # endif
 
-// make stores visible before unlock
-MEMBARSTST();
+  // make stores visible before unlock
+  MEMBARSTST();
 
-// release locks and increment version
-DropLocks(Self, wv);
+  // release locks and increment version
+  DropLocks(Self, wv);
 
-// ensure later loads from above writes
-MEMBARSTLD();
+  // ensure later loads from above writes
+  MEMBARSTLD();
 
-...
+  ...
    #+END_SRC
 
    #+BEGIN_NOTES
@@ -286,25 +523,25 @@ MEMBARSTLD();
 
 ** unnecessary
    #+BEGIN_SRC c :results value :exports both
-...
+  ...
 
-# ifndef TL2_EAGER
-for (wr = logs; wr != end; wr++) {
-  // write the deferred stores
-  WriteBackForward(wr);
-}
-# endif
+  # ifndef TL2_EAGER
+  for (wr = logs; wr != end; wr++) {
+    // write the deferred stores
+    WriteBackForward(wr);
+  }
+  # endif
 
-// make stores visible before unlock
-// MEMBARSTST();
+  // make stores visible before unlock
+▶ MEMBARSTST();
 
-// release locks and increment version
-DropLocks(Self, wv);
+  // release locks and increment version
+  DropLocks(Self, wv);
 
-// ensure later loads from above writes
-MEMBARSTLD();
+  // ensure later loads from above writes
+  MEMBARSTLD();
 
-...
+  ...
    #+END_SRC
 
    #+BEGIN_NOTES
@@ -504,10 +741,6 @@ digraph a {
  6 -> 8 [color="gray"]
 }
    #+END_SRC
-   # @@html: <div class="algo-arch-rules">@@
-   # ${\mathsf{ld}(x) \rightarrow \mathsf{st}(y)}$
-   # @@html: </div>@@
-
    @@html: </div>@@
 
 ** multi-cut
@@ -563,6 +796,62 @@ digraph a {
  6 -> 8 [color="gray"]
 }
    #+END_SRC
+
+   @@html: </div>@@
+
+** multi-cut
+   #+BEGIN_SRC python
+   # Insert : CFG x Arch x Orders -> CFG
+   def Insert(G1, A, O1):
+
+     # Elim : CFG x Arch x Orders -> Orders
+     O2 = O1 \ Elim(G, A, O1)
+
+     # Cut : CFG x Orders -> CutSet
+   ▶ K  = Cut(G, O2)
+
+     # Refine : CFG x CutSet -> CFG
+     G2 = Refine(G1, K)
+
+     return G2
+   end
+   #+END_SRC
+
+   @@html: <div class="algo-graph">@@
+   #+BEGIN_SRC dot :file assets/images/full-graph-cut-highlight.png :exports results
+digraph a {
+ splines=line
+ node [shape = circle];
+ 1 [label="ld(w)"]
+ 2 [label="st(x)"]
+ 3 [label="st(w)"]
+ 4 [label="ld(z)"]
+
+ 1 -> 2
+ 2 -> 3
+ 3 -> 4
+
+ node[shape=circle]
+
+ 9 [label="st(x)", color="red"]
+ 10 [label="st(w)", color="red"]
+
+ 6 [label="st(x)", color="red"]
+ 8 [label="ld(z)", color="red"]
+
+ node[shape=point style=invis]
+ splines=line
+ n -> 6 [style=invis]
+ 6 -> o [style=invis]
+ o -> 8 [style=invis]
+ p -> 9 [style=invis]
+
+
+ 9 -> 10 [color="red"]
+
+ 6 -> 8 [color="red"]
+}
+   #+END_SRC
    # @@html: <div class="algo-arch-rules">@@
    # ${\mathsf{ld}(x) \rightarrow \mathsf{st}(y)}$
    # @@html: </div>@@
@@ -588,7 +877,7 @@ digraph a {
    #+END_SRC
 
    @@html: <div class="algo-graph">@@
-   #+BEGIN_SRC dot :file assets/images/full-graph-cut-highlight.png :exports results
+   #+BEGIN_SRC dot :file assets/images/full-graph-cut-highlight-2.png :exports results
 digraph a {
  splines=line
  node [shape = circle];
