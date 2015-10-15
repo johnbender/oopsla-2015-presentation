@@ -595,7 +595,7 @@ like Java, x86, ARM, and Power
 </section>
 <section>
 <section id="slide-sec-0-12">
-<h3 id="sec-0-12">ensuring correctness</h3>
+<h3 id="sec-0-12">traditional solutions</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -767,7 +767,7 @@ Can be thought of as "finding the orders" necessary to ensure properties
 <ul>
 <li>Ask the programmer for the orders
 <ul>
-<li>Calculus for Relaxed Memory, Crary et al</li>
+<li>A Calculus for Relaxed Memory, Crary et al</li>
 
 </ul></li>
 <li>Insert fences to enforce orders</li>
@@ -794,7 +794,7 @@ CMU paper: PLDI 2015 has semantics, we've built the tool
 </section>
 <section>
 <section id="slide-sec-1">
-<h2 id="sec-1">Problem Subtleties</h2>
+<h2 id="sec-1">Fence Insertion Subtleties</h2>
 <aside class="notes">
 <p>
 We have an idea of what we think algorithms should look like,
@@ -1121,7 +1121,163 @@ by the architecture. <b>optimization</b>
 </section>
 <section>
 <section id="slide-sec-2-2">
-<h3 id="sec-2-2">order elimination</h3>
+<h3 id="sec-2-2">three steps</h3>
+<div class="org-src-container">
+
+<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
+<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+            &#9650;
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
+  <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
+  <span class="org-variable-name">K</span>  = Cut(G, O2)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
+  <span class="org-variable-name">G2</span> = Refine(G1, K)
+
+  <span class="org-keyword">return</span> G2
+end
+</pre>
+</div>
+
+<p>
+ <div class="algo-graph">
+</p>
+
+<div class="figure">
+<p><img src="assets/images/full-graph-fst-input.png" alt="full-graph-fst-input.png" />
+</p>
+</div>
+
+<p>
+ </div>
+</p>
+
+<aside class="notes">
+<ol class="org-ol">
+<li>We eliminate orders which are enforced on the target
+architecture, e.g. a store -&gt; store order on x86 is enforced
+by the architecture. <b>optimization</b>
+</li>
+
+<li>We find a multicut for the remaining orders and the control flow graph G
+</li>
+
+<li>We use the cut to insert fences on the cut set edges
+</li>
+</ol>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-sec-2-3">
+<h3 id="sec-2-3">three steps</h3>
+<div class="org-src-container">
+
+<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
+<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+               &#9650;
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
+  <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
+  <span class="org-variable-name">K</span>  = Cut(G, O2)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
+  <span class="org-variable-name">G2</span> = Refine(G1, K)
+
+  <span class="org-keyword">return</span> G2
+end
+</pre>
+</div>
+
+<p>
+ <div class="algo-graph">
+</p>
+
+<div class="figure">
+<p><img src="assets/images/full-graph.png" alt="full-graph.png" />
+</p>
+</div>
+
+<p>
+ </div>
+</p>
+
+<aside class="notes">
+<ol class="org-ol">
+<li>We eliminate orders which are enforced on the target
+architecture, e.g. a store -&gt; store order on x86 is enforced
+by the architecture. <b>optimization</b>
+</li>
+
+<li>We find a multicut for the remaining orders and the control flow graph G
+</li>
+
+<li>We use the cut to insert fences on the cut set edges
+</li>
+</ol>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-sec-2-4">
+<h3 id="sec-2-4">three steps</h3>
+<div class="org-src-container">
+
+<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
+<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+                   &#9650;
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
+  <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
+  <span class="org-variable-name">K</span>  = Cut(G, O2)
+
+  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
+  <span class="org-variable-name">G2</span> = Refine(G1, K)
+
+  <span class="org-keyword">return</span> G2
+end
+</pre>
+</div>
+
+<p>
+ <div class="algo-graph">
+</p>
+
+<div class="figure">
+<p><img src="assets/images/full-graph-third-input.png" alt="full-graph-third-input.png" />
+</p>
+</div>
+
+<p>
+ </div>
+</p>
+
+<aside class="notes">
+<ol class="org-ol">
+<li>We eliminate orders which are enforced on the target
+architecture, e.g. a store -&gt; store order on x86 is enforced
+by the architecture. <b>optimization</b>
+</li>
+
+<li>We find a multicut for the remaining orders and the control flow graph G
+</li>
+
+<li>We use the cut to insert fences on the cut set edges
+</li>
+</ol>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-sec-2-5">
+<h3 id="sec-2-5">order elimination</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -1157,8 +1313,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-3">
-<h3 id="sec-2-3">order elimination</h3>
+<section id="slide-sec-2-6">
+<h3 id="sec-2-6">order elimination</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -1194,8 +1350,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-4">
-<h3 id="sec-2-4">multi-cut</h3>
+<section id="slide-sec-2-7">
+<h3 id="sec-2-7">multi-cut</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -1231,8 +1387,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-5">
-<h3 id="sec-2-5">multi-cut</h3>
+<section id="slide-sec-2-8">
+<h3 id="sec-2-8">multi-cut</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -1268,8 +1424,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-6">
-<h3 id="sec-2-6">multi-cut</h3>
+<section id="slide-sec-2-9">
+<h3 id="sec-2-9">multi-cut</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -1305,8 +1461,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-7">
-<h3 id="sec-2-7">fence placement</h3>
+<section id="slide-sec-2-10">
+<h3 id="sec-2-10">fence placement</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -1342,8 +1498,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-8">
-<h3 id="sec-2-8">fence placement</h3>
+<section id="slide-sec-2-11">
+<h3 id="sec-2-11">fence placement</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -1378,8 +1534,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-9">
-<h3 id="sec-2-9">main theorem</h3>
+<section id="slide-sec-2-12">
+<h3 id="sec-2-12">main theorem</h3>
 <p>
 \(\mathsf{Insert}(G, A, O), A \vDash O\)
 </p>

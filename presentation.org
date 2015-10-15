@@ -265,7 +265,7 @@ class LockOne implements Lock {
    like Java, x86, ARM, and Power
    #+END_NOTES
 
-** ensuring correctness
+** traditional solutions
    | solutions              | lost semantics | overkill | error prone |
    |------------------------+----------------+----------+-------------|
    | sequential consistency | ✓              | ✓        |             |
@@ -340,7 +340,7 @@ class LockOne implements Lock {
    #+END_NOTES
 ** our approach
    - Ask the programmer for the orders
-     - Calculus for Relaxed Memory, Crary et al
+     - A Calculus for Relaxed Memory, Crary et al
    - Insert fences to enforce orders
    - Per-procedure
      - still O(2^n) but inputs are small
@@ -351,7 +351,7 @@ class LockOne implements Lock {
    CMU paper: PLDI 2015 has semantics, we've built the tool
    #+END_NOTES
 
-* Problem Subtleties
+* Fence Insertion Subtleties
   #+BEGIN_NOTES
   We have an idea of what we think algorithms should look like,
   what's standing in our way?
@@ -616,6 +616,236 @@ digraph a {
      3. We use the cut to insert fences on the cut set edges
    #+END_NOTES
 
+** three steps
+   #+BEGIN_SRC python
+   # Insert : CFG x Arch x Orders -> CFG
+   def Insert(G1, A, O1):
+               ▲
+     # Elim : CFG x Arch x Orders -> Orders
+     O2 = O1 \ Elim(G, A, O1)
+
+     # Cut : CFG x Orders -> CutSet
+     K  = Cut(G, O2)
+
+     # Refine : CFG x CutSet -> CFG
+     G2 = Refine(G1, K)
+
+     return G2
+   end
+   #+END_SRC
+
+   @@html: <div class="algo-graph">@@
+   #+BEGIN_SRC dot :file assets/images/full-graph-fst-input.png :exports results
+digraph a {
+ splines=line
+ node [shape = circle];
+ 1 [label="ld(w)", color="red"]
+ 2 [label="st(x)", color="red"]
+ 3 [label="st(w)", color="red"]
+ 4 [label="ld(z)", color="red"]
+
+ 1 -> 2 [color="red"]
+ 2 -> 3 [color="red"]
+ 3 -> 4 [color="red"]
+
+ node[shape=circle]
+ 5 [label="ld(w)", color="gray"]
+ 7 [label="st(w)", color="gray"]
+
+ 9 [label="st(x)", color="gray"]
+ 10 [label="st(w)", color="gray"]
+
+ 6 [label="st(x)", color="gray"]
+ 8 [label="ld(z)", color="gray"]
+
+ node[shape=point style=invis]
+ splines=line
+ 5 -> m [style=invis]
+ m -> 7 [style=invis]
+ n -> 6 [style=invis]
+ 6 -> o [style=invis]
+ o -> 8 [style=invis]
+ p -> 9 [style=invis]
+
+
+ 5 -> 7 [color="gray"]
+
+ 9 -> 10 [color="gray"]
+
+ 6 -> 8 [color="gray"]
+}
+   #+END_SRC
+
+   #+RESULTS:
+   [[file:assets/images/full-graph-fst-input.png]]
+
+   # @@html: <div class="algo-arch-rules">@@
+   # ${\mathsf{ld}(x) \rightarrow \mathsf{st}(y)}$
+   # @@html: </div>@@
+
+   @@html: </div>@@
+
+   #+BEGIN_NOTES
+     1. We eliminate orders which are enforced on the target
+        architecture, e.g. a store -> store order on x86 is enforced
+        by the architecture. *optimization*
+
+     2. We find a multicut for the remaining orders and the control flow graph G
+
+     3. We use the cut to insert fences on the cut set edges
+   #+END_NOTES
+** three steps
+   #+BEGIN_SRC python
+   # Insert : CFG x Arch x Orders -> CFG
+   def Insert(G1, A, O1):
+                  ▲
+     # Elim : CFG x Arch x Orders -> Orders
+     O2 = O1 \ Elim(G, A, O1)
+
+     # Cut : CFG x Orders -> CutSet
+     K  = Cut(G, O2)
+
+     # Refine : CFG x CutSet -> CFG
+     G2 = Refine(G1, K)
+
+     return G2
+   end
+   #+END_SRC
+
+   @@html: <div class="algo-graph">@@
+   #+BEGIN_SRC dot :file assets/images/full-graph.png :exports results
+digraph a {
+ splines=line
+ node [shape = circle];
+ 1 [label="ld(w)"]
+ 2 [label="st(x)"]
+ 3 [label="st(w)"]
+ 4 [label="ld(z)"]
+
+ 1 -> 2
+ 2 -> 3
+ 3 -> 4
+
+ node[shape=circle]
+ 5 [label="ld(w)", color="gray"]
+ 7 [label="st(w)", color="gray"]
+
+ 9 [label="st(x)", color="gray"]
+ 10 [label="st(w)", color="gray"]
+
+ 6 [label="st(x)", color="gray"]
+ 8 [label="ld(z)", color="gray"]
+
+ node[shape=point style=invis]
+ splines=line
+ 5 -> m [style=invis]
+ m -> 7 [style=invis]
+ n -> 6 [style=invis]
+ 6 -> o [style=invis]
+ o -> 8 [style=invis]
+ p -> 9 [style=invis]
+
+
+ 5 -> 7 [color="gray"]
+
+ 9 -> 10 [color="gray"]
+
+ 6 -> 8 [color="gray"]
+}
+   #+END_SRC
+   # @@html: <div class="algo-arch-rules">@@
+   # ${\mathsf{ld}(x) \rightarrow \mathsf{st}(y)}$
+   # @@html: </div>@@
+
+   @@html: </div>@@
+
+   #+BEGIN_NOTES
+     1. We eliminate orders which are enforced on the target
+        architecture, e.g. a store -> store order on x86 is enforced
+        by the architecture. *optimization*
+
+     2. We find a multicut for the remaining orders and the control flow graph G
+
+     3. We use the cut to insert fences on the cut set edges
+   #+END_NOTES
+** three steps
+   #+BEGIN_SRC python
+   # Insert : CFG x Arch x Orders -> CFG
+   def Insert(G1, A, O1):
+                      ▲
+     # Elim : CFG x Arch x Orders -> Orders
+     O2 = O1 \ Elim(G, A, O1)
+
+     # Cut : CFG x Orders -> CutSet
+     K  = Cut(G, O2)
+
+     # Refine : CFG x CutSet -> CFG
+     G2 = Refine(G1, K)
+
+     return G2
+   end
+   #+END_SRC
+
+   @@html: <div class="algo-graph">@@
+   #+BEGIN_SRC dot :file assets/images/full-graph-third-input.png :exports results
+digraph a {
+ splines=line
+ node [shape = circle];
+ 1 [label="ld(w)"]
+ 2 [label="st(x)"]
+ 3 [label="st(w)"]
+ 4 [label="ld(z)"]
+
+ 1 -> 2
+ 2 -> 3
+ 3 -> 4
+
+ node[shape=circle]
+ 5 [label="ld(w)", color="red"]
+ 7 [label="st(w)", color="red"]
+
+ 9 [label="st(x)", color="red"]
+ 10 [label="st(w)", color="red"]
+
+ 6 [label="st(x)", color="red"]
+ 8 [label="ld(z)", color="red"]
+
+ node[shape=point style=invis]
+ splines=line
+ 5 -> m [style=invis]
+ m -> 7 [style=invis]
+ n -> 6 [style=invis]
+ 6 -> o [style=invis]
+ o -> 8 [style=invis]
+ p -> 9 [style=invis]
+
+
+ 5 -> 7 [color="red"]
+
+ 9 -> 10 [color="red"]
+
+ 6 -> 8 [color="red"]
+}
+   #+END_SRC
+
+   #+RESULTS:
+   [[file:assets/images/full-graph-third-input.png]]
+
+   # @@html: <div class="algo-arch-rules">@@
+   # ${\mathsf{ld}(x) \rightarrow \mathsf{st}(y)}$
+   # @@html: </div>@@
+
+   @@html: </div>@@
+
+   #+BEGIN_NOTES
+     1. We eliminate orders which are enforced on the target
+        architecture, e.g. a store -> store order on x86 is enforced
+        by the architecture. *optimization*
+
+     2. We find a multicut for the remaining orders and the control flow graph G
+
+     3. We use the cut to insert fences on the cut set edges
+   #+END_NOTES
 ** order elimination
    #+BEGIN_SRC python
    # Insert : CFG x Arch x Orders -> CFG
