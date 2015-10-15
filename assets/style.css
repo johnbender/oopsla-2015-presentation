@@ -198,6 +198,14 @@ table {
   width: 900px;
 }
 
+
+#slide-sec-0-8 table,
+#slide-sec-0-9 table,
+#slide-sec-0-10 table,
+#slide-sec-0-11 table {
+  width: 500px;
+}
+
 #slide-sec-0-1 p:nth-child(2),
 #slide-sec-0-2 p:nth-child(2),
 #slide-sec-0-3 p:nth-child(2),

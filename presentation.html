@@ -35,7 +35,7 @@
 </section>
 <section>
 <section id="slide-sec-0-1">
-<h3 id="sec-0-1">mutex</h3>
+<h3 id="sec-0-1"><code>LockOne</code> mutex</h3>
 <p>
 The Art of Multiprocessor Programming, 2.3.1
 </p>
@@ -81,7 +81,7 @@ threads
 </section>
 <section>
 <section id="slide-sec-0-2">
-<h3 id="sec-0-2">mutex</h3>
+<h3 id="sec-0-2"><code>LockOne</code> mutex</h3>
 <p>
 The Art of Multiprocessor Programming, 2.3.1
 </p>
@@ -126,7 +126,7 @@ threads
 </section>
 <section>
 <section id="slide-sec-0-3">
-<h3 id="sec-0-3">mutex</h3>
+<h3 id="sec-0-3"><code>LockOne</code> mutex</h3>
 <p>
 The Art of Multiprocessor Programming, 2.3.1
 </p>
@@ -172,7 +172,7 @@ threads
 </section>
 <section>
 <section id="slide-sec-0-4">
-<h3 id="sec-0-4">mutex</h3>
+<h3 id="sec-0-4"><code>LockOne</code> mutex</h3>
 <p>
 The Art of Multiprocessor Programming, 2.3.1
 </p>
@@ -217,7 +217,7 @@ threads
 </section>
 <section>
 <section id="slide-sec-0-5">
-<h3 id="sec-0-5">mutex</h3>
+<h3 id="sec-0-5"><code>LockOne</code> mutex</h3>
 <p>
 The Art of Multiprocessor Programming, 2.3.1
 </p>
@@ -262,7 +262,7 @@ threads
 </section>
 <section>
 <section id="slide-sec-0-6">
-<h3 id="sec-0-6">mutex</h3>
+<h3 id="sec-0-6"><code>LockOne</code> mutex</h3>
 <p>
 The Art of Multiprocessor Programming, 2.3.1
 </p>
@@ -307,7 +307,7 @@ threads
 </section>
 <section>
 <section id="slide-sec-0-7">
-<h3 id="sec-0-7">mutual exclusion proof</h3>
+<h3 id="sec-0-7"><code>LockOne</code> mutex</h3>
 <p>
 The Art of Multiprocessor Programming, 2.3.1
 </p>
@@ -365,13 +365,11 @@ in program order
 </section>
 <section>
 <section id="slide-sec-0-8">
-<h3 id="sec-0-8">bad execution</h3>
+<h3 id="sec-0-8">good execution</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
-<col  class="left" />
-
 <col  class="left" />
 
 <col  class="left" />
@@ -380,52 +378,197 @@ in program order
 <tr>
 <th scope="col" class="left">Thread 0</th>
 <th scope="col" class="left">Thread 1</th>
-<th scope="col" class="left">Notes</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="left"><code>flag[0] = true</code></td>
 <td class="left">&#xa0;</td>
-<td class="left">buffered</td>
 </tr>
 
 <tr>
 <td class="left"><code>flag[1] : false</code></td>
-<td class="left">&#xa0;</td>
 <td class="left">&#xa0;</td>
 </tr>
 
 <tr>
 <td class="left">&#xa0;</td>
 <td class="left"><code>flag[1] = true</code></td>
+</tr>
+
+<tr>
 <td class="left">&#xa0;</td>
+<td class="left"><code>flag[0] : true</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">spin</td>
+</tr>
+
+<tr>
+<td class="left">enter</td>
+<td class="left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-0-9">
+<h3 id="sec-0-9">bad execution</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">Thread 0</th>
+<th scope="col" class="left">Thread 1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left"><span class="hlght"> <code>flag[0] = true</code> </span></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left"><code>flag[1] : false</code></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><code>flag[1] = true</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><code>flag[0] : true</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">spin</td>
+</tr>
+
+<tr>
+<td class="left">enter</td>
+<td class="left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-0-10">
+<h3 id="sec-0-10">bad execution</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">Thread 0</th>
+<th scope="col" class="left">Thread 1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left"><code>flag[1] : false</code></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><code>flag[1] = true</code></td>
 </tr>
 
 <tr>
 <td class="left">&#xa0;</td>
 <td class="left"><code>flag[0] : false</code></td>
-<td class="left">bad!</td>
 </tr>
 
 <tr>
 <td class="left">&#xa0;</td>
-<td class="left">enter cs</td>
+<td class="left">enter</td>
+</tr>
+
+<tr>
+<td class="left"><span class="hlght">  <code>flag[0] = true</code> </span></td>
 <td class="left">&#xa0;</td>
 </tr>
 
 <tr>
-<td class="left">enter cs</td>
+<td class="left">enter</td>
 <td class="left">&#xa0;</td>
-<td class="left">bad!</td>
 </tr>
 </tbody>
 </table>
 
-<p>
-Possible under Java, x86, ARM, and Power
-</p>
 
+</section>
+</section>
+<section>
+<section id="slide-sec-0-11">
+<h3 id="sec-0-11">bad execution</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">Thread 0</th>
+<th scope="col" class="left">Thread 1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left"><code>flag[1] : false</code></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><code>flag[1] = true</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><code>flag[0] : false</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><span class="hlght">  enter </span></td>
+</tr>
+
+<tr>
+<td class="left"><code>flag[0] = true</code></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left"><span class="hlght">  enter </span></td>
+<td class="left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
 <aside class="notes">
 <p>
 For example if the write to flag<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup> in thread 0 is buffered, thread
@@ -451,14 +594,51 @@ like Java, x86, ARM, and Power
 </section>
 </section>
 <section>
-<section id="slide-sec-0-9">
-<h3 id="sec-0-9">ensuring correctness</h3>
-<ol>
-<li>sequential consistency</li>
-<li><code>volatile</code> modifier</li>
-<li>memory fences</li>
+<section id="slide-sec-0-12">
+<h3 id="sec-0-12">ensuring correctness</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
-</ol>
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">solutions</th>
+<th scope="col" class="left">lost semantics</th>
+<th scope="col" class="left">overkill</th>
+<th scope="col" class="left">error prone</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">sequential consistency</td>
+<td class="left">✓</td>
+<td class="left">✓</td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left"><code>volatile</code> modifier</td>
+<td class="left">✓</td>
+<td class="left">✓</td>
+<td class="left">✓</td>
+</tr>
+
+<tr>
+<td class="left">memory fences</td>
+<td class="left">✓</td>
+<td class="left">&#xa0;</td>
+<td class="left">✓</td>
+</tr>
+</tbody>
+</table>
 
 <blockquote nil>
 <p>
@@ -495,20 +675,19 @@ All of these are implementation details of a higher level concept
 </section>
 </section>
 <section>
-<section id="slide-sec-0-10">
-<h3 id="sec-0-10">execution order</h3>
+<section id="slide-sec-0-13">
+<h3 id="sec-0-13">execution order:</h3>
 <blockquote nil>
 <p>
-The requirement that two instructions appear to execute in the
-program order.
+The requirement that two instructions appear to execute in program order.
 </p>
 </blockquote>
 
 </section>
 </section>
 <section>
-<section id="slide-sec-0-11">
-<h3 id="sec-0-11">algorithms: code <b>and</b> orders</h3>
+<section id="slide-sec-0-14">
+<h3 id="sec-0-14">algorithms: code <b>and</b> orders</h3>
 <div class="org-src-container">
 
 <pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
@@ -530,14 +709,26 @@ program order.
 </div>
 
 <p>
-\({st(\mathtt{flag[i]}) \rightarrow ld(\mathtt{flag[j]})}\)
+order: \({st(\mathtt{flag[i]}) \rightarrow ld(\mathtt{flag[j]})}\)
 </p>
 
 </section>
 </section>
 <section>
-<section id="slide-sec-1">
-<h2 id="sec-1">previous approaches</h2>
+<section id="slide-sec-0-15">
+<h3 id="sec-0-15">Enforcing Orders</h3>
+<p>
+How do we help implementers use orders?
+</p>
+
+<p>
+Fence insertion!
+</p>
+</section>
+</section>
+<section>
+<section id="slide-sec-0-16">
+<h3 id="sec-0-16">previous approaches</h3>
 <ul>
 <li>Insert fences to&#x2026;
 <ul>
@@ -571,19 +762,15 @@ Can be thought of as "finding the orders" necessary to ensure properties
 </section>
 </section>
 <section>
-<section id="slide-sec-1-1">
-<h3 id="sec-1-1">our approach</h3>
+<section id="slide-sec-0-17">
+<h3 id="sec-0-17">our approach</h3>
 <ul>
-<li>Insert fences to&#x2026;
-<ul>
-<li>enforce orders</li>
-
-</ul></li>
 <li>Ask the programmer for the orders
 <ul>
 <li>Calculus for Relaxed Memory, Crary et al</li>
 
 </ul></li>
+<li>Insert fences to enforce orders</li>
 <li>Per-procedure
 <ul>
 <li>still O(2<sup>n</sup>) but inputs are small</li>
@@ -606,8 +793,8 @@ CMU paper: PLDI 2015 has semantics, we've built the tool
 </section>
 </section>
 <section>
-<section id="slide-sec-2">
-<h2 id="sec-2">Problem Subtleties</h2>
+<section id="slide-sec-1">
+<h2 id="sec-1">Problem Subtleties</h2>
 <aside class="notes">
 <p>
 We have an idea of what we think algorithms should look like,
@@ -618,8 +805,8 @@ what's standing in our way?
 </section>
 </section>
 <section>
-<section id="slide-sec-2-1">
-<h3 id="sec-2-1">cross platform</h3>
+<section id="slide-sec-1-1">
+<h3 id="sec-1-1">many platforms</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
@@ -627,11 +814,10 @@ what's standing in our way?
   <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
   flag[i] = <span class="org-constant">true</span>;
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">one x86, one for ARMv7</span>
-&#9654; <span class="org-keyword">__asm__</span> (<span class="org-string">"mfence"</span>);
-&#9654; <span class="org-keyword">__asm__</span> (<span class="org-string">"dmb"</span>);
+&#9654; <span class="org-keyword">__asm__</span> (<span class="org-string">"mfence"</span>); <span class="org-comment-delimiter">// </span><span class="org-comment">x86</span>
+&#9654; <span class="org-keyword">__asm__</span> (<span class="org-string">"dmb"</span>);    <span class="org-comment-delimiter">// </span><span class="org-comment">ARMv7</span>
 
-  <span class="org-keyword">while</span> (flag[j]) {} <span class="org-comment-delimiter">// </span><span class="org-comment">wait</span>
+  <span class="org-keyword">while</span> (flag[j]) {}
 }
 </pre>
 </div>
@@ -648,8 +834,8 @@ defined in the proof
 </section>
 </section>
 <section>
-<section id="slide-sec-2-2">
-<h3 id="sec-2-2">fence selection</h3>
+<section id="slide-sec-1-2">
+<h3 id="sec-1-2">fence selection</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
@@ -657,11 +843,10 @@ defined in the proof
   <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
   flag[i] = <span class="org-constant">true</span>;
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">`dmb st` may be faster</span>
 &#9654; <span class="org-keyword">__asm__</span> (<span class="org-string">"dmb"</span>);
-&#9654; <span class="org-keyword">__asm__</span> (<span class="org-string">"dmb st"</span>);
+&#9654; <span class="org-keyword">__asm__</span> (<span class="org-string">"dmb st"</span>); <span class="org-comment-delimiter">// </span><span class="org-comment">may be faster</span>
 
-  <span class="org-keyword">while</span> (flag[j]) {} <span class="org-comment-delimiter">// </span><span class="org-comment">wait</span>
+  <span class="org-keyword">while</span> (flag[j]) {}
 }
 </pre>
 </div>
@@ -677,18 +862,19 @@ optimizing for performance
 </section>
 </section>
 <section>
-<section id="slide-sec-2-3">
-<h3 id="sec-2-3">existing fence(-likes)</h3>
+<section id="slide-sec-1-3">
+<h3 id="sec-1-3">existing fence(-likes)</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
   <span class="org-type">int</span> <span class="org-variable-name">i</span> = get_thread_id();
   <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">x86 `cmpxchg`, ARMv7 ldrex/strex</span>
+  <span class="org-comment-delimiter">// </span><span class="org-comment">x86:   cmpxchg</span>
+  <span class="org-comment-delimiter">// </span><span class="org-comment">ARMv7: ldrex/strex</span>
 &#9654; CAS(flag[i], <span class="org-constant">false</span>, <span class="org-constant">true</span>);
 
-  <span class="org-keyword">while</span> (flag[j]) {} <span class="org-comment-delimiter">// </span><span class="org-comment">wait</span>
+  <span class="org-keyword">while</span> (flag[j]) {}
 }
 </pre>
 </div>
@@ -704,8 +890,8 @@ semantics that we should account for (by avoiding adding more fences).
 </section>
 </section>
 <section>
-<section id="slide-sec-2-4">
-<h3 id="sec-2-4">TL2 STM Algorithm</h3>
+<section id="slide-sec-1-4">
+<h3 id="sec-1-4">TL2 STM Algorithm</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c">  ...
@@ -722,9 +908,6 @@ semantics that we should account for (by avoiding adding more fences).
 
   <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
   DropLocks(Self, wv);
-
-  <span class="org-comment-delimiter">// </span><span class="org-comment">ensure later loads from above writes</span>
-  MEMBARSTLD();
 
   ...
 </pre>
@@ -743,8 +926,8 @@ macros provided for implementors to define arch appropriate fences
 </section>
 </section>
 <section>
-<section id="slide-sec-2-5">
-<h3 id="sec-2-5">TL2 STM Algorithm</h3>
+<section id="slide-sec-1-5">
+<h3 id="sec-1-5">TL2 STM Algorithm</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c">  ...
@@ -762,9 +945,6 @@ macros provided for implementors to define arch appropriate fences
   <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
 &#9654; DropLocks(Self, wv);
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">ensure later loads from above writes</span>
-  MEMBARSTLD();
-
   ...
 </pre>
 </div>
@@ -781,8 +961,8 @@ macros provided for implementors to define arch appropriate fences
 </section>
 </section>
 <section>
-<section id="slide-sec-2-6">
-<h3 id="sec-2-6">TL2 STM Algorithm</h3>
+<section id="slide-sec-1-6">
+<h3 id="sec-1-6">TL2 STM Algorithm</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c">  ...
@@ -800,9 +980,6 @@ macros provided for implementors to define arch appropriate fences
   <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
   DropLocks(Self, wv);
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">ensure later loads from above writes</span>
-&#9654; MEMBARSTLD();
-
   ...
 </pre>
 </div>
@@ -819,44 +996,8 @@ macros provided for implementors to define arch appropriate fences
 </section>
 </section>
 <section>
-<section id="slide-sec-2-7">
-<h3 id="sec-2-7">loops</h3>
-<div class="org-src-container">
-
-<pre  class="src src-c">  ...
-
-<span class="org-preprocessor">  # if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
-  <span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
-    <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
-    WriteBackForward(wr);
-
-    <span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
-&#9654;   MEMBARSTST();
-  }
-<span class="org-preprocessor">  # endif</span>
-
-  <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
-  DropLocks(Self, wv);
-
-  <span class="org-comment-delimiter">// </span><span class="org-comment">ensure later loads from above writes</span>
-  MEMBARSTLD();
-
-  ...
-</pre>
-</div>
-
-<aside class="notes">
-<p>
-bad to put a fence right after writebackforward (loop)
-</p>
-
-</aside>
-
-</section>
-</section>
-<section>
-<section id="slide-sec-2-8">
-<h3 id="sec-2-8">code transformations</h3>
+<section id="slide-sec-1-7">
+<h3 id="sec-1-7">code transformations</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c">  ...
@@ -874,9 +1015,6 @@ bad to put a fence right after writebackforward (loop)
   <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
   DropLocks(Self, wv);
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">ensure later loads from above writes</span>
-  MEMBARSTLD();
-
   ...
 </pre>
 </div>
@@ -891,8 +1029,8 @@ bad to use a fence if <code>TL2_EAGER</code> is defined (will remove writebackfo
 </section>
 </section>
 <section>
-<section id="slide-sec-2-9">
-<h3 id="sec-2-9">unnecessary</h3>
+<section id="slide-sec-1-8">
+<h3 id="sec-1-8">unnecessary</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c">  ...
@@ -910,9 +1048,6 @@ bad to use a fence if <code>TL2_EAGER</code> is defined (will remove writebackfo
   <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
   DropLocks(Self, wv);
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">ensure later loads from above writes</span>
-  MEMBARSTLD();
-
   ...
 </pre>
 </div>
@@ -926,14 +1061,14 @@ bad to use a fence for <code>MEMBARSTST</code> on x86
 </section>
 </section>
 <section>
-<section id="slide-sec-3">
-<h2 id="sec-3">Algorithm</h2>
-<div class="outline-text-2" id="text-3">
+<section id="slide-sec-2">
+<h2 id="sec-2">Algorithm</h2>
+<div class="outline-text-2" id="text-2">
 </div></section>
 </section>
 <section>
-<section id="slide-sec-3-1">
-<h3 id="sec-3-1">three steps</h3>
+<section id="slide-sec-2-1">
+<h3 id="sec-2-1">three steps</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -985,8 +1120,8 @@ by the architecture. <b>optimization</b>
 </section>
 </section>
 <section>
-<section id="slide-sec-3-2">
-<h3 id="sec-3-2">order elimination</h3>
+<section id="slide-sec-2-2">
+<h3 id="sec-2-2">order elimination</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -1022,8 +1157,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-3-3">
-<h3 id="sec-3-3">order elimination</h3>
+<section id="slide-sec-2-3">
+<h3 id="sec-2-3">order elimination</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -1059,8 +1194,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-3-4">
-<h3 id="sec-3-4">multi-cut</h3>
+<section id="slide-sec-2-4">
+<h3 id="sec-2-4">multi-cut</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -1096,8 +1231,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-3-5">
-<h3 id="sec-3-5">multi-cut</h3>
+<section id="slide-sec-2-5">
+<h3 id="sec-2-5">multi-cut</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -1133,8 +1268,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-3-6">
-<h3 id="sec-3-6">multi-cut</h3>
+<section id="slide-sec-2-6">
+<h3 id="sec-2-6">multi-cut</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -1170,8 +1305,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-3-7">
-<h3 id="sec-3-7">place fences</h3>
+<section id="slide-sec-2-7">
+<h3 id="sec-2-7">fence placement</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -1207,8 +1342,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-3-8">
-<h3 id="sec-3-8">place fences</h3>
+<section id="slide-sec-2-8">
+<h3 id="sec-2-8">fence placement</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
@@ -1243,8 +1378,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-3-9">
-<h3 id="sec-3-9">main theorem</h3>
+<section id="slide-sec-2-9">
+<h3 id="sec-2-9">main theorem</h3>
 <p>
 \(\mathsf{Insert}(G, A, O), A \vDash O\)
 </p>
@@ -1267,49 +1402,14 @@ We briefly discuss the subtlety introduced by fence selection in the paper
 </section>
 </section>
 <section>
-<section id="slide-sec-4">
-<h2 id="sec-4">Implementation</h2>
-
-<div class="figure">
-<p><img src="./assets/images/impl-diagram.png" alt="impl-diagram.png" />
-</p>
-</div>
-
-<aside class="notes">
-<ul class="org-ul">
-<li>Our tool Parry takes an architecture specification, source and
-orders and provides source with fences to enforce those orders
-</li>
-
-<li>Parry is built on top of LLVM's IR and wraps both Clang and
-LLVM's opt tool.
-</li>
-
-<li>Edge elimination shrinks the control flow graph to speed up
-Elimination
-</li>
-
-<li>Order elimination corresponds with Elim
-</li>
-
-<li>Assigning cycle capacities ensures that we avoid placing fences
-in loops unless otherwise completely necessary
-</li>
-</ul>
-
-</aside>
-
-</section>
-</section>
-<section>
-<section id="slide-sec-5">
-<h2 id="sec-5">Results</h2>
-<div class="outline-text-2" id="text-5">
+<section id="slide-sec-3">
+<h2 id="sec-3">Results/Parry</h2>
+<div class="outline-text-2" id="text-3">
 </div></section>
 </section>
 <section>
-<section id="slide-sec-5-1">
-<h3 id="sec-5-1">benchmark: classic algorithms</h3>
+<section id="slide-sec-3-1">
+<h3 id="sec-3-1">benchmark: classic algorithms</h3>
 <ul>
 <li>from Algave et al '14</li>
 <li>x86 and ARMv7</li>
@@ -1319,8 +1419,8 @@ in loops unless otherwise completely necessary
 </section>
 </section>
 <section>
-<section id="slide-sec-5-2">
-<h3 id="sec-5-2">benchmark: STM algorithms</h3>
+<section id="slide-sec-3-2">
+<h3 id="sec-3-2">benchmark: STM algorithms</h3>
 <ul>
 <li>TL2/TL2 Eager</li>
 <li>Rochester ByteEager (TLRW)</li>
@@ -1354,8 +1454,8 @@ in loops unless otherwise completely necessary
 </section>
 </section>
 <section>
-<section id="slide-sec-5-3">
-<h3 id="sec-5-3">tl2 - ARMv7</h3>
+<section id="slide-sec-3-3">
+<h3 id="sec-3-3">tl2 - ARMv7</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -1424,8 +1524,8 @@ nil
 </section>
 </section>
 <section>
-<section id="slide-sec-6">
-<h2 id="sec-6">tl2 - ARMv7</h2>
+<section id="slide-sec-4">
+<h2 id="sec-4">tl2 - ARMv7</h2>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -1500,8 +1600,8 @@ of similarly weighted edges, choosing the first
 </section>
 </section>
 <section>
-<section id="slide-sec-6-1">
-<h3 id="sec-6-1">tl2 eager - ARMv7</h3>
+<section id="slide-sec-4-1">
+<h3 id="sec-4-1">tl2 eager - ARMv7</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -1544,8 +1644,8 @@ able to eliminate the stst fence at line 1669 on arm
 </section>
 </section>
 <section>
-<section id="slide-sec-6-2">
-<h3 id="sec-6-2">rstm - ARMv7</h3>
+<section id="slide-sec-4-2">
+<h3 id="sec-4-2">rstm - ARMv7</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -1582,8 +1682,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-6-3">
-<h3 id="sec-6-3">tl2 performance</h3>
+<section id="slide-sec-4-3">
+<h3 id="sec-4-3">tl2 performance</h3>
 
 <div class="figure">
 <p><img src="./assets/images/stamp-arm-tl2.png" alt="stamp-arm-tl2.png" />
@@ -1592,8 +1692,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-6-4">
-<h3 id="sec-6-4">rstm performance</h3>
+<section id="slide-sec-4-4">
+<h3 id="sec-4-4">rstm performance</h3>
 
 <div class="figure">
 <p><img src="./assets/images/stamp-arm-rstm.png" alt="stamp-arm-rstm.png" />
@@ -1602,14 +1702,14 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-7">
-<h2 id="sec-7">Related</h2>
-<div class="outline-text-2" id="text-7">
+<section id="slide-sec-5">
+<h2 id="sec-5">Related</h2>
+<div class="outline-text-2" id="text-5">
 </div></section>
 </section>
 <section>
-<section id="slide-sec-7-1">
-<h3 id="sec-7-1">semantics</h3>
+<section id="slide-sec-5-1">
+<h3 id="sec-5-1">semantics</h3>
 <ul>
 <li>A Calculus for Relaxed Memory, Crary and Sullivan</li>
 
@@ -1617,8 +1717,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-7-2">
-<h3 id="sec-7-2">sequential consistency</h3>
+<section id="slide-sec-5-2">
+<h3 id="sec-5-2">sequential consistency</h3>
 <ul>
 <li>Don't Sit on the Fence, Alglave et al</li>
 <li>Hiding relaxed memory consistency with a compiler, Lee et al</li>
@@ -1627,8 +1727,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-7-3">
-<h3 id="sec-7-3">specification</h3>
+<section id="slide-sec-5-3">
+<h3 id="sec-5-3">specification</h3>
 <ul>
 <li>Automatic Inference of Memory Fences, Kuperstein et al</li>
 <li>Synthesis of Memory Fences via Refinement Propagation, Meshman et al</li>
@@ -1638,13 +1738,13 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-8">
-<h2 id="sec-8">Orders, not fences!</h2>
+<section id="slide-sec-6">
+<h2 id="sec-6">Orders, not fences!</h2>
 </section>
 </section>
 <section>
-<section id="slide-sec-9">
-<h2 id="sec-9">Thanks</h2>
+<section id="slide-sec-7">
+<h2 id="sec-7">Thanks</h2>
 </section>
 </section>
 </div>

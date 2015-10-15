@@ -9,7 +9,7 @@
 #+AUTHOR: John Bender, Jens Palsberg - UCLA @@html: <br/> @@ Mohsen Lesani - MIT
 #+EMAIL:
 #+OPTIONS: num:nil toc:nil reveal_history:t reveal_control:nil reveal_mathjax:t
-** mutex
+** ~LockOne~ mutex
    The Art of Multiprocessor Programming, 2.3.1
 
    Maurice Herlihy & Nir Shavit, 2012
@@ -24,7 +24,7 @@
    threads
    #+END_NOTES
 
-** mutex
+** ~LockOne~ mutex
    The Art of Multiprocessor Programming, 2.3.1
 
    Maurice Herlihy & Nir Shavit, 2012
@@ -54,7 +54,7 @@ class LockOne implements Lock {
    It's lock that's intended to guarantee mutual exclusion for two
    threads
    #+END_NOTES
-** mutex
+** ~LockOne~ mutex
    The Art of Multiprocessor Programming, 2.3.1
 
    Maurice Herlihy & Nir Shavit, 2012
@@ -85,7 +85,7 @@ class LockOne implements Lock {
    It's lock that's intended to guarantee mutual exclusion for two
    threads
    #+END_NOTES
-** mutex
+** ~LockOne~ mutex
    The Art of Multiprocessor Programming, 2.3.1
 
    Maurice Herlihy & Nir Shavit, 2012
@@ -115,7 +115,7 @@ class LockOne implements Lock {
    It's lock that's intended to guarantee mutual exclusion for two
    threads
    #+END_NOTES
-** mutex
+** ~LockOne~ mutex
    The Art of Multiprocessor Programming, 2.3.1
 
    Maurice Herlihy & Nir Shavit, 2012
@@ -145,7 +145,7 @@ class LockOne implements Lock {
    It's lock that's intended to guarantee mutual exclusion for two
    threads
    #+END_NOTES
-** mutex
+** ~LockOne~ mutex
    The Art of Multiprocessor Programming, 2.3.1
 
    Maurice Herlihy & Nir Shavit, 2012
@@ -175,7 +175,7 @@ class LockOne implements Lock {
    It's lock that's intended to guarantee mutual exclusion for two
    threads
    #+END_NOTES
-** mutual exclusion proof
+** ~LockOne~ mutex
    The Art of Multiprocessor Programming, 2.3.1
 
    Maurice Herlihy & Nir Shavit, 2012
@@ -212,19 +212,50 @@ class LockOne implements Lock {
    in program order
    #+END_NOTES
 
+** good execution
+
+   | Thread 0          | Thread 1          |
+   |-------------------+-------------------+
+   | ~flag[0] = true~  |                   |
+   | ~flag[1] : false~ |                   |
+   |                   | ~flag[1] = true~  |
+   |                   | ~flag[0] : true~  |
+   |                   | spin              |
+   | enter             |                   |
+
 ** bad execution
 
-   | Thread 0          | Thread 1          | Notes    |
-   |-------------------+-------------------+----------|
-   | ~flag[0] = true~  |                   | buffered |
-   | ~flag[1] : false~ |                   |          |
-   |                   | ~flag[1] = true~  |          |
-   |                   | ~flag[0] : false~ | bad!     |
-   |                   | enter cs          |          |
-   | enter cs          |                   | bad!     |
+   | Thread 0                                                        | Thread 1          |
+   |-----------------------------------------------------------------+-------------------|
+   | @@html:<span class="hlght">@@ ~flag[0] = true~ @@html:</span>@@ |                   |
+   | ~flag[1] : false~                                               |                   |
+   |                                                                 | ~flag[1] = true~  |
+   |                                                                 | ~flag[0] : true~  |
+   |                                                                 | spin              |
+   | enter                                                           |                   |
 
-   Possible under Java, x86, ARM, and Power
+** bad execution
 
+   | Thread 0                                                         | Thread 1          |
+   |------------------------------------------------------------------+-------------------|
+   | ~flag[1] : false~                                                |                   |
+   |                                                                  | ~flag[1] = true~  |
+   |                                                                  | ~flag[0] : false~ |
+   |                                                                  | enter             |
+   | @@html:<span class="hlght">@@  ~flag[0] = true~ @@html:</span>@@ |                   |
+   | enter                                                            |                   |
+
+
+** bad execution
+
+   | Thread 0                                              | Thread 1                                              |
+   |-------------------------------------------------------+-------------------------------------------------------|
+   | ~flag[1] : false~                                     |                                                       |
+   |                                                       | ~flag[1] = true~                                      |
+   |                                                       | ~flag[0] : false~                                     |
+   |                                                       | @@html:<span class="hlght">@@  enter @@html:</span>@@ |
+   | ~flag[0] = true~                                      |                                                       |
+   | @@html:<span class="hlght">@@  enter @@html:</span>@@ |                                                       |
    #+BEGIN_NOTES
    For example if the write to flag[0] in thread 0 is buffered, thread
    1 may read false in this execution allowing both threads to acquire
@@ -235,9 +266,11 @@ class LockOne implements Lock {
    #+END_NOTES
 
 ** ensuring correctness
-   1. sequential consistency
-   2. ~volatile~ modifier
-   3. memory fences
+   | solutions              | lost semantics | overkill | error prone |
+   |------------------------+----------------+----------+-------------|
+   | sequential consistency | ✓              | ✓        |             |
+   | ~volatile~ modifier    | ✓              | ✓        | ✓           |
+   | memory fences          | ✓              |          | ✓           |
 
    #+BEGIN_QUOTE
    Pragma 2.3.1. In practice, the Boolean flag variables ... must all
@@ -258,10 +291,9 @@ class LockOne implements Lock {
    All of these are implementation details of a higher level concept
    #+END_NOTES
 
-** execution order
+** execution order:
    #+BEGIN_QUOTE
-   The requirement that two instructions appear to execute in the
-   program order.
+   The requirement that two instructions appear to execute in program order.
    #+END_QUOTE
 
 ** algorithms: code *and* orders
@@ -283,29 +315,33 @@ class LockOne implements Lock {
 }
    #+END_SRC
 
-   ${st(\mathtt{flag[i]}) \rightarrow ld(\mathtt{flag[j]})}$
+   order: ${st(\mathtt{flag[i]}) \rightarrow ld(\mathtt{flag[j]})}$
 
-* previous approaches
-  - Insert fences to...
-    - enforce sequential consistency
-    - enforce a specification
-  - Whole program, O(2^n)
+** Enforcing Orders
 
-  #+BEGIN_NOTES
-  Whole program
+   How do we help implementers use orders?
 
-  Don't scale well
-
-  Orders exist as fragments of proofs which can't easily
-  be translated into specifications
-
-  Can be thought of as "finding the orders" necessary to ensure properties
-  #+END_NOTES
-** our approach
+   Fence insertion!
+** previous approaches
    - Insert fences to...
-     - enforce orders
+     - enforce sequential consistency
+     - enforce a specification
+   - Whole program, O(2^n)
+
+   #+BEGIN_NOTES
+   Whole program
+
+   Don't scale well
+
+   Orders exist as fragments of proofs which can't easily
+   be translated into specifications
+
+   Can be thought of as "finding the orders" necessary to ensure properties
+   #+END_NOTES
+** our approach
    - Ask the programmer for the orders
      - Calculus for Relaxed Memory, Crary et al
+   - Insert fences to enforce orders
    - Per-procedure
      - still O(2^n) but inputs are small
 
@@ -320,18 +356,17 @@ class LockOne implements Lock {
   We have an idea of what we think algorithms should look like,
   what's standing in our way?
   #+END_NOTES
-** cross platform
+** many platforms
    #+BEGIN_SRC c++
    void lock() {
      int i = get_thread_id();
      int j = i-1;
      flag[i] = true;
 
-     // one x86, one for ARMv7
-   ▶ __asm__ ("mfence");
-   ▶ __asm__ ("dmb");
+   ▶ __asm__ ("mfence"); // x86
+   ▶ __asm__ ("dmb");    // ARMv7
 
-     while (flag[j]) {} // wait
+     while (flag[j]) {}
    }
    #+END_SRC
 
@@ -348,11 +383,10 @@ class LockOne implements Lock {
      int j = i-1;
      flag[i] = true;
 
-     // `dmb st` may be faster
    ▶ __asm__ ("dmb");
-   ▶ __asm__ ("dmb st");
+   ▶ __asm__ ("dmb st"); // may be faster
 
-     while (flag[j]) {} // wait
+     while (flag[j]) {}
    }
    #+END_SRC
 
@@ -367,10 +401,11 @@ class LockOne implements Lock {
      int i = get_thread_id();
      int j = i-1;
 
-     // x86 `cmpxchg`, ARMv7 ldrex/strex
+     // x86:   cmpxchg
+     // ARMv7: ldrex/strex
    ▶ CAS(flag[i], false, true);
 
-     while (flag[j]) {} // wait
+     while (flag[j]) {}
    }
    #+END_SRC
 
@@ -395,9 +430,6 @@ class LockOne implements Lock {
 
   // release locks and increment version
   DropLocks(Self, wv);
-
-  // ensure later loads from above writes
-  MEMBARSTLD();
 
   ...
    #+END_SRC
@@ -426,9 +458,6 @@ class LockOne implements Lock {
   // release locks and increment version
 ▶ DropLocks(Self, wv);
 
-  // ensure later loads from above writes
-  MEMBARSTLD();
-
   ...
    #+END_SRC
 
@@ -455,9 +484,6 @@ class LockOne implements Lock {
   // release locks and increment version
   DropLocks(Self, wv);
 
-  // ensure later loads from above writes
-▶ MEMBARSTLD();
-
   ...
    #+END_SRC
 
@@ -467,33 +493,6 @@ class LockOne implements Lock {
      droplocks releases locks for the memory addresses for other commit calls to write
      macros provided for implementors to define arch appropriate fences
    #+END_NOTES
-** loops
-   #+BEGIN_SRC c  :results value :exports both
-  ...
-
-  # ifndef TL2_EAGER
-  for (wr = logs; wr != end; wr++) {
-    // write the deferred stores
-    WriteBackForward(wr);
-
-    // make stores visible before unlock
-▶   MEMBARSTST();
-  }
-  # endif
-
-  // release locks and increment version
-  DropLocks(Self, wv);
-
-  // ensure later loads from above writes
-  MEMBARSTLD();
-
-  ...
-   #+END_SRC
-
-   #+BEGIN_NOTES
-   bad to put a fence right after writebackforward (loop)
-   #+END_NOTES
-
 ** code transformations
      #+BEGIN_SRC c :results value :exports both
   ...
@@ -510,9 +509,6 @@ class LockOne implements Lock {
 
   // release locks and increment version
   DropLocks(Self, wv);
-
-  // ensure later loads from above writes
-  MEMBARSTLD();
 
   ...
    #+END_SRC
@@ -537,9 +533,6 @@ class LockOne implements Lock {
 
   // release locks and increment version
   DropLocks(Self, wv);
-
-  // ensure later loads from above writes
-  MEMBARSTLD();
 
   ...
    #+END_SRC
@@ -917,7 +910,7 @@ digraph a {
 
    @@html: </div>@@
 
-** place fences
+** fence placement
    #+BEGIN_SRC python
    # Insert : CFG x Arch x Orders -> CFG
    def Insert(G1, A, O1):
@@ -976,7 +969,7 @@ digraph a {
 
    @@html: </div>@@
 
-** place fences
+** fence placement
    #+BEGIN_SRC python
    # Insert : CFG x Arch x Orders -> CFG
    def Insert(G1, A, O1):
@@ -1049,26 +1042,26 @@ digraph a {
      We briefly discuss the subtlety introduced by fence selection in the paper
    #+END_NOTES
 
-* Implementation
-   [[file:./assets/images/impl-diagram.png]]
+# * Implementation
+#    [[file:./assets/images/impl-diagram.png]]
 
-   #+BEGIN_NOTES
-     - Our tool Parry takes an architecture specification, source and
-       orders and provides source with fences to enforce those orders
+#    #+BEGIN_NOTES
+#      - Our tool Parry takes an architecture specification, source and
+#        orders and provides source with fences to enforce those orders
 
-     - Parry is built on top of LLVM's IR and wraps both Clang and
-       LLVM's opt tool.
+#      - Parry is built on top of LLVM's IR and wraps both Clang and
+#        LLVM's opt tool.
 
-     - Edge elimination shrinks the control flow graph to speed up
-       Elimination
+#      - Edge elimination shrinks the control flow graph to speed up
+#        Elimination
 
-     - Order elimination corresponds with Elim
+#      - Order elimination corresponds with Elim
 
-     - Assigning cycle capacities ensures that we avoid placing fences
-       in loops unless otherwise completely necessary
-   #+END_NOTES
+#      - Assigning cycle capacities ensures that we avoid placing fences
+#        in loops unless otherwise completely necessary
+#    #+END_NOTES
 
-* Results
+* Results/Parry
 ** benchmark: classic algorithms
    - from Algave et al '14
    - x86 and ARMv7
