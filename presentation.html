@@ -1063,24 +1063,14 @@ bad to use a fence for <code>MEMBARSTST</code> on x86
 <section>
 <section id="slide-sec-2">
 <h2 id="sec-2">Algorithm</h2>
-<div class="outline-text-2" id="text-2">
-</div></section>
-</section>
-<section>
-<section id="slide-sec-2-1">
-<h3 id="sec-2-1">three steps</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
-<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
   <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
-  <span class="org-variable-name">K</span>  = Cut(G, O2)
+  <span class="org-variable-name">K</span>  = Cut(G1, O2)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
   <span class="org-variable-name">G2</span> = Refine(G1, K)
 
   <span class="org-keyword">return</span> G2
@@ -1120,20 +1110,16 @@ by the architecture. <b>optimization</b>
 </section>
 </section>
 <section>
-<section id="slide-sec-2-2">
-<h3 id="sec-2-2">three steps</h3>
+<section id="slide-sec-2-1">
+<h3 id="sec-2-1">control flow graph</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
-<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
             &#9650;
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
   <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
-  <span class="org-variable-name">K</span>  = Cut(G, O2)
+  <span class="org-variable-name">K</span>  = Cut(G1, O2)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
   <span class="org-variable-name">G2</span> = Refine(G1, K)
 
   <span class="org-keyword">return</span> G2
@@ -1172,20 +1158,16 @@ by the architecture. <b>optimization</b>
 </section>
 </section>
 <section>
-<section id="slide-sec-2-3">
-<h3 id="sec-2-3">three steps</h3>
+<section id="slide-sec-2-2">
+<h3 id="sec-2-2">architecture spec</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
-<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
                &#9650;
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
   <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
-  <span class="org-variable-name">K</span>  = Cut(G, O2)
+  <span class="org-variable-name">K</span>  = Cut(G1, O2)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
   <span class="org-variable-name">G2</span> = Refine(G1, K)
 
   <span class="org-keyword">return</span> G2
@@ -1224,20 +1206,16 @@ by the architecture. <b>optimization</b>
 </section>
 </section>
 <section>
-<section id="slide-sec-2-4">
-<h3 id="sec-2-4">three steps</h3>
+<section id="slide-sec-2-3">
+<h3 id="sec-2-3">orders</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
-<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
                    &#9650;
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
   <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
-  <span class="org-variable-name">K</span>  = Cut(G, O2)
+  <span class="org-variable-name">K</span>  = Cut(G1, O2)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
   <span class="org-variable-name">G2</span> = Refine(G1, K)
 
   <span class="org-keyword">return</span> G2
@@ -1276,20 +1254,16 @@ by the architecture. <b>optimization</b>
 </section>
 </section>
 <section>
-<section id="slide-sec-2-5">
-<h3 id="sec-2-5">order elimination</h3>
+<section id="slide-sec-2-4">
+<h3 id="sec-2-4">order elimination</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
-<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
 &#9654; <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
-  <span class="org-variable-name">K</span>  = Cut(G, O2)
+  <span class="org-variable-name">K</span>  = Cut(G1, O2)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
   <span class="org-variable-name">G2</span> = Refine(G1, K)
 
   <span class="org-keyword">return</span> G2
@@ -1313,20 +1287,16 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-6">
-<h3 id="sec-2-6">order elimination</h3>
+<section id="slide-sec-2-5">
+<h3 id="sec-2-5">order elimination</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
-<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
 &#9654; <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
-  <span class="org-variable-name">K</span>  = Cut(G, O2)
+  <span class="org-variable-name">K</span>  = Cut(G1, O2)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
   <span class="org-variable-name">G2</span> = Refine(G1, K)
 
   <span class="org-keyword">return</span> G2
@@ -1350,20 +1320,16 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-7">
-<h3 id="sec-2-7">multi-cut</h3>
+<section id="slide-sec-2-6">
+<h3 id="sec-2-6">fence position</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
-<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
   <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
-&#9654; <span class="org-variable-name">K</span>  = Cut(G, O2)
+&#9654; <span class="org-variable-name">K</span>  = Cut(G1, O2)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
   <span class="org-variable-name">G2</span> = Refine(G1, K)
 
   <span class="org-keyword">return</span> G2
@@ -1387,20 +1353,16 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-8">
-<h3 id="sec-2-8">multi-cut</h3>
+<section id="slide-sec-2-7">
+<h3 id="sec-2-7">fence position</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
-<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
   <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
-&#9654; <span class="org-variable-name">K</span>  = Cut(G, O2)
+&#9654; <span class="org-variable-name">K</span>  = Cut(G1, O2)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
   <span class="org-variable-name">G2</span> = Refine(G1, K)
 
   <span class="org-keyword">return</span> G2
@@ -1424,20 +1386,16 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-9">
-<h3 id="sec-2-9">multi-cut</h3>
+<section id="slide-sec-2-8">
+<h3 id="sec-2-8">fence position</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
-<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
   <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
-&#9654; <span class="org-variable-name">K</span>  = Cut(G, O2)
+&#9654; <span class="org-variable-name">K</span>  = Cut(G1, O2)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
   <span class="org-variable-name">G2</span> = Refine(G1, K)
 
   <span class="org-keyword">return</span> G2
@@ -1461,20 +1419,16 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-10">
-<h3 id="sec-2-10">fence placement</h3>
+<section id="slide-sec-2-9">
+<h3 id="sec-2-9">fence placement</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
-<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
   <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
-  <span class="org-variable-name">K</span>  = Cut(G, O2)
+  <span class="org-variable-name">K</span>  = Cut(G1, O2)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
 &#9654; <span class="org-variable-name">G2</span> = Refine(G1, K)
 
   <span class="org-keyword">return</span> G2
@@ -1498,20 +1452,16 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-11">
-<h3 id="sec-2-11">fence placement</h3>
+<section id="slide-sec-2-10">
+<h3 id="sec-2-10">fence placement</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-comment-delimiter"># </span><span class="org-comment">Insert : CFG x Arch x Orders -&gt; CFG</span>
-<span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Elim : CFG x Arch x Orders -&gt; Orders</span>
   <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Cut : CFG x Orders -&gt; CutSet</span>
-  <span class="org-variable-name">K</span>  = Cut(G, O2)
+  <span class="org-variable-name">K</span>  = Cut(G1, O2)
 
-  <span class="org-comment-delimiter"># </span><span class="org-comment">Refine : CFG x CutSet -&gt; CFG</span>
 &#9654; <span class="org-variable-name">G2</span> = Refine(G1, K)
 
   <span class="org-keyword">return</span> G2
@@ -1534,8 +1484,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-12">
-<h3 id="sec-2-12">main theorem</h3>
+<section id="slide-sec-2-11">
+<h3 id="sec-2-11">main theorem</h3>
 <p>
 \(\mathsf{Insert}(G, A, O), A \vDash O\)
 </p>
@@ -1624,76 +1574,6 @@ We briefly discuss the subtlety introduced by fence selection in the paper
 </colgroup>
 <tbody>
 <tr>
-<td class="left"><b><b><code>TxStore</code></b></b></td>
-<td class="left">baseline</td>
-<td class="left">ours</td>
-</tr>
-
-<tr>
-<td class="left">1886 \(\xrightarrow{ld,ld}\) 1923</td>
-<td class="left">1920: <code>dmb</code></td>
-<td class="left">1886: <code>dmb</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left"><b><code>TxCommit</code></b></td>
-<td class="left">baseline</td>
-<td class="left">ours</td>
-</tr>
-
-<tr>
-<td class="left">1555 \(\xrightarrow{st,st}\) 1625</td>
-<td class="left">1555: <code>ldrex/strex</code></td>
-<td class="left">1555: <code>ldrex/strex</code></td>
-</tr>
-
-<tr>
-<td class="left">1596 \(\xrightarrow{st,st}\) 1625</td>
-<td class="left">1596: <code>ldrex/strex</code></td>
-<td class="left">1596: <code>ldrex/strex</code></td>
-</tr>
-
-<tr>
-<td class="left">760 \(\xrightarrow{st,st}\) 1413</td>
-<td class="left">1669: <code>dmb st</code></td>
-<td class="left">1669: <code>dmb st</code></td>
-</tr>
-
-<tr>
-<td class="left">1413 \(\xrightarrow{st,ld}\) 1679</td>
-<td class="left">1679: <code>dmb st</code></td>
-<td class="left">1416: <code>dmb st</code></td>
-</tr>
-</tbody>
-</table>
-
-<aside class="notes">
-nil
-</aside>
-
-</section>
-</section>
-<section>
-<section id="slide-sec-4">
-<h2 id="sec-4">tl2 - ARMv7</h2>
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-
-<col  class="left" />
-
-<col  class="left" />
-</colgroup>
-<tbody>
-<tr>
 <td class="left"><b><code>TxStore</code></b></td>
 <td class="left">baseline</td>
 <td class="left">ours</td>
@@ -1703,42 +1583,6 @@ nil
 <td class="left">1886 \(\xrightarrow{ld,ld}\) 1923</td>
 <td class="left"><span class="hlght"> 1920: <code>dmb</code> </span></td>
 <td class="left"><span class="hlght"> 1886: <code>dmb</code> </span></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left"><b><code>TxCommit</code></b></td>
-<td class="left">baseline</td>
-<td class="left">ours</td>
-</tr>
-
-<tr>
-<td class="left">1555 \(\xrightarrow{st,st}\) 1625</td>
-<td class="left">1555: <code>ldrex/strex</code></td>
-<td class="left">1555: <code>ldrex/strex</code></td>
-</tr>
-
-<tr>
-<td class="left">1596 \(\xrightarrow{st,st}\) 1625</td>
-<td class="left">1596: <code>ldrex/strex</code></td>
-<td class="left">1596: <code>ldrex/strex</code></td>
-</tr>
-
-<tr>
-<td class="left">760 \(\xrightarrow{st,st}\) 1413</td>
-<td class="left">1669: <code>dmb st</code></td>
-<td class="left">1669: <code>dmb st</code></td>
-</tr>
-
-<tr>
-<td class="left">1413 \(\xrightarrow{st,ld}\) 1679</td>
-<td class="left"><span class="hlght"> 1679: <code>dmb st</code> </span></td>
-<td class="left"><span class="hlght"> 1416: <code>dmb st</code> </span></td>
 </tr>
 </tbody>
 </table>
@@ -1756,8 +1600,8 @@ of similarly weighted edges, choosing the first
 </section>
 </section>
 <section>
-<section id="slide-sec-4-1">
-<h3 id="sec-4-1">tl2 eager - ARMv7</h3>
+<section id="slide-sec-3-4">
+<h3 id="sec-3-4">tl2 eager - ARMv7</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -1780,12 +1624,6 @@ of similarly weighted edges, choosing the first
 <td class="left"><span class="hlght"> 1669: <code>dmb st</code> </span></td>
 <td class="left"><span class="hlght">  — </span></td>
 </tr>
-
-<tr>
-<td class="left">1413 \(\xrightarrow{st,ld}\) 1679</td>
-<td class="left">1679: <code>dmb st</code></td>
-<td class="left">1679: <code>dmb st</code></td>
-</tr>
 </tbody>
 </table>
 
@@ -1800,8 +1638,8 @@ able to eliminate the stst fence at line 1669 on arm
 </section>
 </section>
 <section>
-<section id="slide-sec-4-2">
-<h3 id="sec-4-2">rstm - ARMv7</h3>
+<section id="slide-sec-3-5">
+<h3 id="sec-3-5">rstm - ARMv7</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -1821,8 +1659,8 @@ able to eliminate the stst fence at line 1669 on arm
 
 <tr>
 <td class="left">163 \(\xrightarrow{st,ld}\) 165</td>
-<td class="left">163: <code>ldrex/strex</code></td>
-<td class="left">163: <code>dmb st</code></td>
+<td class="left"><span class="hlght"> 163: <code>ldrex/strex</code> </span></td>
+<td class="left"><span class="hlght"> 163: <code>dmb st</code> </span></td>
 </tr>
 </tbody>
 </table>
@@ -1838,8 +1676,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-4-3">
-<h3 id="sec-4-3">tl2 performance</h3>
+<section id="slide-sec-3-6">
+<h3 id="sec-3-6">tl2 performance</h3>
 
 <div class="figure">
 <p><img src="./assets/images/stamp-arm-tl2.png" alt="stamp-arm-tl2.png" />
@@ -1848,8 +1686,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-4-4">
-<h3 id="sec-4-4">rstm performance</h3>
+<section id="slide-sec-3-7">
+<h3 id="sec-3-7">rstm performance</h3>
 
 <div class="figure">
 <p><img src="./assets/images/stamp-arm-rstm.png" alt="stamp-arm-rstm.png" />
@@ -1858,14 +1696,14 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-5">
-<h2 id="sec-5">Related</h2>
-<div class="outline-text-2" id="text-5">
+<section id="slide-sec-4">
+<h2 id="sec-4">Related</h2>
+<div class="outline-text-2" id="text-4">
 </div></section>
 </section>
 <section>
-<section id="slide-sec-5-1">
-<h3 id="sec-5-1">semantics</h3>
+<section id="slide-sec-4-1">
+<h3 id="sec-4-1">semantics</h3>
 <ul>
 <li>A Calculus for Relaxed Memory, Crary and Sullivan</li>
 
@@ -1873,8 +1711,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-5-2">
-<h3 id="sec-5-2">sequential consistency</h3>
+<section id="slide-sec-4-2">
+<h3 id="sec-4-2">sequential consistency</h3>
 <ul>
 <li>Don't Sit on the Fence, Alglave et al</li>
 <li>Hiding relaxed memory consistency with a compiler, Lee et al</li>
@@ -1883,8 +1721,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-5-3">
-<h3 id="sec-5-3">specification</h3>
+<section id="slide-sec-4-3">
+<h3 id="sec-4-3">specification</h3>
 <ul>
 <li>Automatic Inference of Memory Fences, Kuperstein et al</li>
 <li>Synthesis of Memory Fences via Refinement Propagation, Meshman et al</li>
@@ -1894,13 +1732,18 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-6">
-<h2 id="sec-6">Orders, not fences!</h2>
+<section id="slide-sec-5">
+<h2 id="sec-5">Orders, not fences!</h2>
+<ul>
+<li>Describe the algorithm behavior</li>
+<li>Let the compiler do the work</li>
+
+</ul>
 </section>
 </section>
 <section>
-<section id="slide-sec-7">
-<h2 id="sec-7">Thanks</h2>
+<section id="slide-sec-6">
+<h2 id="sec-6">Thanks</h2>
 </section>
 </section>
 </div>
