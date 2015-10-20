@@ -245,7 +245,6 @@ class LockOne implements Lock {
    | @@html:<span class="hlght">@@  ~flag[0] = true~ @@html:</span>@@ |                   |
    | enter                                                            |                   |
 
-
 ** bad execution
 
    | Thread 0                                              | Thread 1                                              |
@@ -296,7 +295,7 @@ class LockOne implements Lock {
    The requirement that two instructions appear to execute in program order.
    #+END_QUOTE
 
-** algorithms: code *and* orders
+** algorithms = code + orders
    #+BEGIN_SRC java
 class LockOne implements Lock {
   private boolean[] flag = new boolean[2];
@@ -314,8 +313,14 @@ class LockOne implements Lock {
   }
 }
    #+END_SRC
-
-   order: ${st(\mathtt{flag[i]}) \rightarrow ld(\mathtt{flag[j]})}$
+   @@html:
+   <span class="plus">+</span>
+   <div class="order">
+   @@
+   $\{ st(\mathtt{flag[i]}) \rightarrow ld(\mathtt{flag[j]}) \}$
+   @@html:
+   </div>
+   @@
 
 ** Enforcing Orders
 

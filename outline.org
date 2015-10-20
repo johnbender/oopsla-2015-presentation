@@ -370,3 +370,15 @@
      - conference and year
    - conclusion with take home message
      - "stop writing your lock free algorithms without orders", only positive
+** Jens 3
+   - make the order notation more prominent
+   - mention paper in slides about other approaches if not talked about
+   - "ask programmer for ..." => "orders should be part of the algorithm"
+   - put conferences with related work
+   - remove related work
+   - mention tool runtime for each set of benchmarks
+     - loc and seconds
+     - doesn't have to be on the slide
+   - slogan: algorithm = code + orders
+     - let the compiler enforce the orders
+   - after talk tomorrow, revise and send Mohsen an email

@@ -517,7 +517,6 @@ in program order
 </tbody>
 </table>
 
-
 </section>
 </section>
 <section>
@@ -687,7 +686,7 @@ The requirement that two instructions appear to execute in program order.
 </section>
 <section>
 <section id="slide-sec-0-14">
-<h3 id="sec-0-14">algorithms: code <b>and</b> orders</h3>
+<h3 id="sec-0-14">algorithms = code + orders</h3>
 <div class="org-src-container">
 
 <pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
@@ -707,9 +706,15 @@ The requirement that two instructions appear to execute in program order.
 }
 </pre>
 </div>
-
 <p>
-order: \({st(\mathtt{flag[i]}) \rightarrow ld(\mathtt{flag[j]})}\)
+
+   <span class="plus">+</span>
+   <div class="order">
+
+\(\{ st(\mathtt{flag[i]}) \rightarrow ld(\mathtt{flag[j]}) \}\)
+
+   </div>
+
 </p>
 
 </section>

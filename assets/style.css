@@ -226,3 +226,19 @@ table {
   font-size: 0.7em;
   margin-top: 0px;
 }
+
+div.order, span.plus {
+  position: absolute;
+  top: 40%;
+  right: -50px;
+}
+
+div.order {
+  padding-top: 36px;
+}
+
+span.plus {
+  left: 0;
+  font-size: 100px;
+  margin-right: 80px;
+}
