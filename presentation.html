@@ -570,24 +570,10 @@ in program order
 </table>
 <aside class="notes">
 <p>
-For example if the write to flag<sup><a id="fnr.1" name="fnr.1" class="footref" href="#fn.1">1</a></sup> in thread 0 is buffered, thread
-1 may read false in this execution allowing both threads to acquire
-the lock and enter the critical section
-</p>
-
-<p>
 Note that this is possible under extremely common memory models
 like Java, x86, ARM, and Power
 </p>
-<div id="footnotes">
-<h2 class="footnotes">Footnotes: </h2>
-<div id="text-footnotes">
 
-<div class="footdef"><sup><a id="fn.1" name="fn.1" class="footnum" href="#fnr.1">1</a></sup> <p>DEFINITION NOT FOUND.</p></div>
-
-
-</div>
-</div>
 </aside>
 
 </section>
@@ -611,16 +597,16 @@ like Java, x86, ARM, and Power
 <tr>
 <th scope="col" class="left">solutions</th>
 <th scope="col" class="left">lost semantics</th>
-<th scope="col" class="left">overkill</th>
 <th scope="col" class="left">error prone</th>
+<th scope="col" class="left">overkill</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="left">sequential consistency</td>
 <td class="left">✓</td>
-<td class="left">✓</td>
 <td class="left">&#xa0;</td>
+<td class="left">✓</td>
 </tr>
 
 <tr>
@@ -633,8 +619,8 @@ like Java, x86, ARM, and Power
 <tr>
 <td class="left">memory fences</td>
 <td class="left">✓</td>
-<td class="left">&#xa0;</td>
 <td class="left">✓</td>
+<td class="left">&#xa0;</td>
 </tr>
 </tbody>
 </table>
@@ -648,25 +634,35 @@ be declared <code>volatile</code> to work properly.
 
 <aside class="notes">
 <p>
-How do we prevent these kinds of issues?
+traditional solutions
 </p>
 
 <p>
-sequential consistency is expensive and not required by the proof
+sequential consistency:
+sem: The actual required behavior for the algorithm is subsumed by sequential consistency
+over: Many instructions can reorder and the algorithm can work just fine
 </p>
 
 <p>
-volatile affects all writes to the modified variable, but we only
-care about on write in particular
+volatile:
+sem/error: establishes happens-before between many reads and writes
+   when often there are only few important ones
+overkill: may need just one or two
 </p>
 
 <p>
-in C/C++ memory fences relate many instructions before and after,
-sacrificing information about the actual required behavior
+memory fences:
+sem/error:
+  in C/C++ memory fences appearing in code relate many instructions before
+  and after, again loosing information.
 </p>
 
 <p>
-All of these are implementation details of a higher level concept
+Also easy to mess up placement/required instruction
+</p>
+
+<p>
+!!All of these are implementation details of a higher level concept
 </p>
 
 </aside>
@@ -695,8 +691,8 @@ The requirement that two instructions appear to execute in program order.
   <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
     <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
     <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
-&#9654;   flag[i] = <span class="org-constant">true</span>;
-&#9654;   <span class="org-keyword">while</span> (flag[j]) {}
+    flag[i] = <span class="org-constant">true</span>;
+    <span class="org-keyword">while</span> (flag[j]) {}
   }
 
   <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
@@ -747,16 +743,24 @@ Fence insertion!
 
 <aside class="notes">
 <p>
-Whole program
+SC: Don't Sit On the Fence, CAV'14
 </p>
 
 <p>
-Don't scale well
+Spec: Automatic Inference of Memory Fences, FMCAD '10
+</p>
+
+<p>
+Whole program, don't scale well
 </p>
 
 <p>
 Orders exist as fragments of proofs which can't easily
 be translated into specifications
+</p>
+
+<p>
+e.g. opacity correctness condition for the STM algorithms we consider in our results
 </p>
 
 <p>
@@ -770,11 +774,7 @@ Can be thought of as "finding the orders" necessary to ensure properties
 <section id="slide-sec-0-17">
 <h3 id="sec-0-17">our approach</h3>
 <ul>
-<li>Ask the programmer for the orders
-<ul>
-<li>A Calculus for Relaxed Memory, Crary et al</li>
-
-</ul></li>
+<li>Orders as part of the algorithm</li>
 <li>Insert fences to enforce orders</li>
 <li>Per-procedure
 <ul>
@@ -1035,7 +1035,7 @@ bad to use a fence if <code>TL2_EAGER</code> is defined (will remove writebackfo
 </section>
 <section>
 <section id="slide-sec-1-8">
-<h3 id="sec-1-8">unnecessary</h3>
+<h3 id="sec-1-8">unnecessary fences</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c">  ...
@@ -1060,6 +1060,51 @@ bad to use a fence if <code>TL2_EAGER</code> is defined (will remove writebackfo
 <aside class="notes">
 <p>
 bad to use a fence for <code>MEMBARSTST</code> on x86
+</p>
+
+<p>
+implementers really wanted orders here
+</p>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-sec-1-9">
+<h3 id="sec-1-9">faux order</h3>
+<div class="org-src-container">
+
+<pre  class="src src-c">  ...
+
+<span class="org-preprocessor">  # if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
+  <span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
+    <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
+    WriteBackForward(wr);
+  }
+<span class="org-preprocessor">  # endif</span>
+
+  <span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
+&#9654; MEMBARSTST();
+
+  <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
+  DropLocks(Self, wv);
+
+  ...
+</pre>
+</div>
+
+<aside class="notes">
+<p>
+implementers really wanted orders here
+</p>
+
+<p>
+defining the macro based on the platform solves the cross platform issue
+</p>
+
+<p>
+coming to the code later, it's still not clear what the purpose was unless
+one knows the algorithm
 </p>
 
 </aside>
@@ -1698,57 +1743,22 @@ compare and swap to enforce a store/store order
 <p><img src="./assets/images/stamp-arm-rstm.png" alt="stamp-arm-rstm.png" />
 </p>
 </div>
+
 </section>
 </section>
 <section>
 <section id="slide-sec-4">
-<h2 id="sec-4">Related</h2>
-<div class="outline-text-2" id="text-4">
-</div></section>
-</section>
-<section>
-<section id="slide-sec-4-1">
-<h3 id="sec-4-1">semantics</h3>
+<h2 id="sec-4">algorithms = code + orders</h2>
 <ul>
-<li>A Calculus for Relaxed Memory, Crary and Sullivan</li>
+<li>Describe the algorithm behavior</li>
+<li>Let the compiler enforce the orders</li>
 
 </ul>
-</section>
-</section>
-<section>
-<section id="slide-sec-4-2">
-<h3 id="sec-4-2">sequential consistency</h3>
-<ul>
-<li>Don't Sit on the Fence, Alglave et al</li>
-<li>Hiding relaxed memory consistency with a compiler, Lee et al</li>
-
-</ul>
-</section>
-</section>
-<section>
-<section id="slide-sec-4-3">
-<h3 id="sec-4-3">specification</h3>
-<ul>
-<li>Automatic Inference of Memory Fences, Kuperstein et al</li>
-<li>Synthesis of Memory Fences via Refinement Propagation, Meshman et al</li>
-
-</ul>
-
 </section>
 </section>
 <section>
 <section id="slide-sec-5">
-<h2 id="sec-5">Orders, not fences!</h2>
-<ul>
-<li>Describe the algorithm behavior</li>
-<li>Let the compiler do the work</li>
-
-</ul>
-</section>
-</section>
-<section>
-<section id="slide-sec-6">
-<h2 id="sec-6">Thanks</h2>
+<h2 id="sec-5">Thanks!</h2>
 </section>
 </section>
 </div>

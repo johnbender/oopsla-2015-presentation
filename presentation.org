@@ -256,20 +256,18 @@ class LockOne implements Lock {
    | ~flag[0] = true~                                      |                                                       |
    | @@html:<span class="hlght">@@  enter @@html:</span>@@ |                                                       |
    #+BEGIN_NOTES
-   For example if the write to flag[0] in thread 0 is buffered, thread
-   1 may read false in this execution allowing both threads to acquire
-   the lock and enter the critical section
+
 
    Note that this is possible under extremely common memory models
    like Java, x86, ARM, and Power
    #+END_NOTES
 
 ** traditional solutions
-   | solutions              | lost semantics | overkill | error prone |
-   |------------------------+----------------+----------+-------------|
-   | sequential consistency | ✓              | ✓        |             |
-   | ~volatile~ modifier    | ✓              | ✓        | ✓           |
-   | memory fences          | ✓              |          | ✓           |
+   | solutions              | lost semantics | error prone | overkill |
+   |------------------------+----------------+-------------+----------|
+   | sequential consistency | ✓              |             | ✓        |
+   | ~volatile~ modifier    | ✓              | ✓           | ✓        |
+   | memory fences          | ✓              | ✓           |          |
 
    #+BEGIN_QUOTE
    Pragma 2.3.1. In practice, the Boolean flag variables ... must all
@@ -277,17 +275,25 @@ class LockOne implements Lock {
    #+END_QUOTE
 
    #+BEGIN_NOTES
-   How do we prevent these kinds of issues?
+   traditional solutions
 
-   sequential consistency is expensive and not required by the proof
+   sequential consistency:
+   sem: The actual required behavior for the algorithm is subsumed by sequential consistency
+   over: Many instructions can reorder and the algorithm can work just fine
 
-   volatile affects all writes to the modified variable, but we only
-   care about on write in particular
+   volatile:
+   sem/error: establishes happens-before between many reads and writes
+      when often there are only few important ones
+   overkill: may need just one or two
 
-   in C/C++ memory fences relate many instructions before and after,
-   sacrificing information about the actual required behavior
+   memory fences:
+   sem/error:
+     in C/C++ memory fences appearing in code relate many instructions before
+     and after, again loosing information.
 
-   All of these are implementation details of a higher level concept
+     Also easy to mess up placement/required instruction
+
+   !!All of these are implementation details of a higher level concept
    #+END_NOTES
 
 ** execution order:
@@ -303,8 +309,8 @@ class LockOne implements Lock {
   public void lock() {
     int i = ThreadID.get();
     int j = i-1;
-▶   flag[i] = true;
-▶   while (flag[j]) {}
+    flag[i] = true;
+    while (flag[j]) {}
   }
 
   public void unlock() {
@@ -334,18 +340,21 @@ class LockOne implements Lock {
    - Whole program, O(2^n)
 
    #+BEGIN_NOTES
-   Whole program
+   SC: Don't Sit On the Fence, CAV'14
 
-   Don't scale well
+   Spec: Automatic Inference of Memory Fences, FMCAD '10
+
+   Whole program, don't scale well
 
    Orders exist as fragments of proofs which can't easily
    be translated into specifications
 
+   e.g. opacity correctness condition for the STM algorithms we consider in our results
+
    Can be thought of as "finding the orders" necessary to ensure properties
    #+END_NOTES
 ** our approach
-   - Ask the programmer for the orders
-     - A Calculus for Relaxed Memory, Crary et al
+   - Orders as part of the algorithm
    - Insert fences to enforce orders
    - Per-procedure
      - still O(2^n) but inputs are small
@@ -522,7 +531,7 @@ class LockOne implements Lock {
    bad to use a fence if ~TL2_EAGER~ is defined (will remove writebackforward)
    #+END_NOTES
 
-** unnecessary
+** unnecessary fences
    #+BEGIN_SRC c :results value :exports both
   ...
 
@@ -544,6 +553,36 @@ class LockOne implements Lock {
 
    #+BEGIN_NOTES
    bad to use a fence for ~MEMBARSTST~ on x86
+
+   implementers really wanted orders here
+   #+END_NOTES
+** faux order
+   #+BEGIN_SRC c :results value :exports both
+  ...
+
+  # ifndef TL2_EAGER
+  for (wr = logs; wr != end; wr++) {
+    // write the deferred stores
+    WriteBackForward(wr);
+  }
+  # endif
+
+  // make stores visible before unlock
+▶ MEMBARSTST();
+
+  // release locks and increment version
+  DropLocks(Self, wv);
+
+  ...
+   #+END_SRC
+
+   #+BEGIN_NOTES
+   implementers really wanted orders here
+
+   defining the macro based on the platform solves the cross platform issue
+
+   coming to the code later, it's still not clear what the purpose was unless
+   one knows the algorithm
    #+END_NOTES
 * Algorithm
    #+BEGIN_SRC python
@@ -1339,17 +1378,17 @@ digraph a {
    file:./assets/images/stamp-arm-tl2.png
 ** rstm performance
    file:./assets/images/stamp-arm-rstm.png
-* Related
-** semantics
-   - A Calculus for Relaxed Memory, Crary and Sullivan
-** sequential consistency
-   - Don't Sit on the Fence, Alglave et al
-   - Hiding relaxed memory consistency with a compiler, Lee et al
-** specification
-   - Automatic Inference of Memory Fences, Kuperstein et al
-   - Synthesis of Memory Fences via Refinement Propagation, Meshman et al
+# * Related
+# ** semantics
+#    - A Calculus for Relaxed Memory, Crary and Sullivan
+# ** sequential consistency
+#    - Don't Sit on the Fence, Alglave et al
+#    - Hiding relaxed memory consistency with a compiler, Lee et al
+# ** specification
+#    - Automatic Inference of Memory Fences, Kuperstein et al
+#    - Synthesis of Memory Fences via Refinement Propagation, Meshman et al
 
-* Orders, not fences!
+* algorithms = code + orders
   - Describe the algorithm behavior
-  - Let the compiler do the work
-* Thanks
+  - Let the compiler enforce the orders
+* Thanks!

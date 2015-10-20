@@ -230,7 +230,7 @@ table {
 div.order, span.plus {
   position: absolute;
   top: 40%;
-  right: -50px;
+  right: 0px;
 }
 
 div.order {
