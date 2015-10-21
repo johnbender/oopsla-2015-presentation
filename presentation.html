@@ -639,31 +639,39 @@ traditional solutions
 
 <p>
 sequential consistency:
-sem: The actual required behavior for the algorithm is subsumed by sequential consistency
-over: Many instructions can reorder and the algorithm can work just fine
 </p>
+<ul class="org-ul">
+<li>sem: The actual required behavior for the algorithm is subsumed by sequential consistency
+</li>
+<li>over: Many instructions can reorder and the algorithm can work just fine
+</li>
+</ul>
 
 <p>
 volatile:
-sem/error: establishes happens-before between many reads and writes
-   when often there are only few important ones
-overkill: may need just one or two
 </p>
+<ul class="org-ul">
+<li>sem/error: establishes happens-before between many reads and writes
+when often there are only few important ones
+</li>
+<li>overkill: may need just one or two
+</li>
+</ul>
 
 <p>
 memory fences:
-sem/error:
-  in C/C++ memory fences appearing in code relate many instructions before
-  and after, again loosing information.
 </p>
+<ul class="org-ul">
+<li>sem/error: in C/C++ memory fences appearing in code relate many instructions before
+and after, again loosing information.
+</li>
 
-<p>
-Also easy to mess up placement/required instruction
-</p>
+<li>Also easy to mess up placement/required instruction
+</li>
 
-<p>
-!!All of these are implementation details of a higher level concept
-</p>
+<li>!! All of these are implementation details of a higher level concept
+</li>
+</ul>
 
 </aside>
 
@@ -691,8 +699,8 @@ The requirement that two instructions appear to execute in program order.
   <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
     <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
     <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
-    flag[i] = <span class="org-constant">true</span>;
-    <span class="org-keyword">while</span> (flag[j]) {}
+&#9654;   flag[i] = <span class="org-constant">true</span>;
+&#9654;   <span class="org-keyword">while</span> (flag[j]) {}
   }
 
   <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
@@ -743,28 +751,36 @@ Fence insertion!
 
 <aside class="notes">
 <p>
-SC: Don't Sit On the Fence, CAV'14
+SC: overkill in many cases
 </p>
 
 <p>
-Spec: Automatic Inference of Memory Fences, FMCAD '10
-</p>
-
-<p>
-Whole program, don't scale well
-</p>
-
-<p>
-Orders exist as fragments of proofs which can't easily
-be translated into specifications
-</p>
-
-<p>
-e.g. opacity correctness condition for the STM algorithms we consider in our results
+Spec:
 </p>
 
 <p>
 Can be thought of as "finding the orders" necessary to ensure properties
+</p>
+
+<p>
+some properties don't work well as specification
+</p>
+
+<p>
+Orders exist as fragments of proofs which can't easily
+be translated into specifications, eg stm correctness
+</p>
+
+<p>
+Both: Whole program, don't scale well
+</p>
+
+<p>
+SC: Don't Sit On the Fence, CAV'14, alglave et al
+</p>
+
+<p>
+Spec: Automatic Inference of Memory Fences, FMCAD '10, Kuperstein et al
 </p>
 
 </aside>
@@ -790,7 +806,11 @@ This places our analysis at the procedure level.
 </p>
 
 <p>
-CMU paper: PLDI 2015 has semantics, we've built the tool
+A Calculus for Relaxed Memory Models, PLDI 2015, Crary et al
+</p>
+
+<p>
+they built the semantics, we built the tool
 </p>
 
 </aside>
@@ -919,12 +939,14 @@ semantics that we should account for (by avoiding adding more fences).
 </div>
 
 <aside class="notes">
-<p>
-commit procedure for the tl2 software transactional memory algorithm
-writebackforward is where the actual writes to memory take place
-droplocks releases locks for the memory addresses for other commit calls to write
-macros provided for implementors to define arch appropriate fences
-</p>
+<ul class="org-ul">
+<li>this is code from the tl2 transactional memory algorithm
+</li>
+<li>avoiding details
+</li>
+<li>there's a store to memory in the writebackforward
+</li>
+</ul>
 
 </aside>
 
@@ -955,12 +977,10 @@ macros provided for implementors to define arch appropriate fences
 </div>
 
 <aside class="notes">
-<p>
-commit procedure for the tl2 software transactional memory algorithm
-writebackforward is where the actual writes to memory take place
-droplocks releases locks for the memory addresses for other commit calls to write
-macros provided for implementors to define arch appropriate fences
-</p>
+<ul class="org-ul">
+<li>must happen before the store in droplocks for the algo to work
+</li>
+</ul>
 
 </aside>
 </section>
@@ -990,12 +1010,13 @@ macros provided for implementors to define arch appropriate fences
 </div>
 
 <aside class="notes">
-<p>
-commit procedure for the tl2 software transactional memory algorithm
-writebackforward is where the actual writes to memory take place
-droplocks releases locks for the memory addresses for other commit calls to write
-macros provided for implementors to define arch appropriate fences
-</p>
+<ul class="org-ul">
+<li>the authors of the code add these fence macros
+</li>
+<li>provide a way to define platform appropriate solution to prevent
+stores from swapping
+</li>
+</ul>
 
 </aside>
 </section>
@@ -1025,9 +1046,12 @@ macros provided for implementors to define arch appropriate fences
 </div>
 
 <aside class="notes">
-<p>
-bad to use a fence if <code>TL2_EAGER</code> is defined (will remove writebackforward)
-</p>
+<ul class="org-ul">
+<li>if <code>TL2_EAGER</code> is defined will remove writebackforward
+</li>
+<li>so the macro and fence becomes unnecessary
+</li>
+</ul>
 
 </aside>
 
@@ -1035,7 +1059,7 @@ bad to use a fence if <code>TL2_EAGER</code> is defined (will remove writebackfo
 </section>
 <section>
 <section id="slide-sec-1-8">
-<h3 id="sec-1-8">unnecessary fences</h3>
+<h3 id="sec-1-8">faux order</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c">  ...
@@ -1043,69 +1067,28 @@ bad to use a fence if <code>TL2_EAGER</code> is defined (will remove writebackfo
 <span class="org-preprocessor">  # if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
   <span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
     <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
-    WriteBackForward(wr);
+&#9654;   WriteBackForward(wr);
   }
 <span class="org-preprocessor">  # endif</span>
 
   <span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
-&#9654; MEMBARSTST();
+  MEMBARSTST();
 
   <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
-  DropLocks(Self, wv);
+&#9654; DropLocks(Self, wv);
 
   ...
 </pre>
 </div>
 
 <aside class="notes">
-<p>
-bad to use a fence for <code>MEMBARSTST</code> on x86
-</p>
-
-<p>
-implementers really wanted orders here
-</p>
-
-</aside>
-</section>
-</section>
-<section>
-<section id="slide-sec-1-9">
-<h3 id="sec-1-9">faux order</h3>
-<div class="org-src-container">
-
-<pre  class="src src-c">  ...
-
-<span class="org-preprocessor">  # if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
-  <span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
-    <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
-    WriteBackForward(wr);
-  }
-<span class="org-preprocessor">  # endif</span>
-
-  <span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
-&#9654; MEMBARSTST();
-
-  <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
-  DropLocks(Self, wv);
-
-  ...
-</pre>
-</div>
-
-<aside class="notes">
-<p>
-implementers really wanted orders here
-</p>
-
-<p>
-defining the macro based on the platform solves the cross platform issue
-</p>
-
-<p>
-coming to the code later, it's still not clear what the purpose was unless
-one knows the algorithm
-</p>
+<ul class="org-ul">
+<li>more generally the implementers really wanted to define an order here
+</li>
+<li>by using a fence macro anyone coming to the code has to have the algorithm
+spec in hand to determine why that fence was placed
+</li>
+</ul>
 
 </aside>
 </section>
@@ -1113,10 +1096,16 @@ one knows the algorithm
 <section>
 <section id="slide-sec-2">
 <h2 id="sec-2">Algorithm</h2>
+<div class="outline-text-2" id="text-2">
+</div></section>
+</section>
+<section>
+<section id="slide-sec-2-1">
+<h3 id="sec-2-1">algorithm</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
-
+      &#9650;
   <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
 
   <span class="org-variable-name">K</span>  = Cut(G1, O2)
@@ -1142,26 +1131,20 @@ end
 </p>
 
 <aside class="notes">
-<ol class="org-ol">
-<li>We eliminate orders which are enforced on the target
-architecture, e.g. a store -&gt; store order on x86 is enforced
-by the architecture. <b>optimization</b>
+<ul class="org-ul">
+<li>our algorithm insert
 </li>
-
-<li>We find a multicut for the remaining orders and the control flow graph G
+<li>left code, right inputs except for the architecture
 </li>
-
-<li>We use the cut to insert fences on the cut set edges
-</li>
-</ol>
+</ul>
 
 </aside>
 
 </section>
 </section>
 <section>
-<section id="slide-sec-2-1">
-<h3 id="sec-2-1">control flow graph</h3>
+<section id="slide-sec-2-2">
+<h3 id="sec-2-2">control flow graph</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1191,25 +1174,17 @@ end
 </p>
 
 <aside class="notes">
-<ol class="org-ol">
-<li>We eliminate orders which are enforced on the target
-architecture, e.g. a store -&gt; store order on x86 is enforced
-by the architecture. <b>optimization</b>
+<ul class="org-ul">
+<li>control flow graph for some simple procedure
 </li>
-
-<li>We find a multicut for the remaining orders and the control flow graph G
-</li>
-
-<li>We use the cut to insert fences on the cut set edges
-</li>
-</ol>
+</ul>
 
 </aside>
 </section>
 </section>
 <section>
-<section id="slide-sec-2-2">
-<h3 id="sec-2-2">architecture spec</h3>
+<section id="slide-sec-2-3">
+<h3 id="sec-2-3">architecture spec</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1239,25 +1214,21 @@ end
 </p>
 
 <aside class="notes">
-<ol class="org-ol">
-<li>We eliminate orders which are enforced on the target
-architecture, e.g. a store -&gt; store order on x86 is enforced
-by the architecture. <b>optimization</b>
+<ul class="org-ul">
+<li>an architecture specification not pictured here
 </li>
-
-<li>We find a multicut for the remaining orders and the control flow graph G
+<li>it tells us what the architecture WONT reorder
 </li>
-
-<li>We use the cut to insert fences on the cut set edges
+<li>we'll assume ARM for the sake of the example
 </li>
-</ol>
+</ul>
 
 </aside>
 </section>
 </section>
 <section>
-<section id="slide-sec-2-3">
-<h3 id="sec-2-3">orders</h3>
+<section id="slide-sec-2-4">
+<h3 id="sec-2-4">orders</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1287,25 +1258,17 @@ end
 </p>
 
 <aside class="notes">
-<ol class="org-ol">
-<li>We eliminate orders which are enforced on the target
-architecture, e.g. a store -&gt; store order on x86 is enforced
-by the architecture. <b>optimization</b>
+<ul class="org-ul">
+<li>set of orders that need to be enforced
 </li>
-
-<li>We find a multicut for the remaining orders and the control flow graph G
-</li>
-
-<li>We use the cut to insert fences on the cut set edges
-</li>
-</ol>
+</ul>
 
 </aside>
 </section>
 </section>
 <section>
-<section id="slide-sec-2-4">
-<h3 id="sec-2-4">order elimination</h3>
+<section id="slide-sec-2-5">
+<h3 id="sec-2-5">order elimination</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1334,11 +1297,23 @@ end
  </div>
 </p>
 
+<aside class="notes">
+<ul class="org-ul">
+<li>first step is order elimination
+</li>
+<li>we want to avoid inserting fences where they are unnecessary
+</li>
+<li>on arm (and every other architecture) a load won't move past a store to the same address
+</li>
+</ul>
+
+</aside>
+
 </section>
 </section>
 <section>
-<section id="slide-sec-2-5">
-<h3 id="sec-2-5">order elimination</h3>
+<section id="slide-sec-2-6">
+<h3 id="sec-2-6">order elimination</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1367,11 +1342,19 @@ end
  </div>
 </p>
 
+<aside class="notes">
+<ul class="org-ul">
+<li>so we can safely discard that order
+</li>
+</ul>
+
+</aside>
+
 </section>
 </section>
 <section>
-<section id="slide-sec-2-6">
-<h3 id="sec-2-6">fence position</h3>
+<section id="slide-sec-2-7">
+<h3 id="sec-2-7">fence position</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1400,11 +1383,19 @@ end
  </div>
 </p>
 
+<aside class="notes">
+<ul class="org-ul">
+<li>the next step is finding good places for fences that will enforce the orders
+</li>
+</ul>
+
+</aside>
+
 </section>
 </section>
 <section>
-<section id="slide-sec-2-7">
-<h3 id="sec-2-7">fence position</h3>
+<section id="slide-sec-2-8">
+<h3 id="sec-2-8">fence position</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1433,11 +1424,21 @@ end
  </div>
 </p>
 
+<aside class="notes">
+<ul class="org-ul">
+<li>we consider all the orders
+</li>
+<li>use multicut to find an optimal set of edges to separate the sources from the sinks
+</li>
+</ul>
+
+</aside>
+
 </section>
 </section>
 <section>
-<section id="slide-sec-2-8">
-<h3 id="sec-2-8">fence position</h3>
+<section id="slide-sec-2-9">
+<h3 id="sec-2-9">fence position</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1466,11 +1467,19 @@ end
  </div>
 </p>
 
+<aside class="notes">
+<ul class="org-ul">
+<li>so our cut set K is just the one edge between the two stores
+</li>
+</ul>
+
+</aside>
+
 </section>
 </section>
 <section>
-<section id="slide-sec-2-9">
-<h3 id="sec-2-9">fence placement</h3>
+<section id="slide-sec-2-10">
+<h3 id="sec-2-10">fence placement</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1499,11 +1508,19 @@ end
  </div>
 </p>
 
+<aside class="notes">
+<ul class="org-ul">
+<li>finally we use the cut set to place fences in the control flow graph
+</li>
+</ul>
+
+</aside>
+
 </section>
 </section>
 <section>
-<section id="slide-sec-2-10">
-<h3 id="sec-2-10">fence placement</h3>
+<section id="slide-sec-2-11">
+<h3 id="sec-2-11">fence placement</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1531,26 +1548,21 @@ end
 <p>
  </div>
 </p>
+
 </section>
 </section>
 <section>
-<section id="slide-sec-2-11">
-<h3 id="sec-2-11">main theorem</h3>
+<section id="slide-sec-2-12">
+<h3 id="sec-2-12">main theorem</h3>
 <p>
 \(\mathsf{Insert}(G, A, O), A \vDash O\)
 </p>
 
 <aside class="notes">
 <p>
-Intuitively, if we have at least one "big hammer fence" for A
-that will work to keep any instructions we might pair from
-trading places in execution then Insert will enforce the orders
-we have defined by getting a fence between them on all possible
-execution paths
-</p>
-
-<p>
-We briefly discuss the subtlety introduced by fence selection in the paper
+intuitively, Given a graph, architecture and orders <code>insert</code>
+will produce a graph that, assuming the same architecture
+will enforce the orders
 </p>
 
 </aside>
@@ -1602,6 +1614,13 @@ We briefly discuss the subtlety introduced by fence selection in the paper
 <li>part of Rochester STM Algorithm Suite
 </li>
 </ul>
+</li>
+
+<li>TL2 is the largest in terms of procedure size
+</li>
+<li>TxCommit has nearly 400 nodes
+</li>
+<li>Just under 30s to run for the 3 procedures in TL2 that have orders
 </li>
 </ul>
 
