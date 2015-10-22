@@ -17,10 +17,12 @@
    #+INCLUDE: "code/LockOne.java" src java
 
    #+BEGIN_NOTES
-   Here we have some example code from the art of multiproc
+   Our work focuses on performance critical concurrent algorithms
+
+   Here we have an example of one such algorithm from the art of multiproc
    programming
 
-   It's lock that's intended to guarantee mutual exclusion for two
+   It's a lock that's intended to guarantee mutual exclusion for exactly two
    threads
    #+END_NOTES
 
@@ -234,6 +236,11 @@ class LockOne implements Lock {
    |                                                                 | spin              |
    | enter                                                           |                   |
 
+   #+BEGIN_NOTES
+   As an example of a bad execution, the processor may "move" the
+   store to thread 0's flag
+   #+END_NOTES
+
 ** bad execution
 
    | Thread 0                                                         | Thread 1          |
@@ -244,6 +251,11 @@ class LockOne implements Lock {
    |                                                                  | enter             |
    | @@html:<span class="hlght">@@  ~flag[0] = true~ @@html:</span>@@ |                   |
    | enter                                                            |                   |
+
+   #+BEGIN_NOTES
+   This can happen when the processor determines that delaying the store
+   is advantageous for performance reasons
+   #+END_NOTES
 
 ** bad execution
 
@@ -256,7 +268,8 @@ class LockOne implements Lock {
    | ~flag[0] = true~                                      |                                                       |
    | @@html:<span class="hlght">@@  enter @@html:</span>@@ |                                                       |
    #+BEGIN_NOTES
-
+   This ordering of operations allows both threads to enter the
+   critical section
 
    Note that this is possible under extremely common memory models
    like Java, x86, ARM, and Power
@@ -265,29 +278,24 @@ class LockOne implements Lock {
 ** traditional solutions
    | solutions              | lost semantics | error prone | overkill |
    |------------------------+----------------+-------------+----------|
-   | sequential consistency | ✓              |             | ✓        |
-   | ~volatile~ modifier    | ✓              | ✓           | ✓        |
+   | sequential consistency |                |             | ✓        |
+   | ~volatile~ modifier    | ✓              |             | ✓        |
    | memory fences          | ✓              | ✓           |          |
-
-   #+BEGIN_QUOTE
-   Pragma 2.3.1. In practice, the Boolean flag variables ... must all
-   be declared ~volatile~ to work properly.
-   #+END_QUOTE
 
    #+BEGIN_NOTES
    traditional solutions
 
    sequential consistency:
-   - sem: The actual required behavior for the algorithm is subsumed by sequential consistency
-   - over: Many instructions can reorder and the algorithm can work just fine
+   - over: Many instructions can safely reorder for performance and the algorithm will work just fine
 
    volatile:
-   - sem/error: establishes happens-before between many reads and writes
+   - sem: establishes happens-before between many reads and writes
      when often there are only few important ones
-   - overkill: may need just one or two
+   - overkill: again, we only need this property for a few operations,
+     not every operation on the volatile variables
 
    memory fences:
-   - sem/error: in C/C++ memory fences appearing in code relate many instructions before
+   - sem: in C/C++ memory fences appearing in code relate many instructions before
      and after, again loosing information.
 
    - Also easy to mess up placement/required instruction
@@ -299,6 +307,10 @@ class LockOne implements Lock {
    #+BEGIN_QUOTE
    The requirement that two instructions appear to execute in program order.
    #+END_QUOTE
+
+   #+BEGIN_NOTES
+   That higher level concept is the execution order, which is ...
+   #+END_NOTES
 
 ** algorithms = code + orders
    #+BEGIN_SRC java

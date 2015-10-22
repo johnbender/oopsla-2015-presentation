@@ -66,12 +66,16 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <aside class="notes">
 <p>
-Here we have some example code from the art of multiproc
+Our work focuses on performance critical concurrent algorithms
+</p>
+
+<p>
+Here we have an example of one such algorithm from the art of multiproc
 programming
 </p>
 
 <p>
-It's lock that's intended to guarantee mutual exclusion for two
+It's a lock that's intended to guarantee mutual exclusion for exactly two
 threads
 </p>
 
@@ -604,7 +608,7 @@ like Java, x86, ARM, and Power
 <tbody>
 <tr>
 <td class="left">sequential consistency</td>
-<td class="left">✓</td>
+<td class="left">&#xa0;</td>
 <td class="left">&#xa0;</td>
 <td class="left">✓</td>
 </tr>
@@ -612,7 +616,7 @@ like Java, x86, ARM, and Power
 <tr>
 <td class="left"><code>volatile</code> modifier</td>
 <td class="left">✓</td>
-<td class="left">✓</td>
+<td class="left">&#xa0;</td>
 <td class="left">✓</td>
 </tr>
 
@@ -624,13 +628,6 @@ like Java, x86, ARM, and Power
 </tr>
 </tbody>
 </table>
-
-<blockquote nil>
-<p>
-Pragma 2.3.1. In practice, the Boolean flag variables &#x2026; must all
-be declared <code>volatile</code> to work properly.
-</p>
-</blockquote>
 
 <aside class="notes">
 <p>

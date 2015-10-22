@@ -382,3 +382,20 @@
    - slogan: algorithm = code + orders
      - let the compiler enforce the orders
    - after talk tomorrow, revise and send Mohsen an email
+** labmates
+   - target audience for this talk
+   - problems that arise in the domain
+   - for performance critical concurrent applications
+     - "and this is an example"
+   - often cross platform
+   - more high level
+   - mention why operations can be reordered
+     - on bad execution slides
+     - store buffering
+     - ooe
+     - reason is performance
+   - sc eliminates all reorderings
+   - just say "specs not expressive enough for the algorithms we consider"
+   - algorithm, don't say multicut or cutset
+   - algorithm, explain cfg
+   - the graph and nodes are confusing
