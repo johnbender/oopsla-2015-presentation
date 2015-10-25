@@ -3,7 +3,7 @@ class LockOne implements Lock {
 
   public void lock() {
     int i = ThreadID.get();
-    int j = i-1;
+    int j = 1-i;
     flag[i] = true;
     while (flag[j]) {}
   }

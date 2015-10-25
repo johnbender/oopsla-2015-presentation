@@ -51,7 +51,7 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
   <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
     <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-    <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
+    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
     flag[i] = <span class="org-constant">true</span>;
     <span class="org-keyword">while</span> (flag[j]) {}
   }
@@ -75,8 +75,7 @@ programming
 </p>
 
 <p>
-It's a lock that's intended to guarantee mutual exclusion for exactly two
-threads
+lock intended to guarantee mutual exclusion for two threads
 </p>
 
 </aside>
@@ -101,7 +100,7 @@ Maurice Herlihy &amp; Nir Shavit, 2012
                                        &#9650;
   <span class="org-keyword">public</span> <span class="org-type">void</span> lock() {
     <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-    <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
+    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
     flag[i] = <span class="org-constant">true</span>;
     <span class="org-keyword">while</span> (flag[j]) {}
   }
@@ -116,13 +115,7 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <aside class="notes">
 <p>
-Here we have some example code from the art of multiproc
-programming
-</p>
-
-<p>
-It's lock that's intended to guarantee mutual exclusion for two
-threads
+There are two flags, one for each thread
 </p>
 
 </aside>
@@ -146,7 +139,7 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
   <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
 &#9654;   <span class="org-type">int</span> i = ThreadID.get();
-    <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
+    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
     flag[i] = <span class="org-constant">true</span>;
     <span class="org-keyword">while</span> (flag[j]) {}
   }
@@ -162,13 +155,7 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <aside class="notes">
 <p>
-Here we have some example code from the art of multiproc
-programming
-</p>
-
-<p>
-It's lock that's intended to guarantee mutual exclusion for two
-threads
+Each thread gets it's own id &#x2026;
 </p>
 
 </aside>
@@ -192,7 +179,7 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
   <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
     <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-&#9654;   <span class="org-type">int</span> j = i-1;
+&#9654;   <span class="org-type">int</span> j = 1-i;
     flag[i] = <span class="org-constant">true</span>;
     <span class="org-keyword">while</span> (flag[j]) {}
   }
@@ -207,13 +194,7 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <aside class="notes">
 <p>
-Here we have some example code from the art of multiproc
-programming
-</p>
-
-<p>
-It's lock that's intended to guarantee mutual exclusion for two
-threads
+&#x2026; then flips the bit to get the other id
 </p>
 
 </aside>
@@ -237,7 +218,7 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
   <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
     <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-    <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
+    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
 &#9654;   flag[i] = <span class="org-constant">true</span>;
     <span class="org-keyword">while</span> (flag[j]) {}
   }
@@ -252,12 +233,11 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <aside class="notes">
 <p>
-Here we have some example code from the art of multiproc
-programming
+each thread marks it's own flag as true
 </p>
 
 <p>
-It's lock that's intended to guarantee mutual exclusion for two
+signals intent to enter the critical section
 threads
 </p>
 
@@ -282,7 +262,7 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
   <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
     <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-    <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
+    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
     flag[i] = <span class="org-constant">true</span>;
 &#9654;   <span class="org-keyword">while</span> (flag[j]) {}
   }
@@ -297,13 +277,16 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <aside class="notes">
 <p>
-Here we have some example code from the art of multiproc
-programming
+each thread then checks the <b>other</b> thread's flag
 </p>
 
 <p>
-It's lock that's intended to guarantee mutual exclusion for two
-threads
+if the other thread's flag is set, it waits
+</p>
+
+<p>
+otherwise it the lock method returns, meaning it's ok to proceed
+into some protected critical section of the code
 </p>
 
 </aside>
@@ -327,7 +310,7 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
   <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
     <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-    <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
+    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
 &#9654;   flag[i] = <span class="org-constant">true</span>;
 &#9654;   <span class="org-keyword">while</span> (flag[j]) {}
   }
@@ -342,25 +325,12 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <aside class="notes">
 <p>
-These two lines are critical:
+These two operations are critical:
 </p>
-
-<ul class="org-ul">
-<li>the first records an intent to enter a critical section guarded by the lock
-at the flag index corresponding to the thread id
-</li>
-<li>the second checks the other thread's flag and spins until it's false (unlocked)
-</li>
-</ul>
 
 <p>
 The proof of mutual exclusion in the book requires that these two
 lines execute in program order
-</p>
-
-<p>
-More specifically, their interactions with memory must take effect
-in program order
 </p>
 
 </aside>
@@ -417,6 +387,18 @@ in program order
 </tbody>
 </table>
 
+<aside class="notes">
+<ul class="org-ul">
+<li>assuming everything behaves as expected
+</li>
+<li>example execution of two operations
+</li>
+<li>key: no way to mix up the instructions s.t. both can proceed
+</li>
+</ul>
+
+</aside>
+
 </section>
 </section>
 <section>
@@ -468,6 +450,16 @@ in program order
 </tr>
 </tbody>
 </table>
+
+<aside class="notes">
+<ul class="org-ul">
+<li>x86, ARM, and Power either store maybe be "reordered"
+</li>
+<li>reasons: store buffering, literal OOE
+</li>
+</ul>
+
+</aside>
 
 </section>
 </section>
@@ -521,6 +513,16 @@ in program order
 </tbody>
 </table>
 
+<aside class="notes">
+<ul class="org-ul">
+<li>if that happens we might see an execution like this
+</li>
+<li>it's now for both flag checks to see <code>false</code>
+</li>
+</ul>
+
+</aside>
+
 </section>
 </section>
 <section>
@@ -573,10 +575,10 @@ in program order
 </tbody>
 </table>
 <aside class="notes">
-<p>
-Note that this is possible under extremely common memory models
-like Java, x86, ARM, and Power
-</p>
+<ul class="org-ul">
+<li>then possible for both threads to proceed into the protected code
+</li>
+</ul>
 
 </aside>
 
@@ -631,42 +633,15 @@ like Java, x86, ARM, and Power
 
 <aside class="notes">
 <p>
-traditional solutions
+traditional solutions:
 </p>
 
-<p>
-sequential consistency:
-</p>
 <ul class="org-ul">
-<li>sem: The actual required behavior for the algorithm is subsumed by sequential consistency
+<li>sc
 </li>
-<li>over: Many instructions can reorder and the algorithm can work just fine
+<li>volatile (java)
 </li>
-</ul>
-
-<p>
-volatile:
-</p>
-<ul class="org-ul">
-<li>sem/error: establishes happens-before between many reads and writes
-when often there are only few important ones
-</li>
-<li>overkill: may need just one or two
-</li>
-</ul>
-
-<p>
-memory fences:
-</p>
-<ul class="org-ul">
-<li>sem/error: in C/C++ memory fences appearing in code relate many instructions before
-and after, again loosing information.
-</li>
-
-<li>Also easy to mess up placement/required instruction
-</li>
-
-<li>!! All of these are implementation details of a higher level concept
+<li>memory fences (c/c++)
 </li>
 </ul>
 
@@ -676,18 +651,261 @@ and after, again loosing information.
 </section>
 <section>
 <section id="slide-sec-0-13">
-<h3 id="sec-0-13">execution order:</h3>
+<h3 id="sec-0-13">traditional solutions</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">solutions</th>
+<th scope="col" class="left">lost semantics</th>
+<th scope="col" class="left">error prone</th>
+<th scope="col" class="left">overkill</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left"><span class="hlght"> sequential consistency </span></td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">✓</td>
+</tr>
+
+<tr>
+<td class="left"><code>volatile</code> modifier</td>
+<td class="left">✓</td>
+<td class="left">&#xa0;</td>
+<td class="left">✓</td>
+</tr>
+
+<tr>
+<td class="left">memory fences</td>
+<td class="left">✓</td>
+<td class="left">✓</td>
+<td class="left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+<aside class="notes">
+<ul class="org-ul">
+<li>many ops can safely reorder for performance
+</li>
+<li>the algorithm will continue to work fine
+</li>
+</ul>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-0-14">
+<h3 id="sec-0-14">traditional solutions</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">solutions</th>
+<th scope="col" class="left">lost semantics</th>
+<th scope="col" class="left">error prone</th>
+<th scope="col" class="left">overkill</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">sequential consistency</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">✓</td>
+</tr>
+
+<tr>
+<td class="left"><span class="hlght"> <code>volatile</code> modifier </span></td>
+<td class="left">✓</td>
+<td class="left">&#xa0;</td>
+<td class="left">✓</td>
+</tr>
+
+<tr>
+<td class="left">memory fences</td>
+<td class="left">✓</td>
+<td class="left">✓</td>
+<td class="left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+<aside class="notes">
+<ul class="org-ul">
+<li>the reason for marking variable volatile is unclear for newcomers
+</li>
+<li>every operation on volatile variables is affected, unnecessary
+</li>
+</ul>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-0-15">
+<h3 id="sec-0-15">traditional solutions</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">solutions</th>
+<th scope="col" class="left">lost semantics</th>
+<th scope="col" class="left">error prone</th>
+<th scope="col" class="left">overkill</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">sequential consistency</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">✓</td>
+</tr>
+
+<tr>
+<td class="left"><code>volatile</code> modifier</td>
+<td class="left">✓</td>
+<td class="left">&#xa0;</td>
+<td class="left">✓</td>
+</tr>
+
+<tr>
+<td class="left"><span class="hlght"> memory fences </span></td>
+<td class="left">✓</td>
+<td class="left">✓</td>
+<td class="left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+<aside class="notes">
+<ul class="org-ul">
+<li>relates many instructions obscuring the reason for placement
+</li>
+<li>precise placement matters for performance correctness
+</li>
+</ul>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-0-16">
+<h3 id="sec-0-16">traditional solutions</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">solutions</th>
+<th scope="col" class="left">lost semantics</th>
+<th scope="col" class="left">error prone</th>
+<th scope="col" class="left">overkill</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left"><span class="hlght"> sequential consistency </span></td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">✓</td>
+</tr>
+
+<tr>
+<td class="left"><span class="hlght"> <code>volatile</code> modifier </span></td>
+<td class="left">✓</td>
+<td class="left">&#xa0;</td>
+<td class="left">✓</td>
+</tr>
+
+<tr>
+<td class="left"><span class="hlght"> memory fences </span></td>
+<td class="left">✓</td>
+<td class="left">✓</td>
+<td class="left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+<aside class="notes">
+<ul class="org-ul">
+<li>implementation details of a higher level concept
+</li>
+</ul>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-0-17">
+<h3 id="sec-0-17">execution order:</h3>
 <blockquote nil>
 <p>
 The requirement that two instructions appear to execute in program order.
 </p>
 </blockquote>
 
+<aside class="notes">
+<ul class="org-ul">
+<li>simple but useful
+</li>
+<li>higher level concept is the execution order
+</li>
+</ul>
+
+</aside>
 </section>
 </section>
 <section>
-<section id="slide-sec-0-14">
-<h3 id="sec-0-14">algorithms = code + orders</h3>
+<section id="slide-sec-0-18">
+<h3 id="sec-0-18">algorithms = code + orders</h3>
 <div class="org-src-container">
 
 <pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
@@ -695,7 +913,7 @@ The requirement that two instructions appear to execute in program order.
 
   <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
     <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-    <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
+    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
 &#9654;   flag[i] = <span class="org-constant">true</span>;
 &#9654;   <span class="org-keyword">while</span> (flag[j]) {}
   }
@@ -718,11 +936,20 @@ The requirement that two instructions appear to execute in program order.
 
 </p>
 
+<aside class="notes">
+<ul class="org-ul">
+<li>LockOne not complete without orders
+</li>
+<li></li>
+</ul>
+
+</aside>
+
 </section>
 </section>
 <section>
-<section id="slide-sec-0-15">
-<h3 id="sec-0-15">Enforcing Orders</h3>
+<section id="slide-sec-0-19">
+<h3 id="sec-0-19">Enforcing Orders</h3>
 <p>
 How do we help implementers use orders?
 </p>
@@ -733,8 +960,8 @@ Fence insertion!
 </section>
 </section>
 <section>
-<section id="slide-sec-0-16">
-<h3 id="sec-0-16">previous approaches</h3>
+<section id="slide-sec-0-20">
+<h3 id="sec-0-20">previous approaches</h3>
 <ul>
 <li>Insert fences to&#x2026;
 <ul>
@@ -784,8 +1011,8 @@ Spec: Automatic Inference of Memory Fences, FMCAD '10, Kuperstein et al
 </section>
 </section>
 <section>
-<section id="slide-sec-0-17">
-<h3 id="sec-0-17">our approach</h3>
+<section id="slide-sec-0-21">
+<h3 id="sec-0-21">our approach</h3>
 <ul>
 <li>Orders as part of the algorithm</li>
 <li>Insert fences to enforce orders</li>
@@ -833,7 +1060,7 @@ what's standing in our way?
 
 <pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
   <span class="org-type">int</span> <span class="org-variable-name">i</span> = get_thread_id();
-  <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
+  <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
   flag[i] = <span class="org-constant">true</span>;
 
 &#9654; <span class="org-keyword">__asm__</span> (<span class="org-string">"mfence"</span>); <span class="org-comment-delimiter">// </span><span class="org-comment">x86</span>
@@ -862,7 +1089,7 @@ defined in the proof
 
 <pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
   <span class="org-type">int</span> <span class="org-variable-name">i</span> = get_thread_id();
-  <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
+  <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
   flag[i] = <span class="org-constant">true</span>;
 
 &#9654; <span class="org-keyword">__asm__</span> (<span class="org-string">"dmb"</span>);
@@ -890,7 +1117,7 @@ optimizing for performance
 
 <pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
   <span class="org-type">int</span> <span class="org-variable-name">i</span> = get_thread_id();
-  <span class="org-type">int</span> <span class="org-variable-name">j</span> = i-1;
+  <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
 
   <span class="org-comment-delimiter">// </span><span class="org-comment">x86:   cmpxchg</span>
   <span class="org-comment-delimiter">// </span><span class="org-comment">ARMv7: ldrex/strex</span>

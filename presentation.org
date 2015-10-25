@@ -22,8 +22,7 @@
    Here we have an example of one such algorithm from the art of multiproc
    programming
 
-   It's a lock that's intended to guarantee mutual exclusion for exactly two
-   threads
+   lock intended to guarantee mutual exclusion for two threads
    #+END_NOTES
 
 ** ~LockOne~ mutex
@@ -37,7 +36,7 @@ class LockOne implements Lock {
                                        ▲
   public void lock() {
     int i = ThreadID.get();
-    int j = i-1;
+    int j = 1-i;
     flag[i] = true;
     while (flag[j]) {}
   }
@@ -50,11 +49,7 @@ class LockOne implements Lock {
    #+END_SRC
 
    #+BEGIN_NOTES
-   Here we have some example code from the art of multiproc
-   programming
-
-   It's lock that's intended to guarantee mutual exclusion for two
-   threads
+   There are two flags, one for each thread
    #+END_NOTES
 ** ~LockOne~ mutex
    The Art of Multiprocessor Programming, 2.3.1
@@ -67,7 +62,7 @@ class LockOne implements Lock {
 
   public void lock() {
 ▶   int i = ThreadID.get();
-    int j = i-1;
+    int j = 1-i;
     flag[i] = true;
     while (flag[j]) {}
   }
@@ -81,11 +76,7 @@ class LockOne implements Lock {
 
 
    #+BEGIN_NOTES
-   Here we have some example code from the art of multiproc
-   programming
-
-   It's lock that's intended to guarantee mutual exclusion for two
-   threads
+   Each thread gets it's own id ...
    #+END_NOTES
 ** ~LockOne~ mutex
    The Art of Multiprocessor Programming, 2.3.1
@@ -98,7 +89,7 @@ class LockOne implements Lock {
 
   public void lock() {
     int i = ThreadID.get();
-▶   int j = i-1;
+▶   int j = 1-i;
     flag[i] = true;
     while (flag[j]) {}
   }
@@ -111,11 +102,7 @@ class LockOne implements Lock {
    #+END_SRC
 
    #+BEGIN_NOTES
-   Here we have some example code from the art of multiproc
-   programming
-
-   It's lock that's intended to guarantee mutual exclusion for two
-   threads
+   ... then flips the bit to get the other id
    #+END_NOTES
 ** ~LockOne~ mutex
    The Art of Multiprocessor Programming, 2.3.1
@@ -128,7 +115,7 @@ class LockOne implements Lock {
 
   public void lock() {
     int i = ThreadID.get();
-    int j = i-1;
+    int j = 1-i;
 ▶   flag[i] = true;
     while (flag[j]) {}
   }
@@ -141,10 +128,9 @@ class LockOne implements Lock {
    #+END_SRC
 
    #+BEGIN_NOTES
-   Here we have some example code from the art of multiproc
-   programming
+   each thread marks it's own flag as true
 
-   It's lock that's intended to guarantee mutual exclusion for two
+   signals intent to enter the critical section
    threads
    #+END_NOTES
 ** ~LockOne~ mutex
@@ -158,7 +144,7 @@ class LockOne implements Lock {
 
   public void lock() {
     int i = ThreadID.get();
-    int j = i-1;
+    int j = 1-i;
     flag[i] = true;
 ▶   while (flag[j]) {}
   }
@@ -171,11 +157,12 @@ class LockOne implements Lock {
    #+END_SRC
 
    #+BEGIN_NOTES
-   Here we have some example code from the art of multiproc
-   programming
+   each thread then checks the *other* thread's flag
 
-   It's lock that's intended to guarantee mutual exclusion for two
-   threads
+   if the other thread's flag is set, it waits
+
+   otherwise it the lock method returns, meaning it's ok to proceed
+   into some protected critical section of the code
    #+END_NOTES
 ** ~LockOne~ mutex
    The Art of Multiprocessor Programming, 2.3.1
@@ -188,7 +175,7 @@ class LockOne implements Lock {
 
   public void lock() {
     int i = ThreadID.get();
-    int j = i-1;
+    int j = 1-i;
 ▶   flag[i] = true;
 ▶   while (flag[j]) {}
   }
@@ -201,17 +188,10 @@ class LockOne implements Lock {
    #+END_SRC
 
    #+BEGIN_NOTES
-   These two lines are critical:
-
-   - the first records an intent to enter a critical section guarded by the lock
-     at the flag index corresponding to the thread id
-   - the second checks the other thread's flag and spins until it's false (unlocked)
+   These two operations are critical:
 
    The proof of mutual exclusion in the book requires that these two
    lines execute in program order
-
-   More specifically, their interactions with memory must take effect
-   in program order
    #+END_NOTES
 
 ** good execution
@@ -225,6 +205,12 @@ class LockOne implements Lock {
    |                   | spin              |
    | enter             |                   |
 
+   #+BEGIN_NOTES
+   - assuming everything behaves as expected
+   - example execution of two operations
+   - key: no way to mix up the instructions s.t. both can proceed
+   #+END_NOTES
+
 ** bad execution
 
    | Thread 0                                                        | Thread 1          |
@@ -237,8 +223,8 @@ class LockOne implements Lock {
    | enter                                                           |                   |
 
    #+BEGIN_NOTES
-   As an example of a bad execution, the processor may "move" the
-   store to thread 0's flag
+   - x86, ARM, and Power either store maybe be "reordered"
+   - reasons: store buffering, literal OOE
    #+END_NOTES
 
 ** bad execution
@@ -253,8 +239,8 @@ class LockOne implements Lock {
    | enter                                                            |                   |
 
    #+BEGIN_NOTES
-   This can happen when the processor determines that delaying the store
-   is advantageous for performance reasons
+   - if that happens we might see an execution like this
+   - it's now for both flag checks to see ~false~
    #+END_NOTES
 
 ** bad execution
@@ -268,11 +254,7 @@ class LockOne implements Lock {
    | ~flag[0] = true~                                      |                                                       |
    | @@html:<span class="hlght">@@  enter @@html:</span>@@ |                                                       |
    #+BEGIN_NOTES
-   This ordering of operations allows both threads to enter the
-   critical section
-
-   Note that this is possible under extremely common memory models
-   like Java, x86, ARM, and Power
+   - then possible for both threads to proceed into the protected code
    #+END_NOTES
 
 ** traditional solutions
@@ -283,24 +265,58 @@ class LockOne implements Lock {
    | memory fences          | ✓              | ✓           |          |
 
    #+BEGIN_NOTES
-   traditional solutions
+   traditional solutions:
 
-   sequential consistency:
-   - over: Many instructions can safely reorder for performance and the algorithm will work just fine
+   - sc
+   - volatile (java)
+   - memory fences (c/c++)
+   #+END_NOTES
 
-   volatile:
-   - sem: establishes happens-before between many reads and writes
-     when often there are only few important ones
-   - overkill: again, we only need this property for a few operations,
-     not every operation on the volatile variables
+** traditional solutions
+   | solutions                                                             | lost semantics | error prone | overkill |
+   |-----------------------------------------------------------------------+----------------+-------------+----------|
+   | @@html:<span class="hlght">@@ sequential consistency @@html:</span>@@ |                |             | ✓        |
+   | ~volatile~ modifier                                                   | ✓              |             | ✓        |
+   | memory fences                                                         | ✓              | ✓           |          |
 
-   memory fences:
-   - sem: in C/C++ memory fences appearing in code relate many instructions before
-     and after, again loosing information.
+   #+BEGIN_NOTES
+   - many ops can safely reorder for performance
+   - the algorithm will continue to work fine
+   #+END_NOTES
 
-   - Also easy to mess up placement/required instruction
+** traditional solutions
+   | solutions                                                          | lost semantics | error prone | overkill |
+   |--------------------------------------------------------------------+----------------+-------------+----------|
+   | sequential consistency                                             |                |             | ✓        |
+   | @@html:<span class="hlght">@@ ~volatile~ modifier @@html:</span>@@ | ✓              |             | ✓        |
+   | memory fences                                                      | ✓              | ✓           |          |
 
-   - !! All of these are implementation details of a higher level concept
+   #+BEGIN_NOTES
+   - the reason for marking variable volatile is unclear for newcomers
+   - every operation on volatile variables is affected, unnecessary
+   #+END_NOTES
+
+** traditional solutions
+   | solutions                                                    | lost semantics | error prone | overkill |
+   |--------------------------------------------------------------+----------------+-------------+----------|
+   | sequential consistency                                       |                |             | ✓        |
+   | ~volatile~ modifier                                          | ✓              |             | ✓        |
+   | @@html:<span class="hlght">@@ memory fences @@html:</span>@@ | ✓              | ✓           |          |
+
+   #+BEGIN_NOTES
+   - relates many instructions obscuring the reason for placement
+   - precise placement matters for performance correctness
+   #+END_NOTES
+
+** traditional solutions
+   | solutions                                                             | lost semantics | error prone | overkill |
+   |-----------------------------------------------------------------------+----------------+-------------+----------|
+   | @@html:<span class="hlght">@@ sequential consistency @@html:</span>@@ |                |             | ✓        |
+   | @@html:<span class="hlght">@@ ~volatile~ modifier @@html:</span>@@    | ✓              |             | ✓        |
+   | @@html:<span class="hlght">@@ memory fences @@html:</span>@@          | ✓              | ✓           |          |
+
+   #+BEGIN_NOTES
+    - implementation details of a higher level concept
    #+END_NOTES
 
 ** execution order:
@@ -309,9 +325,9 @@ class LockOne implements Lock {
    #+END_QUOTE
 
    #+BEGIN_NOTES
-   That higher level concept is the execution order, which is ...
+   - simple but useful
+   - higher level concept is the execution order
    #+END_NOTES
-
 ** algorithms = code + orders
    #+BEGIN_SRC java
 class LockOne implements Lock {
@@ -319,7 +335,7 @@ class LockOne implements Lock {
 
   public void lock() {
     int i = ThreadID.get();
-    int j = i-1;
+    int j = 1-i;
 ▶   flag[i] = true;
 ▶   while (flag[j]) {}
   }
@@ -338,6 +354,12 @@ class LockOne implements Lock {
    @@html:
    </div>
    @@
+
+   #+BEGIN_NOTES
+   - LockOne not finished without orders!
+   - it doesn't work properly
+   - "so the algorithim is in fact code plus a set of orders"
+   #+END_NOTES
 
 ** Enforcing Orders
 
@@ -392,7 +414,7 @@ class LockOne implements Lock {
    #+BEGIN_SRC c++
    void lock() {
      int i = get_thread_id();
-     int j = i-1;
+     int j = 1-i;
      flag[i] = true;
 
    ▶ __asm__ ("mfence"); // x86
@@ -412,7 +434,7 @@ class LockOne implements Lock {
    #+BEGIN_SRC c++
    void lock() {
      int i = get_thread_id();
-     int j = i-1;
+     int j = 1-i;
      flag[i] = true;
 
    ▶ __asm__ ("dmb");
@@ -431,7 +453,7 @@ class LockOne implements Lock {
    #+BEGIN_SRC c++
    void lock() {
      int i = get_thread_id();
-     int j = i-1;
+     int j = 1-i;
 
      // x86:   cmpxchg
      // ARMv7: ldrex/strex
