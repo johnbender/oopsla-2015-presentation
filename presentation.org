@@ -1263,6 +1263,10 @@ node[shape=point]
  6 -> 8 [color="black"  arrowhead=none]
 }
    #+END_SRC
+
+   #+RESULTS:
+   [[file:assets/images/full-graph-refine-apply.png]]
+
    @@html: </div>@@
 
 ** main theorem
@@ -1353,8 +1357,8 @@ node[shape=point]
 #    |            | 14 $\xrightarrow{st,ld}$ 16 | 14: ~mfence~ | 14: ~dmb st~ |
 
 ** tl2 - ARMv7
-   | *~TxStore~*                     | baseline                                                      | ours                                                          |
-   | 1886 $\xrightarrow{ld,ld}$ 1923 | @@html:<span class="hlght">@@ 1920: ~dmb~ @@html:</span>@@    | @@html:<span class="hlght">@@ 1886: ~dmb~ @@html:</span>@@    |
+   |             | baseline                                                   | ours                                                       |
+   | *~TxStore~* | @@html:<span class="hlght">@@ 1920: ~dmb~ @@html:</span>@@ | @@html:<span class="hlght">@@ 1886: ~dmb~ @@html:</span>@@ |
 
 
    #+BEGIN_NOTES
@@ -1364,8 +1368,8 @@ node[shape=point]
    #+END_NOTES
 
 ** tl2 eager - ARMv7
-   | *~TxCommit~*                    | baseline                                                      | ours                                              |
-   | 760 $\xrightarrow{st,st}$ 1413  | @@html:<span class="hlght">@@ 1669: ~dmb st~ @@html:</span>@@ | @@html:<span class="hlght">@@  — @@html:</span>@@ |
+   |              | baseline                                                      | ours                                              |
+   | *~TxCommit~* | @@html:<span class="hlght">@@ 1669: ~dmb st~ @@html:</span>@@ | @@html:<span class="hlght">@@  — @@html:</span>@@ |
 
    #+BEGIN_NOTES
    Not that due to the ifdefs we saw in the example earlier we are
@@ -1373,8 +1377,8 @@ node[shape=point]
    #+END_NOTES
 
 ** rstm - ARMv7
-   | *~read_rw~*                   | baseline                                                          | ours                                                         |
-   | 163 $\xrightarrow{st,ld}$ 165 | @@html:<span class="hlght">@@ 163: ~ldrex/strex~ @@html:</span>@@ | @@html:<span class="hlght">@@ 163: ~dmb st~ @@html:</span>@@ |
+   |             | baseline                                                          | ours                                                         |
+   | *~read_rw~* | @@html:<span class="hlght">@@ 163: ~ldrex/strex~ @@html:</span>@@ | @@html:<span class="hlght">@@ 163: ~dmb st~ @@html:</span>@@ |
 
    #+BEGIN_NOTES
    in the ~read_rw~ method of the RSTM ByteEager algorithm they use a
