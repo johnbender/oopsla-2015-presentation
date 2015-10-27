@@ -1965,13 +1965,13 @@ will enforce the orders
 </colgroup>
 <tbody>
 <tr>
-<td class="left"><b><code>TxStore</code></b></td>
+<td class="left">&#xa0;</td>
 <td class="left">baseline</td>
 <td class="left">ours</td>
 </tr>
 
 <tr>
-<td class="left">1886 \(\xrightarrow{ld,ld}\) 1923</td>
+<td class="left"><b><code>TxStore</code></b></td>
 <td class="left"><span class="hlght"> 1920: <code>dmb</code> </span></td>
 <td class="left"><span class="hlght"> 1886: <code>dmb</code> </span></td>
 </tr>
@@ -2005,13 +2005,13 @@ of similarly weighted edges, choosing the first
 </colgroup>
 <tbody>
 <tr>
-<td class="left"><b><code>TxCommit</code></b></td>
+<td class="left">&#xa0;</td>
 <td class="left">baseline</td>
 <td class="left">ours</td>
 </tr>
 
 <tr>
-<td class="left">760 \(\xrightarrow{st,st}\) 1413</td>
+<td class="left"><b><code>TxCommit</code></b></td>
 <td class="left"><span class="hlght"> 1669: <code>dmb st</code> </span></td>
 <td class="left"><span class="hlght">  — </span></td>
 </tr>
@@ -2043,13 +2043,13 @@ able to eliminate the stst fence at line 1669 on arm
 </colgroup>
 <tbody>
 <tr>
-<td class="left"><b><code>read_rw</code></b></td>
+<td class="left">&#xa0;</td>
 <td class="left">baseline</td>
 <td class="left">ours</td>
 </tr>
 
 <tr>
-<td class="left">163 \(\xrightarrow{st,ld}\) 165</td>
+<td class="left"><b><code>read_rw</code></b></td>
 <td class="left"><span class="hlght"> 163: <code>ldrex/strex</code> </span></td>
 <td class="left"><span class="hlght"> 163: <code>dmb st</code> </span></td>
 </tr>
