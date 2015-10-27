@@ -661,15 +661,15 @@ digraph a {
  2 -> 3
  3 -> 4
 
- node[shape=circle]
- 5 [label="ld(w)", color="gray"]
- 7 [label="st(w)", color="gray"]
+ node[shape=point]
+ 5 [color="black"]
+ 7 [color="black"]
 
- 9 [label="st(x)", color="gray"]
- 10 [label="st(w)", color="gray"]
+ 9 [color="black"]
+ 10 [ color="black"]
 
- 6 [label="st(x)", color="gray"]
- 8 [label="ld(z)", color="gray"]
+ 6 [color="black"]
+ 8 [ color="black"]
 
  node[shape=point style=invis]
  splines=line
@@ -681,13 +681,17 @@ digraph a {
  p -> 9 [style=invis]
 
 
- 5 -> 7 [color="gray"]
+ 5 -> 7 [color="black"  arrowhead=none]
 
- 9 -> 10 [color="gray"]
+ 9 -> 10 [color="black"  arrowhead=none]
 
- 6 -> 8 [color="gray"]
+ 6 -> 8 [color="black"  arrowhead=none]
 }
    #+END_SRC
+
+   #+RESULTS:
+   [[file:assets/images/full-graph.png]]
+
    @@html: </div>@@
 
    #+BEGIN_NOTES
@@ -723,15 +727,15 @@ digraph a {
  2 -> 3 [color="red"]
  3 -> 4 [color="red"]
 
- node[shape=circle]
- 5 [label="ld(w)", color="gray"]
- 7 [label="st(w)", color="gray"]
+ node[shape=point]
+ 5 [color="black"]
+ 7 [color="black"]
 
- 9 [label="st(x)", color="gray"]
- 10 [label="st(w)", color="gray"]
+ 9 [color="black"]
+ 10 [ color="black"]
 
- 6 [label="st(x)", color="gray"]
- 8 [label="ld(z)", color="gray"]
+ 6 [color="black"]
+ 8 [ color="black"]
 
  node[shape=point style=invis]
  splines=line
@@ -743,11 +747,11 @@ digraph a {
  p -> 9 [style=invis]
 
 
- 5 -> 7 [color="gray"]
+ 5 -> 7 [color="black"  arrowhead=none]
 
- 9 -> 10 [color="gray"]
+ 9 -> 10 [color="black"  arrowhead=none]
 
- 6 -> 8 [color="gray"]
+ 6 -> 8 [color="black"  arrowhead=none]
 }
    #+END_SRC
 
@@ -774,46 +778,9 @@ digraph a {
    #+END_SRC
 
    @@html: <div class="algo-graph">@@
-   #+BEGIN_SRC dot :file assets/images/full-graph.png :exports results
-digraph a {
- splines=line
- node [shape = circle];
- 1 [label="ld(w)"]
- 2 [label="st(x)"]
- 3 [label="st(w)"]
- 4 [label="ld(z)"]
 
- 1 -> 2
- 2 -> 3
- 3 -> 4
+   [[file:assets/images/full-graph.png]]
 
- node[shape=circle]
- 5 [label="ld(w)", color="gray"]
- 7 [label="st(w)", color="gray"]
-
- 9 [label="st(x)", color="gray"]
- 10 [label="st(w)", color="gray"]
-
- 6 [label="st(x)", color="gray"]
- 8 [label="ld(z)", color="gray"]
-
- node[shape=point style=invis]
- splines=line
- 5 -> m [style=invis]
- m -> 7 [style=invis]
- n -> 6 [style=invis]
- 6 -> o [style=invis]
- o -> 8 [style=invis]
- p -> 9 [style=invis]
-
-
- 5 -> 7 [color="gray"]
-
- 9 -> 10 [color="gray"]
-
- 6 -> 8 [color="gray"]
-}
-   #+END_SRC
    @@html: </div>@@
 
    #+BEGIN_NOTES
@@ -849,15 +816,15 @@ digraph a {
  2 -> 3
  3 -> 4
 
- node[shape=circle]
- 5 [label="ld(w)", color="red"]
- 7 [label="st(w)", color="red"]
+ node[shape=point]
+ 5 [color="red"]
+ 7 [color="red"]
 
- 9 [label="st(x)", color="red"]
- 10 [label="st(w)", color="red"]
+ 9 [color="red"]
+ 10 [ color="red"]
 
- 6 [label="st(x)", color="red"]
- 8 [label="ld(z)", color="red"]
+ 6 [color="red"]
+ 8 [ color="red"]
 
  node[shape=point style=invis]
  splines=line
@@ -869,11 +836,11 @@ digraph a {
  p -> 9 [style=invis]
 
 
- 5 -> 7 [color="red"]
+ 5 -> 7 [color="red"  arrowhead=none]
 
- 9 -> 10 [color="red"]
+ 9 -> 10 [color="red"  arrowhead=none]
 
- 6 -> 8 [color="red"]
+ 6 -> 8 [color="red"  arrowhead=none]
 }
    #+END_SRC
 
@@ -913,15 +880,15 @@ digraph a {
  2 -> 3
  3 -> 4
 
- node[shape=circle]
- 5 [label="ld(w)", color="red"]
- 7 [label="st(w)", color="red"]
+ node[shape=point]
+ 5 [color="red"]
+ 7 [color="red"]
 
- 9 [label="st(x)", color="gray"]
- 10 [label="st(w)", color="gray"]
+ 9 [color="black"]
+ 10 [ color="black"]
 
- 6 [label="st(x)", color="gray"]
- 8 [label="ld(z)", color="gray"]
+ 6 [color="black"]
+ 8 [ color="black"]
 
  node[shape=point style=invis]
  splines=line
@@ -933,13 +900,17 @@ digraph a {
  p -> 9 [style=invis]
 
 
- 5 -> 7 [color="red"]
+ 5 -> 7 [color="red"  arrowhead=none]
 
- 9 -> 10 [color="gray"]
+ 9 -> 10 [color="black"  arrowhead=none]
 
- 6 -> 8 [color="gray"]
+ 6 -> 8 [color="black"  arrowhead=none]
 }
    #+END_SRC
+
+   #+RESULTS:
+   [[file:assets/images/full-graph-elim.png]]
+
    @@html: </div>@@
 
    #+BEGIN_NOTES
@@ -976,27 +947,32 @@ digraph a {
  2 -> 3
  3 -> 4
 
- node[shape=circle]
+ node[shape=point]
+ 9 [color="black"]
+ 10 [ color="black"]
 
- 9 [label="st(x)", color="gray"]
- 10 [label="st(w)", color="gray"]
-
- 6 [label="st(x)", color="gray"]
- 8 [label="ld(z)", color="gray"]
+ 6 [color="black"]
+ 8 [ color="black"]
 
  node[shape=point style=invis]
  splines=line
+ 5 -> m [style=invis]
+ m -> 7 [style=invis]
  n -> 6 [style=invis]
  6 -> o [style=invis]
  o -> 8 [style=invis]
  p -> 9 [style=invis]
 
 
- 9 -> 10 [color="gray"]
+ 9 -> 10 [color="black"  arrowhead=none]
 
- 6 -> 8 [color="gray"]
+ 6 -> 8 [color="black"  arrowhead=none] node[shape=circle]
 }
    #+END_SRC
+
+   #+RESULTS:
+   [[file:assets/images/full-graph-elim-after.png]]
+
    @@html: </div>@@
 
    #+BEGIN_NOTES
@@ -1031,25 +1007,26 @@ digraph a {
  2 -> 3
  3 -> 4
 
- node[shape=circle]
+ node[shape=point]
+ 9 [color="black"]
+ 10 [ color="black"]
 
- 9 [label="st(x)", color="gray"]
- 10 [label="st(w)", color="gray"]
-
- 6 [label="st(x)", color="gray"]
- 8 [label="ld(z)", color="gray"]
+ 6 [color="black"]
+ 8 [ color="black"]
 
  node[shape=point style=invis]
  splines=line
+ 5 -> m [style=invis]
+ m -> 7 [style=invis]
  n -> 6 [style=invis]
  6 -> o [style=invis]
  o -> 8 [style=invis]
  p -> 9 [style=invis]
 
 
- 9 -> 10 [color="gray"]
+ 9 -> 10 [color="black"  arrowhead=none]
 
- 6 -> 8 [color="gray"]
+ 6 -> 8 [color="black"  arrowhead=none] node[shape=circle]
 }
    #+END_SRC
    @@html: </div>@@
@@ -1086,27 +1063,32 @@ digraph a {
  2 -> 3
  3 -> 4
 
- node[shape=circle]
+ node[shape=point]
+ 9 [color="red"]
+ 10 [ color="red"]
 
- 9 [label="st(x)", color="red"]
- 10 [label="st(w)", color="red"]
-
- 6 [label="st(x)", color="red"]
- 8 [label="ld(z)", color="red"]
+ 6 [color="red"]
+ 8 [ color="red"]
 
  node[shape=point style=invis]
  splines=line
+ 5 -> m [style=invis]
+ m -> 7 [style=invis]
  n -> 6 [style=invis]
  6 -> o [style=invis]
  o -> 8 [style=invis]
  p -> 9 [style=invis]
 
 
- 9 -> 10 [color="red"]
+ 9 -> 10 [color="red"  arrowhead=none]
 
- 6 -> 8 [color="red"]
+ 6 -> 8 [color="red"  arrowhead=none]
 }
    #+END_SRC
+
+   #+RESULTS:
+   [[file:assets/images/full-graph-cut-highlight.png]]
+
    @@html: </div>@@
 
    #+BEGIN_NOTES
@@ -1142,27 +1124,32 @@ digraph a {
  2 -> 3 [color="red"]
  3 -> 4
 
- node[shape=circle]
+ node[shape=point]
+ 9 [color="black"]
+ 10 [ color="black"]
 
- 9 [label="st(x)", color="gray"]
- 10 [label="st(w)", color="gray"]
-
- 6 [label="st(x)", color="gray"]
- 8 [label="ld(z)", color="gray"]
+ 6 [color="black"]
+ 8 [ color="black"]
 
  node[shape=point style=invis]
  splines=line
+ 5 -> m [style=invis]
+ m -> 7 [style=invis]
  n -> 6 [style=invis]
  6 -> o [style=invis]
  o -> 8 [style=invis]
  p -> 9 [style=invis]
 
 
- 9 -> 10 [color="gray"]
+ 9 -> 10 [color="black"  arrowhead=none]
 
- 6 -> 8 [color="gray"]
+ 6 -> 8 [color="black"  arrowhead=none]
 }
    #+END_SRC
+
+   #+RESULTS:
+   [[file:assets/images/full-graph-cut-highlight-2.png]]
+
    @@html: </div>@@
 
    #+BEGIN_NOTES
@@ -1197,25 +1184,26 @@ digraph a {
  2 -> 3 [color="red"]
  3 -> 4
 
- node[shape=circle]
+ node[shape=point]
+ 9 [color="black"]
+ 10 [ color="black"]
 
- 9 [label="st(x)", color="gray"]
- 10 [label="st(w)", color="gray"]
-
- 6 [label="st(x)", color="gray"]
- 8 [label="ld(z)", color="gray"]
+ 6 [color="black"]
+ 8 [ color="black"]
 
  node[shape=point style=invis]
  splines=line
+ 5 -> m [style=invis]
+ m -> 7 [style=invis]
  n -> 6 [style=invis]
  6 -> o [style=invis]
  o -> 8 [style=invis]
  p -> 9 [style=invis]
 
 
- 9 -> 10 [color="gray"]
+ 9 -> 10 [color="black"  arrowhead=none]
 
- 6 -> 8 [color="gray"]
+ 6 -> 8 [color="black"  arrowhead=none]
 }
    #+END_SRC
    @@html: </div>@@
@@ -1254,13 +1242,13 @@ digraph a {
  2 -> 5 [color="red"]
  5 -> 3 [color="red"]
 
- node[shape=circle]
+node[shape=point]
 
- 9 [label="st(x)", color="gray"]
- 10 [label="st(w)", color="gray"]
+ 9 [color="black"]
+ 10 [ color="black"]
 
- 6 [label="st(x)", color="gray"]
- 8 [label="ld(z)", color="gray"]
+ 6 [color="black"]
+ 8 [ color="black"]
 
  node[shape=point style=invis]
  splines=line
@@ -1270,9 +1258,9 @@ digraph a {
  p -> 9 [style=invis]
 
 
- 9 -> 10 [color="gray"]
+ 9 -> 10 [color="black"  arrowhead=none]
 
- 6 -> 8 [color="gray"]
+ 6 -> 8 [color="black"  arrowhead=none]
 }
    #+END_SRC
    @@html: </div>@@
