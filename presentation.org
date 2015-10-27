@@ -17,12 +17,12 @@
    #+INCLUDE: "code/LockOne.java" src java
 
    #+BEGIN_NOTES
-   Our work focuses on performance critical concurrent algorithms
+   - Our work focuses on performance critical concurrent algorithms
 
-   Here we have an example of one such algorithm from the art of multiproc
-   programming
+   - To illustrate the problem we have an example of one such algorithm
+     from the art of multiproc programming
 
-   lock intended to guarantee mutual exclusion for two threads
+   - lock intended to guarantee mutual exclusion for two threads
    #+END_NOTES
 
 ** ~LockOne~ mutex
@@ -208,7 +208,7 @@ class LockOne implements Lock {
    #+BEGIN_NOTES
    - assuming everything behaves as expected
    - example execution of two operations
-   - key: no way to mix up the instructions s.t. both can proceed
+   - key: no way to mix up the instructions s.t. both can acquire/proceed
    #+END_NOTES
 
 ** bad execution
@@ -240,9 +240,22 @@ class LockOne implements Lock {
 
    #+BEGIN_NOTES
    - if that happens we might see an execution like this
-   - it's now for both flag checks to see ~false~
    #+END_NOTES
 
+** bad execution
+
+   | Thread 0                                                         | Thread 1                                                         |
+   |------------------------------------------------------------------+------------------------------------------------------------------|
+   | @@html:<span class="hlght">@@ ~flag[1] : false~ @@html:</span>@@ |                                                                  |
+   |                                                                  | ~flag[1] = true~                                                 |
+   |                                                                  | @@html:<span class="hlght">@@ ~flag[0] : false~ @@html:</span>@@ |
+   |                                                                  | enter                                                            |
+   | ~flag[0] = true~                                                 |                                                                  |
+   | enter                                                            |                                                                  |
+
+   #+BEGIN_NOTES
+   - now possible for both flag checks to see ~false~
+   #+END_NOTES
 ** bad execution
 
    | Thread 0                                              | Thread 1                                              |
@@ -253,6 +266,7 @@ class LockOne implements Lock {
    |                                                       | @@html:<span class="hlght">@@  enter @@html:</span>@@ |
    | ~flag[0] = true~                                      |                                                       |
    | @@html:<span class="hlght">@@  enter @@html:</span>@@ |                                                       |
+
    #+BEGIN_NOTES
    - then possible for both threads to proceed into the protected code
    #+END_NOTES
@@ -263,6 +277,11 @@ class LockOne implements Lock {
    | sequential consistency |                |             | ✓        |
    | ~volatile~ modifier    | ✓              |             | ✓        |
    | memory fences          | ✓              | ✓           |          |
+
+   #+BEGIN_QUOTE
+   Pragma 2.3.1. In practice, the Boolean flag variables ... must
+   all be declared volatile to work properly.
+   #+END_QUOTE
 
    #+BEGIN_NOTES
    traditional solutions:
@@ -279,6 +298,11 @@ class LockOne implements Lock {
    | ~volatile~ modifier                                                   | ✓              |             | ✓        |
    | memory fences                                                         | ✓              | ✓           |          |
 
+   #+BEGIN_QUOTE
+   Pragma 2.3.1. In practice, the Boolean flag variables ... must
+   all be declared volatile to work properly.
+   #+END_QUOTE
+
    #+BEGIN_NOTES
    - many ops can safely reorder for performance
    - the algorithm will continue to work fine
@@ -290,6 +314,11 @@ class LockOne implements Lock {
    | sequential consistency                                             |                |             | ✓        |
    | @@html:<span class="hlght">@@ ~volatile~ modifier @@html:</span>@@ | ✓              |             | ✓        |
    | memory fences                                                      | ✓              | ✓           |          |
+
+   #+BEGIN_QUOTE
+   Pragma 2.3.1. In practice, the Boolean flag variables ... must
+   all be declared volatile to work properly.
+   #+END_QUOTE
 
    #+BEGIN_NOTES
    - the reason for marking variable volatile is unclear for newcomers
@@ -303,9 +332,14 @@ class LockOne implements Lock {
    | ~volatile~ modifier                                          | ✓              |             | ✓        |
    | @@html:<span class="hlght">@@ memory fences @@html:</span>@@ | ✓              | ✓           |          |
 
+   #+BEGIN_QUOTE
+   Pragma 2.3.1. In practice, the Boolean flag variables ... must
+   all be declared volatile to work properly.
+   #+END_QUOTE
+
    #+BEGIN_NOTES
    - relates many instructions obscuring the reason for placement
-   - precise placement matters for performance correctness
+   - you really need to know the docs to get these right
    #+END_NOTES
 
 ** traditional solutions
@@ -315,11 +349,16 @@ class LockOne implements Lock {
    | @@html:<span class="hlght">@@ ~volatile~ modifier @@html:</span>@@    | ✓              |             | ✓        |
    | @@html:<span class="hlght">@@ memory fences @@html:</span>@@          | ✓              | ✓           |          |
 
+   #+BEGIN_QUOTE
+   Pragma 2.3.1. In practice, the Boolean flag variables ... must
+   all be declared volatile to work properly.
+   #+END_QUOTE
+
    #+BEGIN_NOTES
     - implementation details of a higher level concept
    #+END_NOTES
 
-** execution order:
+** execution order
    #+BEGIN_QUOTE
    The requirement that two instructions appear to execute in program order.
    #+END_QUOTE
@@ -361,11 +400,12 @@ class LockOne implements Lock {
    - "so the algorithim is in fact code plus a set of orders"
    #+END_NOTES
 
-** Enforcing Orders
+* Enforcing Orders
+  #+BEGIN_NOTES
+  - how do we help implementers use orders?
+  - fence insertion!
+  #+END_NOTES
 
-   How do we help implementers use orders?
-
-   Fence insertion!
 ** previous approaches
    - Insert fences to...
      - enforce sequential consistency

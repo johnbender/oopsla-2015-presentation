@@ -65,18 +65,17 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 </div>
 
 <aside class="notes">
-<p>
-Our work focuses on performance critical concurrent algorithms
-</p>
+<ul class="org-ul">
+<li>Our work focuses on performance critical concurrent algorithms
+</li>
 
-<p>
-Here we have an example of one such algorithm from the art of multiproc
-programming
-</p>
+<li>To illustrate the problem we have an example of one such algorithm
+from the art of multiproc programming
+</li>
 
-<p>
-lock intended to guarantee mutual exclusion for two threads
-</p>
+<li>lock intended to guarantee mutual exclusion for two threads
+</li>
+</ul>
 
 </aside>
 
@@ -393,7 +392,7 @@ lines execute in program order
 </li>
 <li>example execution of two operations
 </li>
-<li>key: no way to mix up the instructions s.t. both can proceed
+<li>key: no way to mix up the instructions s.t. both can acquire/proceed
 </li>
 </ul>
 
@@ -517,8 +516,6 @@ lines execute in program order
 <ul class="org-ul">
 <li>if that happens we might see an execution like this
 </li>
-<li>it's now for both flag checks to see <code>false</code>
-</li>
 </ul>
 
 </aside>
@@ -528,6 +525,65 @@ lines execute in program order
 <section>
 <section id="slide-sec-0-11">
 <h3 id="sec-0-11">bad execution</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">Thread 0</th>
+<th scope="col" class="left">Thread 1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left"><span class="hlght"> <code>flag[1] : false</code> </span></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><code>flag[1] = true</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><span class="hlght"> <code>flag[0] : false</code> </span></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">enter</td>
+</tr>
+
+<tr>
+<td class="left"><code>flag[0] = true</code></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">enter</td>
+<td class="left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+<aside class="notes">
+<ul class="org-ul">
+<li>now possible for both flag checks to see <code>false</code>
+</li>
+</ul>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-sec-0-12">
+<h3 id="sec-0-12">bad execution</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -574,6 +630,7 @@ lines execute in program order
 </tr>
 </tbody>
 </table>
+
 <aside class="notes">
 <ul class="org-ul">
 <li>then possible for both threads to proceed into the protected code
@@ -585,8 +642,8 @@ lines execute in program order
 </section>
 </section>
 <section>
-<section id="slide-sec-0-12">
-<h3 id="sec-0-12">traditional solutions</h3>
+<section id="slide-sec-0-13">
+<h3 id="sec-0-13">traditional solutions</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -631,6 +688,13 @@ lines execute in program order
 </tbody>
 </table>
 
+<blockquote nil>
+<p>
+Pragma 2.3.1. In practice, the Boolean flag variables &#x2026; must
+all be declared volatile to work properly.
+</p>
+</blockquote>
+
 <aside class="notes">
 <p>
 traditional solutions:
@@ -650,8 +714,8 @@ traditional solutions:
 </section>
 </section>
 <section>
-<section id="slide-sec-0-13">
-<h3 id="sec-0-13">traditional solutions</h3>
+<section id="slide-sec-0-14">
+<h3 id="sec-0-14">traditional solutions</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -696,70 +760,18 @@ traditional solutions:
 </tbody>
 </table>
 
+<blockquote nil>
+<p>
+Pragma 2.3.1. In practice, the Boolean flag variables &#x2026; must
+all be declared volatile to work properly.
+</p>
+</blockquote>
+
 <aside class="notes">
 <ul class="org-ul">
 <li>many ops can safely reorder for performance
 </li>
 <li>the algorithm will continue to work fine
-</li>
-</ul>
-
-</aside>
-
-</section>
-</section>
-<section>
-<section id="slide-sec-0-14">
-<h3 id="sec-0-14">traditional solutions</h3>
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-
-<col  class="left" />
-
-<col  class="left" />
-
-<col  class="left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="left">solutions</th>
-<th scope="col" class="left">lost semantics</th>
-<th scope="col" class="left">error prone</th>
-<th scope="col" class="left">overkill</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="left">sequential consistency</td>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left">✓</td>
-</tr>
-
-<tr>
-<td class="left"><span class="hlght"> <code>volatile</code> modifier </span></td>
-<td class="left">✓</td>
-<td class="left">&#xa0;</td>
-<td class="left">✓</td>
-</tr>
-
-<tr>
-<td class="left">memory fences</td>
-<td class="left">✓</td>
-<td class="left">✓</td>
-<td class="left">&#xa0;</td>
-</tr>
-</tbody>
-</table>
-
-<aside class="notes">
-<ul class="org-ul">
-<li>the reason for marking variable volatile is unclear for newcomers
-</li>
-<li>every operation on volatile variables is affected, unnecessary
 </li>
 </ul>
 
@@ -799,6 +811,72 @@ traditional solutions:
 </tr>
 
 <tr>
+<td class="left"><span class="hlght"> <code>volatile</code> modifier </span></td>
+<td class="left">✓</td>
+<td class="left">&#xa0;</td>
+<td class="left">✓</td>
+</tr>
+
+<tr>
+<td class="left">memory fences</td>
+<td class="left">✓</td>
+<td class="left">✓</td>
+<td class="left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote nil>
+<p>
+Pragma 2.3.1. In practice, the Boolean flag variables &#x2026; must
+all be declared volatile to work properly.
+</p>
+</blockquote>
+
+<aside class="notes">
+<ul class="org-ul">
+<li>the reason for marking variable volatile is unclear for newcomers
+</li>
+<li>every operation on volatile variables is affected, unnecessary
+</li>
+</ul>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-0-16">
+<h3 id="sec-0-16">traditional solutions</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">solutions</th>
+<th scope="col" class="left">lost semantics</th>
+<th scope="col" class="left">error prone</th>
+<th scope="col" class="left">overkill</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left">sequential consistency</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">✓</td>
+</tr>
+
+<tr>
 <td class="left"><code>volatile</code> modifier</td>
 <td class="left">✓</td>
 <td class="left">&#xa0;</td>
@@ -814,11 +892,18 @@ traditional solutions:
 </tbody>
 </table>
 
+<blockquote nil>
+<p>
+Pragma 2.3.1. In practice, the Boolean flag variables &#x2026; must
+all be declared volatile to work properly.
+</p>
+</blockquote>
+
 <aside class="notes">
 <ul class="org-ul">
 <li>relates many instructions obscuring the reason for placement
 </li>
-<li>precise placement matters for performance correctness
+<li>you really need to know the docs to get these right
 </li>
 </ul>
 
@@ -827,8 +912,8 @@ traditional solutions:
 </section>
 </section>
 <section>
-<section id="slide-sec-0-16">
-<h3 id="sec-0-16">traditional solutions</h3>
+<section id="slide-sec-0-17">
+<h3 id="sec-0-17">traditional solutions</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -873,6 +958,13 @@ traditional solutions:
 </tbody>
 </table>
 
+<blockquote nil>
+<p>
+Pragma 2.3.1. In practice, the Boolean flag variables &#x2026; must
+all be declared volatile to work properly.
+</p>
+</blockquote>
+
 <aside class="notes">
 <ul class="org-ul">
 <li>implementation details of a higher level concept
@@ -884,8 +976,8 @@ traditional solutions:
 </section>
 </section>
 <section>
-<section id="slide-sec-0-17">
-<h3 id="sec-0-17">execution order:</h3>
+<section id="slide-sec-0-18">
+<h3 id="sec-0-18">execution order</h3>
 <blockquote nil>
 <p>
 The requirement that two instructions appear to execute in program order.
@@ -904,8 +996,8 @@ The requirement that two instructions appear to execute in program order.
 </section>
 </section>
 <section>
-<section id="slide-sec-0-18">
-<h3 id="sec-0-18">algorithms = code + orders</h3>
+<section id="slide-sec-0-19">
+<h3 id="sec-0-19">algorithms = code + orders</h3>
 <div class="org-src-container">
 
 <pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
@@ -938,9 +1030,12 @@ The requirement that two instructions appear to execute in program order.
 
 <aside class="notes">
 <ul class="org-ul">
-<li>LockOne not complete without orders
+<li>LockOne not finished without orders!
 </li>
-<li></li>
+<li>it doesn't work properly
+</li>
+<li>"so the algorithim is in fact code plus a set of orders"
+</li>
 </ul>
 
 </aside>
@@ -948,20 +1043,23 @@ The requirement that two instructions appear to execute in program order.
 </section>
 </section>
 <section>
-<section id="slide-sec-0-19">
-<h3 id="sec-0-19">Enforcing Orders</h3>
-<p>
-How do we help implementers use orders?
-</p>
+<section id="slide-sec-1">
+<h2 id="sec-1">Enforcing Orders</h2>
+<aside class="notes">
+<ul class="org-ul">
+<li>how do we help implementers use orders?
+</li>
+<li>fence insertion!
+</li>
+</ul>
 
-<p>
-Fence insertion!
-</p>
+</aside>
+
 </section>
 </section>
 <section>
-<section id="slide-sec-0-20">
-<h3 id="sec-0-20">previous approaches</h3>
+<section id="slide-sec-1-1">
+<h3 id="sec-1-1">previous approaches</h3>
 <ul>
 <li>Insert fences to&#x2026;
 <ul>
@@ -1011,8 +1109,8 @@ Spec: Automatic Inference of Memory Fences, FMCAD '10, Kuperstein et al
 </section>
 </section>
 <section>
-<section id="slide-sec-0-21">
-<h3 id="sec-0-21">our approach</h3>
+<section id="slide-sec-1-2">
+<h3 id="sec-1-2">our approach</h3>
 <ul>
 <li>Orders as part of the algorithm</li>
 <li>Insert fences to enforce orders</li>
@@ -1042,8 +1140,8 @@ they built the semantics, we built the tool
 </section>
 </section>
 <section>
-<section id="slide-sec-1">
-<h2 id="sec-1">Fence Insertion Subtleties</h2>
+<section id="slide-sec-2">
+<h2 id="sec-2">Fence Insertion Subtleties</h2>
 <aside class="notes">
 <p>
 We have an idea of what we think algorithms should look like,
@@ -1054,8 +1152,8 @@ what's standing in our way?
 </section>
 </section>
 <section>
-<section id="slide-sec-1-1">
-<h3 id="sec-1-1">many platforms</h3>
+<section id="slide-sec-2-1">
+<h3 id="sec-2-1">many platforms</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
@@ -1083,8 +1181,8 @@ defined in the proof
 </section>
 </section>
 <section>
-<section id="slide-sec-1-2">
-<h3 id="sec-1-2">fence selection</h3>
+<section id="slide-sec-2-2">
+<h3 id="sec-2-2">fence selection</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
@@ -1111,8 +1209,8 @@ optimizing for performance
 </section>
 </section>
 <section>
-<section id="slide-sec-1-3">
-<h3 id="sec-1-3">existing fence(-likes)</h3>
+<section id="slide-sec-2-3">
+<h3 id="sec-2-3">existing fence(-likes)</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
@@ -1139,8 +1237,8 @@ semantics that we should account for (by avoiding adding more fences).
 </section>
 </section>
 <section>
-<section id="slide-sec-1-4">
-<h3 id="sec-1-4">TL2 STM Algorithm</h3>
+<section id="slide-sec-2-4">
+<h3 id="sec-2-4">TL2 STM Algorithm</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c">  ...
@@ -1177,8 +1275,8 @@ semantics that we should account for (by avoiding adding more fences).
 </section>
 </section>
 <section>
-<section id="slide-sec-1-5">
-<h3 id="sec-1-5">TL2 STM Algorithm</h3>
+<section id="slide-sec-2-5">
+<h3 id="sec-2-5">TL2 STM Algorithm</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c">  ...
@@ -1210,8 +1308,8 @@ semantics that we should account for (by avoiding adding more fences).
 </section>
 </section>
 <section>
-<section id="slide-sec-1-6">
-<h3 id="sec-1-6">TL2 STM Algorithm</h3>
+<section id="slide-sec-2-6">
+<h3 id="sec-2-6">TL2 STM Algorithm</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c">  ...
@@ -1246,8 +1344,8 @@ stores from swapping
 </section>
 </section>
 <section>
-<section id="slide-sec-1-7">
-<h3 id="sec-1-7">code transformations</h3>
+<section id="slide-sec-2-7">
+<h3 id="sec-2-7">code transformations</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c">  ...
@@ -1282,8 +1380,8 @@ stores from swapping
 </section>
 </section>
 <section>
-<section id="slide-sec-1-8">
-<h3 id="sec-1-8">faux order</h3>
+<section id="slide-sec-2-8">
+<h3 id="sec-2-8">faux order</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c">  ...
@@ -1318,14 +1416,14 @@ spec in hand to determine why that fence was placed
 </section>
 </section>
 <section>
-<section id="slide-sec-2">
-<h2 id="sec-2">Algorithm</h2>
-<div class="outline-text-2" id="text-2">
+<section id="slide-sec-3">
+<h2 id="sec-3">Algorithm</h2>
+<div class="outline-text-2" id="text-3">
 </div></section>
 </section>
 <section>
-<section id="slide-sec-2-1">
-<h3 id="sec-2-1">algorithm</h3>
+<section id="slide-sec-3-1">
+<h3 id="sec-3-1">algorithm</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1367,8 +1465,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-2">
-<h3 id="sec-2-2">control flow graph</h3>
+<section id="slide-sec-3-2">
+<h3 id="sec-3-2">control flow graph</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1407,8 +1505,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-3">
-<h3 id="sec-2-3">architecture spec</h3>
+<section id="slide-sec-3-3">
+<h3 id="sec-3-3">architecture spec</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1451,8 +1549,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-4">
-<h3 id="sec-2-4">orders</h3>
+<section id="slide-sec-3-4">
+<h3 id="sec-3-4">orders</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1491,8 +1589,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-5">
-<h3 id="sec-2-5">order elimination</h3>
+<section id="slide-sec-3-5">
+<h3 id="sec-3-5">order elimination</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1536,8 +1634,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-6">
-<h3 id="sec-2-6">order elimination</h3>
+<section id="slide-sec-3-6">
+<h3 id="sec-3-6">order elimination</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1577,8 +1675,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-7">
-<h3 id="sec-2-7">fence position</h3>
+<section id="slide-sec-3-7">
+<h3 id="sec-3-7">fence position</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1618,8 +1716,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-8">
-<h3 id="sec-2-8">fence position</h3>
+<section id="slide-sec-3-8">
+<h3 id="sec-3-8">fence position</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1661,8 +1759,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-9">
-<h3 id="sec-2-9">fence position</h3>
+<section id="slide-sec-3-9">
+<h3 id="sec-3-9">fence position</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1702,8 +1800,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-10">
-<h3 id="sec-2-10">fence placement</h3>
+<section id="slide-sec-3-10">
+<h3 id="sec-3-10">fence placement</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1743,8 +1841,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-11">
-<h3 id="sec-2-11">fence placement</h3>
+<section id="slide-sec-3-11">
+<h3 id="sec-3-11">fence placement</h3>
 <div class="org-src-container">
 
 <pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
@@ -1776,8 +1874,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-2-12">
-<h3 id="sec-2-12">main theorem</h3>
+<section id="slide-sec-3-12">
+<h3 id="sec-3-12">main theorem</h3>
 <p>
 \(\mathsf{Insert}(G, A, O), A \vDash O\)
 </p>
@@ -1794,14 +1892,14 @@ will enforce the orders
 </section>
 </section>
 <section>
-<section id="slide-sec-3">
-<h2 id="sec-3">Results/Parry</h2>
-<div class="outline-text-2" id="text-3">
+<section id="slide-sec-4">
+<h2 id="sec-4">Results/Parry</h2>
+<div class="outline-text-2" id="text-4">
 </div></section>
 </section>
 <section>
-<section id="slide-sec-3-1">
-<h3 id="sec-3-1">benchmark: classic algorithms</h3>
+<section id="slide-sec-4-1">
+<h3 id="sec-4-1">benchmark: classic algorithms</h3>
 <ul>
 <li>from Algave et al '14</li>
 <li>x86 and ARMv7</li>
@@ -1811,8 +1909,8 @@ will enforce the orders
 </section>
 </section>
 <section>
-<section id="slide-sec-3-2">
-<h3 id="sec-3-2">benchmark: STM algorithms</h3>
+<section id="slide-sec-4-2">
+<h3 id="sec-4-2">benchmark: STM algorithms</h3>
 <ul>
 <li>TL2/TL2 Eager</li>
 <li>Rochester ByteEager (TLRW)</li>
@@ -1853,8 +1951,8 @@ will enforce the orders
 </section>
 </section>
 <section>
-<section id="slide-sec-3-3">
-<h3 id="sec-3-3">tl2 - ARMv7</h3>
+<section id="slide-sec-4-3">
+<h3 id="sec-4-3">tl2 - ARMv7</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -1893,8 +1991,8 @@ of similarly weighted edges, choosing the first
 </section>
 </section>
 <section>
-<section id="slide-sec-3-4">
-<h3 id="sec-3-4">tl2 eager - ARMv7</h3>
+<section id="slide-sec-4-4">
+<h3 id="sec-4-4">tl2 eager - ARMv7</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -1931,8 +2029,8 @@ able to eliminate the stst fence at line 1669 on arm
 </section>
 </section>
 <section>
-<section id="slide-sec-3-5">
-<h3 id="sec-3-5">rstm - ARMv7</h3>
+<section id="slide-sec-4-5">
+<h3 id="sec-4-5">rstm - ARMv7</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -1969,8 +2067,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-3-6">
-<h3 id="sec-3-6">tl2 performance</h3>
+<section id="slide-sec-4-6">
+<h3 id="sec-4-6">tl2 performance</h3>
 
 <div class="figure">
 <p><img src="./assets/images/stamp-arm-tl2.png" alt="stamp-arm-tl2.png" />
@@ -1979,8 +2077,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-3-7">
-<h3 id="sec-3-7">rstm performance</h3>
+<section id="slide-sec-4-7">
+<h3 id="sec-4-7">rstm performance</h3>
 
 <div class="figure">
 <p><img src="./assets/images/stamp-arm-rstm.png" alt="stamp-arm-rstm.png" />
@@ -1990,8 +2088,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-4">
-<h2 id="sec-4">algorithms = code + orders</h2>
+<section id="slide-sec-5">
+<h2 id="sec-5">algorithms = code + orders</h2>
 <ul>
 <li>Describe the algorithm behavior</li>
 <li>Let the compiler enforce the orders</li>
@@ -2000,8 +2098,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-5">
-<h2 id="sec-5">Thanks!</h2>
+<section id="slide-sec-6">
+<h2 id="sec-6">Thanks!</h2>
 </section>
 </section>
 </div>

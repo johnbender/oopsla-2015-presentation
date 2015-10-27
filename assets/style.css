@@ -202,7 +202,8 @@ table {
 #slide-sec-0-8 table,
 #slide-sec-0-9 table,
 #slide-sec-0-10 table,
-#slide-sec-0-11 table {
+#slide-sec-0-11 table,
+#slide-sec-0-12 table {
   width: 500px;
 }
 
@@ -225,6 +226,20 @@ table {
 #slide-sec-0-7 p:nth-child(3) {
   font-size: 0.7em;
   margin-top: 0px;
+}
+
+#slide-sec-3-1 pre,
+#slide-sec-3-2 pre,
+#slide-sec-3-3 pre,
+#slide-sec-3-4 pre,
+#slide-sec-3-5 pre,
+#slide-sec-3-6 pre,
+#slide-sec-3-7 pre,
+#slide-sec-3-8 pre,
+#slide-sec-3-9 pre,
+#slide-sec-3-10 pre,
+#slide-sec-3-11 pre {
+  margin-left: 120px;
 }
 
 div.order, span.plus {
