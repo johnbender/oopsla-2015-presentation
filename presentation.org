@@ -396,7 +396,8 @@ class LockOne implements Lock {
 
    #+BEGIN_NOTES
    - LockOne not finished without orders!
-   - it doesn't work properly
+   - requires a side note in the book about ~volatile~
+   - o/w it doesn't work properly
    - "so the algorithim is in fact code plus a set of orders"
    #+END_NOTES
 
@@ -1298,6 +1299,10 @@ node[shape=point]
 #    #+END_NOTES
 
 * Results/Parry
+  #+BEGIN_NOTES
+  - we built a tool called Parry
+  - see how well this idea can be implemented
+  #+END_NOTES
 ** benchmark: classic algorithms
    - from Algave et al '14
    - x86 and ARMv7
@@ -1306,58 +1311,28 @@ node[shape=point]
    - TL2/TL2 Eager
    - Rochester ByteEager (TLRW)
    - x86 and ARMv7
-   - compared with hand placed fences (baseline)
-     - fence placement and count
-     - STAMP performance benchmarks
+
    #+BEGIN_NOTES
    - TL2/TL2 Eager
      - included with STAMP Benchmarks
    - RSTM ByteEager
      - part of Rochester STM Algorithm Suite
+   #+END_NOTES
+
+** benchmark: STM algorithms
+   - *baseline*: original fences
+   - *Parry*: fences placed by Parry
+
+   #+BEGIN_NOTES
+   - baseline is fences already placed in algorithms
+   - ours is fences placed by parry using orders from algorithm definitions
 
    - TL2 is the largest in terms of procedure size
-   - TxCommit has nearly 400 nodes
-   - Just under 30s to run for the 3 procedures in TL2 that have orders
+   - TxCommit method has nearly 400 nodes
+   - Just under 30s to run for 3 procedures in TL2
    #+END_NOTES
-# ** execution time
-#    file:./assets/images/linear-perf.png
-
-#    #+BEGIN_NOTES
-#    - exponential time order elimination algorithm
-#    - linear time order elimination algorithm
-
-#    most of the time in processing is spent in generating the
-#    modified control flow graph in Python, everything else appeals to
-#    optimized C/C++ depedencies
-#    #+END_NOTES
-
-# ** classic
-#    |          |                             | *x86*        | *ARMv7*      |
-#    | *Dekker* | 8 $\xrightarrow{st,ld}$ 9   | 8: ~mfence~  | 8: ~dmb st~  |
-#    |          | 13 $\xrightarrow{st,ld}$ 9  | 13: ~mfence~ | 13: ~dmb st~ |
-#    |          | 25 $\xrightarrow{st,ld}$ 26 | 25: ~mfence~ | 25: ~dmb st~ |
-#    |          | 30 $\xrightarrow{st,ld}$ 26 | 30: ~mfence~ | 30: ~dmb st~ |
-#    |          |                             |              |              |
-#    | *Parker* | 44 $\xrightarrow{st,*}$ 46  | 44: ~mfence~ | 44: ~dmb st~ |
-
-#    #+BEGIN_NOTES
-#    For the classic algorithms we fences were placed in expected locations
-
-#    Explain how to read the table.
-#    #+END_NOTES
-
-# ** classic
-#    |            |                             | *x86*        | *ARMv7*      |
-#    | *Lamport*  | 8 $\xrightarrow{st,ld}$ 9   | 8: ~mfence~  | 8: ~dmb st~  |
-#    |            | 14 $\xrightarrow{st,ld}$ 15 | 14: ~mfence~ | 14: ~dmb st~ |
-#    |            | 31 $\xrightarrow{st,ld}$ 32 | 31: ~mfence~ | 31: ~dmb st~ |
-#    |            | 37 $\xrightarrow{st,ld}$ 38 | 37: ~mfence~ | 37: ~dmb st~ |
-#    |            |                             |              |              |
-#    | *Peterson* | 5 $\xrightarrow{st,ld}$ 7   | 5: ~mfence~  | 5: ~dmb st~  |
-#    |            | 14 $\xrightarrow{st,ld}$ 16 | 14: ~mfence~ | 14: ~dmb st~ |
-
 ** tl2 - ARMv7
-   |             | baseline                                                   | ours                                                       |
+   |             | baseline                                                   | Parry                                                       |
    | *~TxStore~* | @@html:<span class="hlght">@@ 1920: ~dmb~ @@html:</span>@@ | @@html:<span class="hlght">@@ 1886: ~dmb~ @@html:</span>@@ |
 
 
@@ -1368,7 +1343,7 @@ node[shape=point]
    #+END_NOTES
 
 ** tl2 eager - ARMv7
-   |              | baseline                                                      | ours                                              |
+   |              | baseline                                                      | Parry                                              |
    | *~TxCommit~* | @@html:<span class="hlght">@@ 1669: ~dmb st~ @@html:</span>@@ | @@html:<span class="hlght">@@  — @@html:</span>@@ |
 
    #+BEGIN_NOTES
@@ -1377,7 +1352,7 @@ node[shape=point]
    #+END_NOTES
 
 ** rstm - ARMv7
-   |             | baseline                                                          | ours                                                         |
+   |             | baseline                                                          | Parry                                                         |
    | *~read_rw~* | @@html:<span class="hlght">@@ 163: ~ldrex/strex~ @@html:</span>@@ | @@html:<span class="hlght">@@ 163: ~dmb st~ @@html:</span>@@ |
 
    #+BEGIN_NOTES
@@ -1387,18 +1362,20 @@ node[shape=point]
 
 ** tl2 performance
    file:./assets/images/stamp-arm-tl2.png
+
+   #+BEGIN_NOTES
+   - STAMP results for TL2 on ARM
+   - Gray bars are Parry
+   - matched hand placed fences
+   #+END_NOTES
 ** rstm performance
    file:./assets/images/stamp-arm-rstm.png
-# * Related
-# ** semantics
-#    - A Calculus for Relaxed Memory, Crary and Sullivan
-# ** sequential consistency
-#    - Don't Sit on the Fence, Alglave et al
-#    - Hiding relaxed memory consistency with a compiler, Lee et al
-# ** specification
-#    - Automatic Inference of Memory Fences, Kuperstein et al
-#    - Synthesis of Memory Fences via Refinement Propagation, Meshman et al
 
+   #+BEGIN_NOTES
+   - STAMP results for RSTM/byteeager on ARM
+   - verified that slower due to the pairing of a store/dmb st fence
+   - suggests ldrex/strex can be faster in some circumstances
+   #+END_NOTES
 * algorithms = code + orders
   - Describe the algorithm behavior
   - Let the compiler enforce the orders

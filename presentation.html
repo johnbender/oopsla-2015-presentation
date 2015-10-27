@@ -1032,7 +1032,9 @@ The requirement that two instructions appear to execute in program order.
 <ul class="org-ul">
 <li>LockOne not finished without orders!
 </li>
-<li>it doesn't work properly
+<li>requires a side note in the book about <code>volatile</code>
+</li>
+<li>o/w it doesn't work properly
 </li>
 <li>"so the algorithim is in fact code plus a set of orders"
 </li>
@@ -1895,8 +1897,16 @@ will enforce the orders
 <section>
 <section id="slide-sec-4">
 <h2 id="sec-4">Results/Parry</h2>
-<div class="outline-text-2" id="text-4">
-</div></section>
+<aside class="notes">
+<ul class="org-ul">
+<li>we built a tool called Parry
+</li>
+<li>see how well this idea can be implemented
+</li>
+</ul>
+
+</aside>
+</section>
 </section>
 <section>
 <section id="slide-sec-4-1">
@@ -1916,14 +1926,9 @@ will enforce the orders
 <li>TL2/TL2 Eager</li>
 <li>Rochester ByteEager (TLRW)</li>
 <li>x86 and ARMv7</li>
-<li>compared with hand placed fences (baseline)
-<ul>
-<li>fence placement and count</li>
-<li>STAMP performance benchmarks</li>
-
-</ul></li>
 
 </ul>
+
 <aside class="notes">
 <ul class="org-ul">
 <li>TL2/TL2 Eager
@@ -1938,13 +1943,6 @@ will enforce the orders
 </li>
 </ul>
 </li>
-
-<li>TL2 is the largest in terms of procedure size
-</li>
-<li>TxCommit has nearly 400 nodes
-</li>
-<li>Just under 30s to run for the 3 procedures in TL2 that have orders
-</li>
 </ul>
 
 </aside>
@@ -1953,7 +1951,34 @@ will enforce the orders
 </section>
 <section>
 <section id="slide-sec-4-3">
-<h3 id="sec-4-3">tl2 - ARMv7</h3>
+<h3 id="sec-4-3">benchmark: STM algorithms</h3>
+<ul>
+<li><b>baseline</b>: original fences</li>
+<li><b>Parry</b>: fences placed by Parry</li>
+
+</ul>
+
+<aside class="notes">
+<ul class="org-ul">
+<li>baseline is fences already placed in algorithms
+</li>
+<li>ours is fences placed by parry using orders from algorithm definitions
+</li>
+
+<li>TL2 is the largest in terms of procedure size
+</li>
+<li>TxCommit method has nearly 400 nodes
+</li>
+<li>Just under 30s to run for 3 procedures in TL2
+</li>
+</ul>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-sec-4-4">
+<h3 id="sec-4-4">tl2 - ARMv7</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -1968,7 +1993,7 @@ will enforce the orders
 <tr>
 <td class="left">&#xa0;</td>
 <td class="left">baseline</td>
-<td class="left">ours</td>
+<td class="left">Parry</td>
 </tr>
 
 <tr>
@@ -1992,8 +2017,8 @@ of similarly weighted edges, choosing the first
 </section>
 </section>
 <section>
-<section id="slide-sec-4-4">
-<h3 id="sec-4-4">tl2 eager - ARMv7</h3>
+<section id="slide-sec-4-5">
+<h3 id="sec-4-5">tl2 eager - ARMv7</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -2008,7 +2033,7 @@ of similarly weighted edges, choosing the first
 <tr>
 <td class="left">&#xa0;</td>
 <td class="left">baseline</td>
-<td class="left">ours</td>
+<td class="left">Parry</td>
 </tr>
 
 <tr>
@@ -2030,8 +2055,8 @@ able to eliminate the stst fence at line 1669 on arm
 </section>
 </section>
 <section>
-<section id="slide-sec-4-5">
-<h3 id="sec-4-5">rstm - ARMv7</h3>
+<section id="slide-sec-4-6">
+<h3 id="sec-4-6">rstm - ARMv7</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -2046,7 +2071,7 @@ able to eliminate the stst fence at line 1669 on arm
 <tr>
 <td class="left">&#xa0;</td>
 <td class="left">baseline</td>
-<td class="left">ours</td>
+<td class="left">Parry</td>
 </tr>
 
 <tr>
@@ -2068,24 +2093,47 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-4-6">
-<h3 id="sec-4-6">tl2 performance</h3>
+<section id="slide-sec-4-7">
+<h3 id="sec-4-7">tl2 performance</h3>
 
 <div class="figure">
 <p><img src="./assets/images/stamp-arm-tl2.png" alt="stamp-arm-tl2.png" />
 </p>
 </div>
+
+<aside class="notes">
+<ul class="org-ul">
+<li>STAMP results for TL2 on ARM
+</li>
+<li>Gray bars are Parry
+</li>
+<li>matched hand placed fences
+</li>
+</ul>
+
+</aside>
 </section>
 </section>
 <section>
-<section id="slide-sec-4-7">
-<h3 id="sec-4-7">rstm performance</h3>
+<section id="slide-sec-4-8">
+<h3 id="sec-4-8">rstm performance</h3>
 
 <div class="figure">
 <p><img src="./assets/images/stamp-arm-rstm.png" alt="stamp-arm-rstm.png" />
 </p>
 </div>
 
+<aside class="notes">
+<ul class="org-ul">
+<li>STAMP results for RSTM/byteeager on ARM
+</li>
+<li>verified that slower due to the pairing of a store/dmb st fence
+</li>
+<li>suggests ldrex/strex can be faster in some circumstances
+</li>
+</ul>
+
+</aside>
 </section>
 </section>
 <section>
