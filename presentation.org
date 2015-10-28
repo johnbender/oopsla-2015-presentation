@@ -1317,6 +1317,7 @@ node[shape=point]
      - included with STAMP Benchmarks
    - RSTM ByteEager
      - part of Rochester STM Algorithm Suite
+     - Michael Scott
    #+END_NOTES
 
 ** benchmark: STM algorithms
@@ -1376,6 +1377,7 @@ node[shape=point]
    - verified that slower due to the pairing of a store/dmb st fence
    - suggests ldrex/strex can be faster in some circumstances
    #+END_NOTES
+
 * algorithms = code + orders
   - Describe the algorithm behavior
   - Let the compiler enforce the orders

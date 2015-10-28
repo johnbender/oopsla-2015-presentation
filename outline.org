@@ -399,3 +399,21 @@
    - algorithm, don't say multicut or cutset
    - algorithm, explain cfg
    - the graph and nodes are confusing
+** mohsen
+   - update orders on fence insert
+   - mention dekker
+   - only guarantees mutual exclusion
+   - safety not progress
+   - too many details in exec example
+   - explain semantics better
+     - part of the algorithm definition is lost
+     - find something else for semantics
+     - logic
+   - repeat performance sensitivity when talking about sc
+   - pair of line number for notation in  alg = code + orders
+   - previous work two authors, et all and conf abbreviation full year
+   - add cmu paper in our approach (see also)
+   - talk about cross platform approach in our approach
+   - refine how we are different
+   - enforcing orders include diagram that illustrates cross platform
+   - explain stores in procedures for tl2 snippet
