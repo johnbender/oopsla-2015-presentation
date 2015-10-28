@@ -75,6 +75,8 @@ from the art of multiproc programming
 
 <li>lock intended to guarantee mutual exclusion for two threads
 </li>
+<li>notably doesn't guarantee progress, only safety
+</li>
 </ul>
 
 </aside>
@@ -323,13 +325,16 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 </div>
 
 <aside class="notes">
-<p>
-These two operations are critical:
-</p>
+<ul class="org-ul">
+<li>these two operations are critical
+</li>
+
+<li>The proof of mutual exclusion in the book requires that these two lines execute in program order
+</li>
+</ul>
 
 <p>
-The proof of mutual exclusion in the book requires that these two
-lines execute in program order
+"program order" is just the order they are written down in the program
 </p>
 
 </aside>
@@ -392,8 +397,6 @@ lines execute in program order
 </li>
 <li>example execution of two operations
 </li>
-<li>key: no way to mix up the instructions s.t. both can acquire/proceed
-</li>
 </ul>
 
 </aside>
@@ -402,7 +405,66 @@ lines execute in program order
 </section>
 <section>
 <section id="slide-sec-0-9">
-<h3 id="sec-0-9">bad execution</h3>
+<h3 id="sec-0-9">good execution</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="left" />
+
+<col  class="left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">Thread 0</th>
+<th scope="col" class="left">Thread 1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="left"><code>flag[0] = true</code></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left"><span class="hlght"> <code>flag[1] : false</code> </span></td>
+<td class="left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><code>flag[1] = true</code></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left"><span class="hlght"> <code>flag[0] : true</code> </span></td>
+</tr>
+
+<tr>
+<td class="left">&#xa0;</td>
+<td class="left">spin</td>
+</tr>
+
+<tr>
+<td class="left">enter</td>
+<td class="left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+<aside class="notes">
+<ul class="org-ul">
+<li>key: no way to mix up the instructions s.t. both can acquire/proceed
+</li>
+</ul>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-sec-0-10">
+<h3 id="sec-0-10">bad execution</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -463,8 +525,8 @@ lines execute in program order
 </section>
 </section>
 <section>
-<section id="slide-sec-0-10">
-<h3 id="sec-0-10">bad execution</h3>
+<section id="slide-sec-0-11">
+<h3 id="sec-0-11">bad execution</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -523,8 +585,8 @@ lines execute in program order
 </section>
 </section>
 <section>
-<section id="slide-sec-0-11">
-<h3 id="sec-0-11">bad execution</h3>
+<section id="slide-sec-0-12">
+<h3 id="sec-0-12">bad execution</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -582,8 +644,8 @@ lines execute in program order
 </section>
 </section>
 <section>
-<section id="slide-sec-0-12">
-<h3 id="sec-0-12">bad execution</h3>
+<section id="slide-sec-0-13">
+<h3 id="sec-0-13">bad execution</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -638,12 +700,9 @@ lines execute in program order
 </ul>
 
 </aside>
-
-</section>
-</section>
-<section>
-<section id="slide-sec-0-13">
-<h3 id="sec-0-13">traditional solutions</h3>
+<p>
+uential consistency |                |             | ✓        |
+</p>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -656,22 +715,7 @@ lines execute in program order
 
 <col  class="left" />
 </colgroup>
-<thead>
-<tr>
-<th scope="col" class="left">solutions</th>
-<th scope="col" class="left">lost semantics</th>
-<th scope="col" class="left">error prone</th>
-<th scope="col" class="left">overkill</th>
-</tr>
-</thead>
 <tbody>
-<tr>
-<td class="left">sequential consistency</td>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left">✓</td>
-</tr>
-
 <tr>
 <td class="left"><code>volatile</code> modifier</td>
 <td class="left">✓</td>
@@ -731,7 +775,7 @@ traditional solutions:
 <thead>
 <tr>
 <th scope="col" class="left">solutions</th>
-<th scope="col" class="left">lost semantics</th>
+<th scope="col" class="left">lossy</th>
 <th scope="col" class="left">error prone</th>
 <th scope="col" class="left">overkill</th>
 </tr>
@@ -797,7 +841,7 @@ all be declared volatile to work properly.
 <thead>
 <tr>
 <th scope="col" class="left">solutions</th>
-<th scope="col" class="left">lost semantics</th>
+<th scope="col" class="left">lossy</th>
 <th scope="col" class="left">error prone</th>
 <th scope="col" class="left">overkill</th>
 </tr>
@@ -835,7 +879,13 @@ all be declared volatile to work properly.
 
 <aside class="notes">
 <ul class="org-ul">
-<li>the reason for marking variable volatile is unclear for newcomers
+<li>lossy
+<ul class="org-ul">
+<li>algorithm broken without guarantees
+</li>
+<li>newcomer can't infer that from volatile
+</li>
+</ul>
 </li>
 <li>every operation on volatile variables is affected, unnecessary
 </li>
@@ -863,7 +913,7 @@ all be declared volatile to work properly.
 <thead>
 <tr>
 <th scope="col" class="left">solutions</th>
-<th scope="col" class="left">lost semantics</th>
+<th scope="col" class="left">lossy</th>
 <th scope="col" class="left">error prone</th>
 <th scope="col" class="left">overkill</th>
 </tr>
@@ -929,7 +979,7 @@ all be declared volatile to work properly.
 <thead>
 <tr>
 <th scope="col" class="left">solutions</th>
-<th scope="col" class="left">lost semantics</th>
+<th scope="col" class="left">lossy</th>
 <th scope="col" class="left">error prone</th>
 <th scope="col" class="left">overkill</th>
 </tr>
@@ -1941,6 +1991,8 @@ will enforce the orders
 <ul class="org-ul">
 <li>part of Rochester STM Algorithm Suite
 </li>
+<li>Michael Scott
+</li>
 </ul>
 </li>
 </ul>
@@ -2134,6 +2186,7 @@ compare and swap to enforce a store/store order
 </ul>
 
 </aside>
+
 </section>
 </section>
 <section>

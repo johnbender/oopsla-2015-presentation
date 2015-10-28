@@ -23,6 +23,7 @@
      from the art of multiproc programming
 
    - lock intended to guarantee mutual exclusion for two threads
+   - notably doesn't guarantee progress, only safety
    #+END_NOTES
 
 ** ~LockOne~ mutex
@@ -188,10 +189,11 @@ class LockOne implements Lock {
    #+END_SRC
 
    #+BEGIN_NOTES
-   These two operations are critical:
+   - these two operations are critical
 
-   The proof of mutual exclusion in the book requires that these two
-   lines execute in program order
+   - The proof of mutual exclusion in the book requires that these two lines execute in program order
+
+   "program order" is just the order they are written down in the program
    #+END_NOTES
 
 ** good execution
@@ -208,9 +210,22 @@ class LockOne implements Lock {
    #+BEGIN_NOTES
    - assuming everything behaves as expected
    - example execution of two operations
-   - key: no way to mix up the instructions s.t. both can acquire/proceed
    #+END_NOTES
 
+** good execution
+
+   | Thread 0                                                         | Thread 1                                                        |
+   |------------------------------------------------------------------+-----------------------------------------------------------------|
+   | ~flag[0] = true~                                                 |                                                                 |
+   | @@html:<span class="hlght">@@ ~flag[1] : false~ @@html:</span>@@ |                                                                 |
+   |                                                                  | ~flag[1] = true~                                                |
+   |                                                                  | @@html:<span class="hlght">@@ ~flag[0] : true~ @@html:</span>@@ |
+   |                                                                  | spin                                                            |
+   | enter                                                            |                                                                 |
+
+   #+BEGIN_NOTES
+   - key: no way to mix up the instructions s.t. both can acquire/proceed
+   #+END_NOTES
 ** bad execution
 
    | Thread 0                                                        | Thread 1          |
@@ -270,11 +285,7 @@ class LockOne implements Lock {
    #+BEGIN_NOTES
    - then possible for both threads to proceed into the protected code
    #+END_NOTES
-
-** traditional solutions
-   | solutions              | lost semantics | error prone | overkill |
-   |------------------------+----------------+-------------+----------|
-   | sequential consistency |                |             | ✓        |
+uential consistency |                |             | ✓        |
    | ~volatile~ modifier    | ✓              |             | ✓        |
    | memory fences          | ✓              | ✓           |          |
 
@@ -292,7 +303,7 @@ class LockOne implements Lock {
    #+END_NOTES
 
 ** traditional solutions
-   | solutions                                                             | lost semantics | error prone | overkill |
+   | solutions                                                             | lossy | error prone | overkill |
    |-----------------------------------------------------------------------+----------------+-------------+----------|
    | @@html:<span class="hlght">@@ sequential consistency @@html:</span>@@ |                |             | ✓        |
    | ~volatile~ modifier                                                   | ✓              |             | ✓        |
@@ -309,11 +320,11 @@ class LockOne implements Lock {
    #+END_NOTES
 
 ** traditional solutions
-   | solutions                                                          | lost semantics | error prone | overkill |
-   |--------------------------------------------------------------------+----------------+-------------+----------|
-   | sequential consistency                                             |                |             | ✓        |
-   | @@html:<span class="hlght">@@ ~volatile~ modifier @@html:</span>@@ | ✓              |             | ✓        |
-   | memory fences                                                      | ✓              | ✓           |          |
+   | solutions                                                          | lossy | error prone | overkill |
+   |--------------------------------------------------------------------+-------+-------------+----------|
+   | sequential consistency                                             |       |             | ✓        |
+   | @@html:<span class="hlght">@@ ~volatile~ modifier @@html:</span>@@ | ✓     |             | ✓        |
+   | memory fences                                                      | ✓     | ✓           |          |
 
    #+BEGIN_QUOTE
    Pragma 2.3.1. In practice, the Boolean flag variables ... must
@@ -321,16 +332,19 @@ class LockOne implements Lock {
    #+END_QUOTE
 
    #+BEGIN_NOTES
-   - the reason for marking variable volatile is unclear for newcomers
+   - note the pragma from the book
+   - lossy
+     - algorithm broken without guarantees
+     - newcomer can't infer that from volatile
    - every operation on volatile variables is affected, unnecessary
    #+END_NOTES
 
 ** traditional solutions
-   | solutions                                                    | lost semantics | error prone | overkill |
-   |--------------------------------------------------------------+----------------+-------------+----------|
-   | sequential consistency                                       |                |             | ✓        |
-   | ~volatile~ modifier                                          | ✓              |             | ✓        |
-   | @@html:<span class="hlght">@@ memory fences @@html:</span>@@ | ✓              | ✓           |          |
+   | solutions                                                    | lossy | error prone | overkill |
+   |--------------------------------------------------------------+------+-------------+----------|
+   | sequential consistency                                       |      |             | ✓        |
+   | ~volatile~ modifier                                          | ✓    |             | ✓        |
+   | @@html:<span class="hlght">@@ memory fences @@html:</span>@@ | ✓    | ✓           |          |
 
    #+BEGIN_QUOTE
    Pragma 2.3.1. In practice, the Boolean flag variables ... must
@@ -343,11 +357,11 @@ class LockOne implements Lock {
    #+END_NOTES
 
 ** traditional solutions
-   | solutions                                                             | lost semantics | error prone | overkill |
-   |-----------------------------------------------------------------------+----------------+-------------+----------|
-   | @@html:<span class="hlght">@@ sequential consistency @@html:</span>@@ |                |             | ✓        |
-   | @@html:<span class="hlght">@@ ~volatile~ modifier @@html:</span>@@    | ✓              |             | ✓        |
-   | @@html:<span class="hlght">@@ memory fences @@html:</span>@@          | ✓              | ✓           |          |
+   | solutions                                                             | lossy | error prone | overkill |
+   |-----------------------------------------------------------------------+------+-------------+----------|
+   | @@html:<span class="hlght">@@ sequential consistency @@html:</span>@@ |      |             | ✓        |
+   | @@html:<span class="hlght">@@ ~volatile~ modifier @@html:</span>@@    | ✓    |             | ✓        |
+   | @@html:<span class="hlght">@@ memory fences @@html:</span>@@          | ✓    | ✓           |          |
 
    #+BEGIN_QUOTE
    Pragma 2.3.1. In practice, the Boolean flag variables ... must

@@ -417,3 +417,15 @@
    - refine how we are different
    - enforcing orders include diagram that illustrates cross platform
    - explain stores in procedures for tl2 snippet
+   - highlight one of the orders as an example
+   - mention multicut
+   - make note of cross platform issues in order elim
+   - take time and explain theorem slide more
+   - explain first table
+   - different line numbers, straight line execution
+   - explain last bar graph short and sweet
+     - "the better we describe an architecture to our compiler the better our result"
+
+   - last slide, "solves the long standing problem of porting TM algorithms"
+   - take points and move to our approach
+   - much larger fonts
