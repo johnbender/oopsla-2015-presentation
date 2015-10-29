@@ -1,5 +1,6 @@
 body {
   padding: 20px;
+  font-size: 20px;
 }
 
 #content {
@@ -190,9 +191,11 @@ section.present > table th {
   font-size: 0.8em;
 }
 
-table td span.hlght {
+span.hlght {
   color: red;
 }
+
+
 
 table {
   width: 900px;
@@ -246,15 +249,24 @@ table {
 div.order, span.plus {
   position: absolute;
   top: 40%;
-  right: 0px;
 }
 
 div.order {
   padding-top: 36px;
+  right: 150px;
 }
 
 span.plus {
   left: 0;
   font-size: 100px;
-  margin-right: 80px;
+  margin-right: 0px;
+  right: -80px;
+}
+
+pre.src {
+  font-size: 24px;
+}
+
+.reveal li li li {
+  font-size: 0.8em;
 }

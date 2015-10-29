@@ -14,13 +14,15 @@
 
    Maurice Herlihy & Nir Shavit, 2012
 
-   #+INCLUDE: "code/LockOne.java" src java
+   #+INCLUDE: "code/LockOne.java" src java -n
 
    #+BEGIN_NOTES
    - Our work focuses on performance critical concurrent algorithms
 
    - To illustrate the problem we have an example of one such algorithm
      from the art of multiproc programming
+
+   - by Maurice Herlihy and Nir Shavit
 
    - lock intended to guarantee mutual exclusion for two threads
    - notably doesn't guarantee progress, only safety
@@ -31,7 +33,7 @@
 
    Maurice Herlihy & Nir Shavit, 2012
 
-   #+BEGIN_SRC java
+   #+BEGIN_SRC java -n
 class LockOne implements Lock {
   private boolean[] flag = new boolean[2];
                                        ▲
@@ -57,7 +59,7 @@ class LockOne implements Lock {
 
    Maurice Herlihy & Nir Shavit, 2012
 
-   #+BEGIN_SRC java
+   #+BEGIN_SRC java -n
 class LockOne implements Lock {
   private boolean[] flag = new boolean[2];
 
@@ -84,7 +86,7 @@ class LockOne implements Lock {
 
    Maurice Herlihy & Nir Shavit, 2012
 
-   #+BEGIN_SRC java
+   #+BEGIN_SRC java -n
 class LockOne implements Lock {
   private boolean[] flag = new boolean[2];
 
@@ -110,7 +112,7 @@ class LockOne implements Lock {
 
    Maurice Herlihy & Nir Shavit, 2012
 
-   #+BEGIN_SRC java
+   #+BEGIN_SRC java -n
 class LockOne implements Lock {
   private boolean[] flag = new boolean[2];
 
@@ -139,7 +141,7 @@ class LockOne implements Lock {
 
    Maurice Herlihy & Nir Shavit, 2012
 
-   #+BEGIN_SRC java
+   #+BEGIN_SRC java -n
 class LockOne implements Lock {
   private boolean[] flag = new boolean[2];
 
@@ -170,7 +172,7 @@ class LockOne implements Lock {
 
    Maurice Herlihy & Nir Shavit, 2012
 
-   #+BEGIN_SRC java
+   #+BEGIN_SRC java -n
 class LockOne implements Lock {
   private boolean[] flag = new boolean[2];
 
@@ -285,9 +287,13 @@ class LockOne implements Lock {
    #+BEGIN_NOTES
    - then possible for both threads to proceed into the protected code
    #+END_NOTES
-uential consistency |                |             | ✓        |
-   | ~volatile~ modifier    | ✓              |             | ✓        |
-   | memory fences          | ✓              | ✓           |          |
+
+** traditional solutions
+   | solutions              | lossy | error prone | overkill |
+   |------------------------+-------+-------------+----------|
+   | sequential consistency |       |             | ✓        |
+   | ~volatile~ modifier    | ✓     |             | ✓        |
+   | memory fences          | ✓     | ✓           |          |
 
    #+BEGIN_QUOTE
    Pragma 2.3.1. In practice, the Boolean flag variables ... must
@@ -304,10 +310,10 @@ uential consistency |                |             | ✓        |
 
 ** traditional solutions
    | solutions                                                             | lossy | error prone | overkill |
-   |-----------------------------------------------------------------------+----------------+-------------+----------|
-   | @@html:<span class="hlght">@@ sequential consistency @@html:</span>@@ |                |             | ✓        |
-   | ~volatile~ modifier                                                   | ✓              |             | ✓        |
-   | memory fences                                                         | ✓              | ✓           |          |
+   |-----------------------------------------------------------------------+-------+-------------+----------|
+   | @@html:<span class="hlght">@@ sequential consistency @@html:</span>@@ |       |             | ✓        |
+   | ~volatile~ modifier                                                   | ✓     |             | ✓        |
+   | memory fences                                                         | ✓     | ✓           |          |
 
    #+BEGIN_QUOTE
    Pragma 2.3.1. In practice, the Boolean flag variables ... must
@@ -315,6 +321,7 @@ uential consistency |                |             | ✓        |
    #+END_QUOTE
 
    #+BEGIN_NOTES
+   - sc might be fine for code that calls these algorithms, but expensive here
    - many ops can safely reorder for performance
    - the algorithm will continue to work fine
    #+END_NOTES
@@ -382,7 +389,7 @@ uential consistency |                |             | ✓        |
    - higher level concept is the execution order
    #+END_NOTES
 ** algorithms = code + orders
-   #+BEGIN_SRC java
+   #+BEGIN_SRC java -n
 class LockOne implements Lock {
   private boolean[] flag = new boolean[2];
 
@@ -403,7 +410,7 @@ class LockOne implements Lock {
    <span class="plus">+</span>
    <div class="order">
    @@
-   $\{ st(\mathtt{flag[i]}) \rightarrow ld(\mathtt{flag[j]}) \}$
+   $\{ 7 \rightarrow 8, ... \}$
    @@html:
    </div>
    @@
@@ -421,10 +428,39 @@ class LockOne implements Lock {
   - fence insertion!
   #+END_NOTES
 
+  #+BEGIN_SRC dot :file ./assets/images/xplatform.png :exports results
+digraph a {
+ node [shape = rectangle, fontsize=20] tool Mutex STM Queue;
+ node [shape = invis, fontsize=20] rest1;
+ node [shape = rectangle, fontsize=20] x86 ARM Power;
+ node [shape = invis, fontsize=20] rest2;
+
+ rest1 [label="..."]
+ rest2 [label="..."]
+
+ Mutex -> tool;
+ STM -> tool;
+ Queue -> tool;
+ rest1 -> tool;
+
+
+ tool -> x86;
+ tool -> ARM;
+ tool -> Power;
+ tool -> rest2;
+}
+  #+END_SRC
+
+  #+RESULTS:
+  [[file:./assets/images/xplatform.png]]
+
+
 ** previous approaches
    - Insert fences to...
      - enforce sequential consistency
+       - Alglave and Kroening et al, CAV 2014
      - enforce a specification
+       - Kuperstein and Vechev et al, FMCAD 2010
    - Whole program, O(2^n)
 
    #+BEGIN_NOTES
@@ -447,17 +483,18 @@ class LockOne implements Lock {
 
    #+END_NOTES
 ** our approach
-   - Orders as part of the algorithm
+   - Algorithm = code + orders
    - Insert fences to enforce orders
    - Per-procedure
      - still O(2^n) but inputs are small
+   - See also
+     - Crary and Sullivan, POPL 2015
 
    #+BEGIN_NOTES
-   This places our analysis at the procedure level.
-
-   A Calculus for Relaxed Memory Models, PLDI 2015, Crary et al
-
-   they built the semantics, we built the tool
+   - Instead of inferring the orders from the program, we ask the programmer for them
+   - This places our analysis at the procedure level.
+   - A Calculus for Relaxed Memory Models, POPL 2015, Crary et al
+   - they built the semantics, we built the tool
    #+END_NOTES
 
 * Fence Insertion Subtleties
@@ -1257,7 +1294,7 @@ digraph a {
  2 -> 5 [color="red"]
  5 -> 3 [color="red"]
 
-node[shape=point]
+ node[shape=point]
 
  9 [color="black"]
  10 [ color="black"]
@@ -1268,13 +1305,12 @@ node[shape=point]
  node[shape=point style=invis]
  splines=line
  n -> 6 [style=invis]
- 6 -> o [style=invis]
- o -> 8 [style=invis]
  p -> 9 [style=invis]
 
+ 6 -> o [style=invis]
+ o -> 8 [style=invis]
 
  9 -> 10 [color="black"  arrowhead=none]
-
  6 -> 8 [color="black"  arrowhead=none]
 }
    #+END_SRC
@@ -1318,9 +1354,9 @@ node[shape=point]
   - see how well this idea can be implemented
   #+END_NOTES
 ** benchmark: classic algorithms
-   - from Algave et al '14
-   - x86 and ARMv7
+   - from Algave et al, CAV 2014
    - 4 lock free algorithms
+   - x86 and ARMv7
 ** benchmark: STM algorithms
    - TL2/TL2 Eager
    - Rochester ByteEager (TLRW)
@@ -1335,8 +1371,18 @@ node[shape=point]
    #+END_NOTES
 
 ** benchmark: STM algorithms
+   - TL2/TL2 Eager
+   - Rochester ByteEager (TLRW)
+   - x86 and @@html:<span class="hlght">@@ ARMv7 @@html:</span>@@
+
+
+   #+BEGIN_NOTES
+   - for the sake of time arm7 only
+   #+END_NOTES
+** benchmark: STM algorithms
    - *baseline*: original fences
    - *Parry*: fences placed by Parry
+   - STAMP for performance
 
    #+BEGIN_NOTES
    - baseline is fences already placed in algorithms

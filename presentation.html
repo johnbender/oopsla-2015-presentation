@@ -46,21 +46,21 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <div class="org-src-container">
 
-<pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
-  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
-
-  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
-    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
-    flag[i] = <span class="org-constant">true</span>;
-    <span class="org-keyword">while</span> (flag[j]) {}
-  }
-
-  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
-    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-    flag[i] = <span class="org-constant">false</span>;
-  }
-}
+<pre  class="src src-java"><span class="linenr"> 1: </span><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
+<span class="linenr"> 2: </span>  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+<span class="linenr"> 3: </span>
+<span class="linenr"> 4: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
+<span class="linenr"> 5: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+<span class="linenr"> 6: </span>    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
+<span class="linenr"> 7: </span>    flag[i] = <span class="org-constant">true</span>;
+<span class="linenr"> 8: </span>    <span class="org-keyword">while</span> (flag[j]) {}
+<span class="linenr"> 9: </span>  }
+<span class="linenr">10: </span>
+<span class="linenr">11: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
+<span class="linenr">12: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+<span class="linenr">13: </span>    flag[i] = <span class="org-constant">false</span>;
+<span class="linenr">14: </span>  }
+<span class="linenr">15: </span>}
 </pre>
 </div>
 
@@ -71,6 +71,9 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <li>To illustrate the problem we have an example of one such algorithm
 from the art of multiproc programming
+</li>
+
+<li>by Maurice Herlihy and Nir Shavit
 </li>
 
 <li>lock intended to guarantee mutual exclusion for two threads
@@ -96,21 +99,21 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <div class="org-src-container">
 
-<pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
-  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
-                                       &#9650;
-  <span class="org-keyword">public</span> <span class="org-type">void</span> lock() {
-    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
-    flag[i] = <span class="org-constant">true</span>;
-    <span class="org-keyword">while</span> (flag[j]) {}
-  }
-
-  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
-    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-    flag[i] = <span class="org-constant">false</span>;
-  }
-}
+<pre  class="src src-java"><span class="linenr"> 1: </span><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
+<span class="linenr"> 2: </span>  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+<span class="linenr"> 3: </span>                                       &#9650;
+<span class="linenr"> 4: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> lock() {
+<span class="linenr"> 5: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+<span class="linenr"> 6: </span>    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
+<span class="linenr"> 7: </span>    flag[i] = <span class="org-constant">true</span>;
+<span class="linenr"> 8: </span>    <span class="org-keyword">while</span> (flag[j]) {}
+<span class="linenr"> 9: </span>  }
+<span class="linenr">10: </span>
+<span class="linenr">11: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
+<span class="linenr">12: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+<span class="linenr">13: </span>    flag[i] = <span class="org-constant">false</span>;
+<span class="linenr">14: </span>  }
+<span class="linenr">15: </span>}
 </pre>
 </div>
 
@@ -135,21 +138,21 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <div class="org-src-container">
 
-<pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
-  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
-
-  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
-&#9654;   <span class="org-type">int</span> i = ThreadID.get();
-    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
-    flag[i] = <span class="org-constant">true</span>;
-    <span class="org-keyword">while</span> (flag[j]) {}
-  }
-
-  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
-    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-    flag[i] = <span class="org-constant">false</span>;
-  }
-}
+<pre  class="src src-java"><span class="linenr"> 1: </span><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
+<span class="linenr"> 2: </span>  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+<span class="linenr"> 3: </span>
+<span class="linenr"> 4: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
+<span class="linenr"> 5: </span>&#9654;   <span class="org-type">int</span> i = ThreadID.get();
+<span class="linenr"> 6: </span>    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
+<span class="linenr"> 7: </span>    flag[i] = <span class="org-constant">true</span>;
+<span class="linenr"> 8: </span>    <span class="org-keyword">while</span> (flag[j]) {}
+<span class="linenr"> 9: </span>  }
+<span class="linenr">10: </span>
+<span class="linenr">11: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
+<span class="linenr">12: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+<span class="linenr">13: </span>    flag[i] = <span class="org-constant">false</span>;
+<span class="linenr">14: </span>  }
+<span class="linenr">15: </span>}
 </pre>
 </div>
 
@@ -175,21 +178,21 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <div class="org-src-container">
 
-<pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
-  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
-
-  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
-    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-&#9654;   <span class="org-type">int</span> j = 1-i;
-    flag[i] = <span class="org-constant">true</span>;
-    <span class="org-keyword">while</span> (flag[j]) {}
-  }
-
-  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
-    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-    flag[i] = <span class="org-constant">false</span>;
-  }
-}
+<pre  class="src src-java"><span class="linenr"> 1: </span><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
+<span class="linenr"> 2: </span>  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+<span class="linenr"> 3: </span>
+<span class="linenr"> 4: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
+<span class="linenr"> 5: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+<span class="linenr"> 6: </span>&#9654;   <span class="org-type">int</span> j = 1-i;
+<span class="linenr"> 7: </span>    flag[i] = <span class="org-constant">true</span>;
+<span class="linenr"> 8: </span>    <span class="org-keyword">while</span> (flag[j]) {}
+<span class="linenr"> 9: </span>  }
+<span class="linenr">10: </span>
+<span class="linenr">11: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
+<span class="linenr">12: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+<span class="linenr">13: </span>    flag[i] = <span class="org-constant">false</span>;
+<span class="linenr">14: </span>  }
+<span class="linenr">15: </span>}
 </pre>
 </div>
 
@@ -214,21 +217,21 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <div class="org-src-container">
 
-<pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
-  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
-
-  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
-    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
-&#9654;   flag[i] = <span class="org-constant">true</span>;
-    <span class="org-keyword">while</span> (flag[j]) {}
-  }
-
-  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
-    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-    flag[i] = <span class="org-constant">false</span>;
-  }
-}
+<pre  class="src src-java"><span class="linenr"> 1: </span><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
+<span class="linenr"> 2: </span>  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+<span class="linenr"> 3: </span>
+<span class="linenr"> 4: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
+<span class="linenr"> 5: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+<span class="linenr"> 6: </span>    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
+<span class="linenr"> 7: </span>&#9654;   flag[i] = <span class="org-constant">true</span>;
+<span class="linenr"> 8: </span>    <span class="org-keyword">while</span> (flag[j]) {}
+<span class="linenr"> 9: </span>  }
+<span class="linenr">10: </span>
+<span class="linenr">11: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
+<span class="linenr">12: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+<span class="linenr">13: </span>    flag[i] = <span class="org-constant">false</span>;
+<span class="linenr">14: </span>  }
+<span class="linenr">15: </span>}
 </pre>
 </div>
 
@@ -258,21 +261,21 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <div class="org-src-container">
 
-<pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
-  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
-
-  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
-    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
-    flag[i] = <span class="org-constant">true</span>;
-&#9654;   <span class="org-keyword">while</span> (flag[j]) {}
-  }
-
-  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
-    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-    flag[i] = <span class="org-constant">false</span>;
-  }
-}
+<pre  class="src src-java"><span class="linenr"> 1: </span><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
+<span class="linenr"> 2: </span>  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+<span class="linenr"> 3: </span>
+<span class="linenr"> 4: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
+<span class="linenr"> 5: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+<span class="linenr"> 6: </span>    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
+<span class="linenr"> 7: </span>    flag[i] = <span class="org-constant">true</span>;
+<span class="linenr"> 8: </span>&#9654;   <span class="org-keyword">while</span> (flag[j]) {}
+<span class="linenr"> 9: </span>  }
+<span class="linenr">10: </span>
+<span class="linenr">11: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
+<span class="linenr">12: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+<span class="linenr">13: </span>    flag[i] = <span class="org-constant">false</span>;
+<span class="linenr">14: </span>  }
+<span class="linenr">15: </span>}
 </pre>
 </div>
 
@@ -306,21 +309,21 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <div class="org-src-container">
 
-<pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
-  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
-
-  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
-    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
-&#9654;   flag[i] = <span class="org-constant">true</span>;
-&#9654;   <span class="org-keyword">while</span> (flag[j]) {}
-  }
-
-  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
-    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-    flag[i] = <span class="org-constant">false</span>;
-  }
-}
+<pre  class="src src-java"><span class="linenr"> 1: </span><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
+<span class="linenr"> 2: </span>  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+<span class="linenr"> 3: </span>
+<span class="linenr"> 4: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
+<span class="linenr"> 5: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+<span class="linenr"> 6: </span>    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
+<span class="linenr"> 7: </span>&#9654;   flag[i] = <span class="org-constant">true</span>;
+<span class="linenr"> 8: </span>&#9654;   <span class="org-keyword">while</span> (flag[j]) {}
+<span class="linenr"> 9: </span>  }
+<span class="linenr">10: </span>
+<span class="linenr">11: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
+<span class="linenr">12: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+<span class="linenr">13: </span>    flag[i] = <span class="org-constant">false</span>;
+<span class="linenr">14: </span>  }
+<span class="linenr">15: </span>}
 </pre>
 </div>
 
@@ -700,9 +703,12 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 </ul>
 
 </aside>
-<p>
-uential consistency |                |             | ✓        |
-</p>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-0-14">
+<h3 id="sec-0-14">traditional solutions</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -715,7 +721,22 @@ uential consistency |                |             | ✓        |
 
 <col  class="left" />
 </colgroup>
+<thead>
+<tr>
+<th scope="col" class="left">solutions</th>
+<th scope="col" class="left">lossy</th>
+<th scope="col" class="left">error prone</th>
+<th scope="col" class="left">overkill</th>
+</tr>
+</thead>
 <tbody>
+<tr>
+<td class="left">sequential consistency</td>
+<td class="left">&#xa0;</td>
+<td class="left">&#xa0;</td>
+<td class="left">✓</td>
+</tr>
+
 <tr>
 <td class="left"><code>volatile</code> modifier</td>
 <td class="left">✓</td>
@@ -758,8 +779,8 @@ traditional solutions:
 </section>
 </section>
 <section>
-<section id="slide-sec-0-14">
-<h3 id="sec-0-14">traditional solutions</h3>
+<section id="slide-sec-0-15">
+<h3 id="sec-0-15">traditional solutions</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -813,6 +834,8 @@ all be declared volatile to work properly.
 
 <aside class="notes">
 <ul class="org-ul">
+<li>sc might be fine for code that calls these algorithms, but expensive here
+</li>
 <li>many ops can safely reorder for performance
 </li>
 <li>the algorithm will continue to work fine
@@ -824,8 +847,8 @@ all be declared volatile to work properly.
 </section>
 </section>
 <section>
-<section id="slide-sec-0-15">
-<h3 id="sec-0-15">traditional solutions</h3>
+<section id="slide-sec-0-16">
+<h3 id="sec-0-16">traditional solutions</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -879,6 +902,8 @@ all be declared volatile to work properly.
 
 <aside class="notes">
 <ul class="org-ul">
+<li>note the pragma from the book
+</li>
 <li>lossy
 <ul class="org-ul">
 <li>algorithm broken without guarantees
@@ -896,8 +921,8 @@ all be declared volatile to work properly.
 </section>
 </section>
 <section>
-<section id="slide-sec-0-16">
-<h3 id="sec-0-16">traditional solutions</h3>
+<section id="slide-sec-0-17">
+<h3 id="sec-0-17">traditional solutions</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -962,8 +987,8 @@ all be declared volatile to work properly.
 </section>
 </section>
 <section>
-<section id="slide-sec-0-17">
-<h3 id="sec-0-17">traditional solutions</h3>
+<section id="slide-sec-0-18">
+<h3 id="sec-0-18">traditional solutions</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -1026,8 +1051,8 @@ all be declared volatile to work properly.
 </section>
 </section>
 <section>
-<section id="slide-sec-0-18">
-<h3 id="sec-0-18">execution order</h3>
+<section id="slide-sec-0-19">
+<h3 id="sec-0-19">execution order</h3>
 <blockquote nil>
 <p>
 The requirement that two instructions appear to execute in program order.
@@ -1046,25 +1071,25 @@ The requirement that two instructions appear to execute in program order.
 </section>
 </section>
 <section>
-<section id="slide-sec-0-19">
-<h3 id="sec-0-19">algorithms = code + orders</h3>
+<section id="slide-sec-0-20">
+<h3 id="sec-0-20">algorithms = code + orders</h3>
 <div class="org-src-container">
 
-<pre  class="src src-java"><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
-  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
-
-  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
-    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
-&#9654;   flag[i] = <span class="org-constant">true</span>;
-&#9654;   <span class="org-keyword">while</span> (flag[j]) {}
-  }
-
-  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
-    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-    flag[i] = <span class="org-constant">false</span>;
-  }
-}
+<pre  class="src src-java"><span class="linenr"> 1: </span><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
+<span class="linenr"> 2: </span>  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+<span class="linenr"> 3: </span>
+<span class="linenr"> 4: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
+<span class="linenr"> 5: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+<span class="linenr"> 6: </span>    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
+<span class="linenr"> 7: </span>&#9654;   flag[i] = <span class="org-constant">true</span>;
+<span class="linenr"> 8: </span>&#9654;   <span class="org-keyword">while</span> (flag[j]) {}
+<span class="linenr"> 9: </span>  }
+<span class="linenr">10: </span>
+<span class="linenr">11: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
+<span class="linenr">12: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
+<span class="linenr">13: </span>    flag[i] = <span class="org-constant">false</span>;
+<span class="linenr">14: </span>  }
+<span class="linenr">15: </span>}
 </pre>
 </div>
 <p>
@@ -1072,7 +1097,7 @@ The requirement that two instructions appear to execute in program order.
    <span class="plus">+</span>
    <div class="order">
 
-\(\{ st(\mathtt{flag[i]}) \rightarrow ld(\mathtt{flag[j]}) \}\)
+\(\{ 7 \rightarrow 8, ... \}\)
 
    </div>
 
@@ -1107,6 +1132,13 @@ The requirement that two instructions appear to execute in program order.
 
 </aside>
 
+
+<div class="figure">
+<p><img src="./assets/images/xplatform.png" alt="xplatform.png" />
+</p>
+</div>
+
+
 </section>
 </section>
 <section>
@@ -1115,8 +1147,16 @@ The requirement that two instructions appear to execute in program order.
 <ul>
 <li>Insert fences to&#x2026;
 <ul>
-<li>enforce sequential consistency</li>
-<li>enforce a specification</li>
+<li>enforce sequential consistency
+<ul>
+<li>Alglave and Kroening et al, CAV 2014</li>
+
+</ul></li>
+<li>enforce a specification
+<ul>
+<li>Kuperstein and Vechev et al, FMCAD 2010</li>
+
+</ul></li>
 
 </ul></li>
 <li>Whole program, O(2<sup>n</sup>)</li>
@@ -1164,28 +1204,32 @@ Spec: Automatic Inference of Memory Fences, FMCAD '10, Kuperstein et al
 <section id="slide-sec-1-2">
 <h3 id="sec-1-2">our approach</h3>
 <ul>
-<li>Orders as part of the algorithm</li>
+<li>Algorithm = code + orders</li>
 <li>Insert fences to enforce orders</li>
 <li>Per-procedure
 <ul>
 <li>still O(2<sup>n</sup>) but inputs are small</li>
 
 </ul></li>
+<li>See also
+<ul>
+<li>Crary and Sullivan, POPL 2015</li>
+
+</ul></li>
 
 </ul>
 
 <aside class="notes">
-<p>
-This places our analysis at the procedure level.
-</p>
-
-<p>
-A Calculus for Relaxed Memory Models, PLDI 2015, Crary et al
-</p>
-
-<p>
-they built the semantics, we built the tool
-</p>
+<ul class="org-ul">
+<li>Instead of inferring the orders from the program, we ask the programmer for them
+</li>
+<li>This places our analysis at the procedure level.
+</li>
+<li>A Calculus for Relaxed Memory Models, POPL 2015, Crary et al
+</li>
+<li>they built the semantics, we built the tool
+</li>
+</ul>
 
 </aside>
 
@@ -1962,9 +2006,9 @@ will enforce the orders
 <section id="slide-sec-4-1">
 <h3 id="sec-4-1">benchmark: classic algorithms</h3>
 <ul>
-<li>from Algave et al '14</li>
-<li>x86 and ARMv7</li>
+<li>from Algave et al, CAV 2014</li>
 <li>4 lock free algorithms</li>
+<li>x86 and ARMv7</li>
 
 </ul>
 </section>
@@ -2005,8 +2049,29 @@ will enforce the orders
 <section id="slide-sec-4-3">
 <h3 id="sec-4-3">benchmark: STM algorithms</h3>
 <ul>
+<li>TL2/TL2 Eager</li>
+<li>Rochester ByteEager (TLRW)</li>
+<li>x86 and <span class="hlght"> ARMv7 </span></li>
+
+</ul>
+
+
+<aside class="notes">
+<ul class="org-ul">
+<li>for the sake of time arm7 only
+</li>
+</ul>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-sec-4-4">
+<h3 id="sec-4-4">benchmark: STM algorithms</h3>
+<ul>
 <li><b>baseline</b>: original fences</li>
 <li><b>Parry</b>: fences placed by Parry</li>
+<li>STAMP for performance</li>
 
 </ul>
 
@@ -2029,8 +2094,8 @@ will enforce the orders
 </section>
 </section>
 <section>
-<section id="slide-sec-4-4">
-<h3 id="sec-4-4">tl2 - ARMv7</h3>
+<section id="slide-sec-4-5">
+<h3 id="sec-4-5">tl2 - ARMv7</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -2069,8 +2134,8 @@ of similarly weighted edges, choosing the first
 </section>
 </section>
 <section>
-<section id="slide-sec-4-5">
-<h3 id="sec-4-5">tl2 eager - ARMv7</h3>
+<section id="slide-sec-4-6">
+<h3 id="sec-4-6">tl2 eager - ARMv7</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -2107,8 +2172,8 @@ able to eliminate the stst fence at line 1669 on arm
 </section>
 </section>
 <section>
-<section id="slide-sec-4-6">
-<h3 id="sec-4-6">rstm - ARMv7</h3>
+<section id="slide-sec-4-7">
+<h3 id="sec-4-7">rstm - ARMv7</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
@@ -2145,8 +2210,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-4-7">
-<h3 id="sec-4-7">tl2 performance</h3>
+<section id="slide-sec-4-8">
+<h3 id="sec-4-8">tl2 performance</h3>
 
 <div class="figure">
 <p><img src="./assets/images/stamp-arm-tl2.png" alt="stamp-arm-tl2.png" />
@@ -2167,8 +2232,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-4-8">
-<h3 id="sec-4-8">rstm performance</h3>
+<section id="slide-sec-4-9">
+<h3 id="sec-4-9">rstm performance</h3>
 
 <div class="figure">
 <p><img src="./assets/images/stamp-arm-rstm.png" alt="stamp-arm-rstm.png" />
