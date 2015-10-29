@@ -182,7 +182,6 @@ div.algo-arch-rules {
 }
 
 section.present > table td {
-  font-size: 0.6em;
   padding-top: 8px;
   padding-bottom: 8px;
 }
@@ -194,8 +193,6 @@ section.present > table th {
 span.hlght {
   color: red;
 }
-
-
 
 table {
   width: 900px;
@@ -264,7 +261,8 @@ span.plus {
 }
 
 pre.src {
-  font-size: 24px;
+  font-size: 30px;
+  padding: 0;
 }
 
 .reveal li li li {
