@@ -27,6 +27,10 @@ h2 {
   margin-top: 1em;
 }
 
+h3 {
+  font-size: 1.8em;
+}
+
 ul {
   padding-left: 1.5em;
   margin-bottom: 10px;
@@ -59,7 +63,10 @@ pre, pre.src {
   box-shadow: none;
   padding: 5px;
   padding: 1em 0 1em 1em;
+}
 
+pre.src > span {
+  font-weight: normal !important;
 }
 
 #text-2 pre {
@@ -153,7 +160,7 @@ pre span.org-sh-quoted-exec              {color:#FF1493;}
 }
 
 .reveal h2, .reveal h3 {
-  font-size: 1.6em;
+  font-size: 1.4em;
 }
 
 div.algo-graph, div.algo-arch-rules {
@@ -177,8 +184,16 @@ div.algo-arch-rules {
 }
 
 #sec-title-slide h2 {
-  font-size: 0.8em;
+  font-size: 1.2em;
   color: #2a76dd;
+}
+
+#sec-title-slide img.badge {
+  position: absolute;
+  top: -90px;
+  right: -60px;
+  width: 150px;
+  opacity: 0.8;
 }
 
 section.present > table td {
@@ -205,7 +220,7 @@ table {
 #slide-sec-0-11 table,
 #slide-sec-0-12 table,
 #slide-sec-0-13 table {
-  width: 500px;
+  width: 650px;
 }
 
 #slide-sec-0-1 p:nth-child(2),
@@ -250,11 +265,11 @@ div.order, span.plus {
 
 div.order {
   padding-top: 36px;
-  right: 150px;
+  right: 120px;
 }
 
 span.plus {
-  left: 0;
+  left: 70px;
   font-size: 100px;
   margin-right: 0px;
   right: -80px;
@@ -267,4 +282,15 @@ pre.src {
 
 .reveal li li li {
   font-size: 0.8em;
+}
+#slide-orgheadline1 p,
+#slide-orgheadline2 p,
+#slide-orgheadline3 p,
+#slide-orgheadline4 p,
+#slide-orgheadline5 p,
+#slide-orgheadline6 p,
+#slide-orgheadline7 p {
+  font-size: 0.8em;
+  margin-top: 0;
+  margin-bottom: 0;
 }

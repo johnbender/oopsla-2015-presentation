@@ -1,11 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <title>Declarative Fence Insertion</title>
-<meta name="author" content="(John Bender, Jens Palsberg - UCLA  (export-snippet (:back-end html :value  <br/>  :begin 35 :end 52 :post-blank 1 :parent #0)) Mohsen Lesani - MIT)"/>
-
+<meta name="author" content="(John Bender, Jens Palsberg - UCLA  (export-snippet (:back-end html :value  <br/>  :begin 35 :end 52 :post-blank 1 :parent #0)) Mohsen Lesani - MIT  (export-snippet (:back-end html :value  <img src='assets/images/badge.png' class='badge'></img>  :begin 72 :end 138 :post-blank 0 :parent #0)))"/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
 <link rel="stylesheet" href="assets/reveal/css/reveal.css"/>
 <link rel="stylesheet" href="assets/reveal/css/theme/white.css" id="theme"/>
 
@@ -19,7 +20,7 @@
         document.getElementsByTagName( 'head' )[0].appendChild( link );
     }
 </script>
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 <link rel="stylesheet" type="text/css" href="assets/style.css" />
 </head>
 <body>
@@ -27,15 +28,15 @@
 <div class="slides">
 <section id="sec-title-slide">
 <h1>Declarative Fence Insertion</h1>
-<h2>John Bender, Jens Palsberg - UCLA  <br/>  Mohsen Lesani - MIT</h2>
+<h2>John Bender, Jens Palsberg - UCLA  <br/>  Mohsen Lesani - MIT  <img src='assets/images/badge.png' class='badge'></img> </h2>
 <h2><a href="mailto:"></a></h2>
 <h2></h2>
 </section>
 </section>
 </section>
 <section>
-<section id="slide-sec-0-1">
-<h3 id="sec-0-1"><code>LockOne</code> mutex</h3>
+<section id="slide-orgheadline1">
+<h3 id="orgheadline1"><code>LockOne</code> mutex</h3>
 <p>
 The Art of Multiprocessor Programming, 2.3.1
 </p>
@@ -46,40 +47,36 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <div class="org-src-container">
 
-<pre  class="src src-java"><span class="linenr"> 1: </span><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
-<span class="linenr"> 2: </span>  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+<pre  class="src src-java"><span class="linenr"> 1: </span><span style="color: #268bd2; font-weight: bold;">class</span> <span style="color: #af005f; font-weight: bold;">LockOne</span> <span style="color: #268bd2; font-weight: bold;">implements</span> <span style="color: #af005f; font-weight: bold;">Lock</span> <span style="color: #268bd2;">{</span>
+<span class="linenr"> 2: </span>  <span style="color: #268bd2; font-weight: bold;">private</span> <span style="color: #af005f; font-weight: bold;">boolean</span><span style="color: #8700af;">[]</span> <span style="color: #af5fd7;">flag</span> = <span style="color: #268bd2; font-weight: bold;">new</span> <span style="color: #af005f; font-weight: bold;">boolean</span><span style="color: #8700af;">[</span><span style="color: #8700af;">2</span><span style="color: #8700af;">]</span>;
 <span class="linenr"> 3: </span>
-<span class="linenr"> 4: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
-<span class="linenr"> 5: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-<span class="linenr"> 6: </span>    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
-<span class="linenr"> 7: </span>    flag[i] = <span class="org-constant">true</span>;
-<span class="linenr"> 8: </span>    <span class="org-keyword">while</span> (flag[j]) {}
-<span class="linenr"> 9: </span>  }
+<span class="linenr"> 4: </span>  <span style="color: #268bd2; font-weight: bold;">public</span> <span style="color: #af005f; font-weight: bold;">void</span> <span style="color: #8700af; font-weight: bold;">lock</span><span style="color: #8700af;">()</span> <span style="color: #8700af;">{</span>
+<span class="linenr"> 5: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">i</span> = ThreadID.get<span style="color: #2aa198;">()</span>;
+<span class="linenr"> 6: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">j</span> = <span style="color: #8700af;">1</span>-i;
+<span class="linenr"> 7: </span>    flag<span style="color: #2aa198;">[</span>i<span style="color: #2aa198;">]</span> = <span style="color: #8700af;">true</span>;
+<span class="linenr"> 8: </span>    <span style="color: #268bd2; font-weight: bold;">while</span> <span style="color: #2aa198;">(</span>flag<span style="color: #5faf00;">[</span>j<span style="color: #5faf00;">]</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{}</span>
+<span class="linenr"> 9: </span>  <span style="color: #8700af;">}</span>
 <span class="linenr">10: </span>
-<span class="linenr">11: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
-<span class="linenr">12: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-<span class="linenr">13: </span>    flag[i] = <span class="org-constant">false</span>;
-<span class="linenr">14: </span>  }
-<span class="linenr">15: </span>}
+<span class="linenr">11: </span>  <span style="color: #268bd2; font-weight: bold;">public</span> <span style="color: #af005f; font-weight: bold;">void</span> <span style="color: #8700af; font-weight: bold;">unlock</span><span style="color: #8700af;">()</span> <span style="color: #8700af;">{</span>
+<span class="linenr">12: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">i</span> = ThreadID.get<span style="color: #2aa198;">()</span>;
+<span class="linenr">13: </span>    flag<span style="color: #2aa198;">[</span>i<span style="color: #2aa198;">]</span> = <span style="color: #8700af;">false</span>;
+<span class="linenr">14: </span>  <span style="color: #8700af;">}</span>
+<span class="linenr">15: </span><span style="color: #268bd2;">}</span>
 </pre>
 </div>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>Our work focuses on performance critical concurrent algorithms
-</li>
+<ul>
+<li>Our work focuses on performance critical concurrent algorithms</li>
 
 <li>To illustrate the problem we have an example of one such algorithm
-from the art of multiproc programming
-</li>
+from the art of multiproc programming</li>
 
-<li>by Maurice Herlihy and Nir Shavit
-</li>
+<li>by Maurice Herlihy and Nir Shavit</li>
 
-<li>lock intended to guarantee mutual exclusion for two threads
-</li>
-<li>notably doesn't guarantee progress, only safety
-</li>
+<li>lock intended to guarantee mutual exclusion for two threads</li>
+<li>notably doesn't guarantee progress, only safety</li>
+
 </ul>
 
 </aside>
@@ -87,8 +84,8 @@ from the art of multiproc programming
 </section>
 </section>
 <section>
-<section id="slide-sec-0-2">
-<h3 id="sec-0-2"><code>LockOne</code> mutex</h3>
+<section id="slide-orgheadline2">
+<h3 id="orgheadline2"><code>LockOne</code> mutex</h3>
 <p>
 The Art of Multiprocessor Programming, 2.3.1
 </p>
@@ -99,21 +96,21 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <div class="org-src-container">
 
-<pre  class="src src-java"><span class="linenr"> 1: </span><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
-<span class="linenr"> 2: </span>  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+<pre  class="src src-java"><span class="linenr"> 1: </span><span style="color: #268bd2; font-weight: bold;">class</span> <span style="color: #af005f; font-weight: bold;">LockOne</span> <span style="color: #268bd2; font-weight: bold;">implements</span> <span style="color: #af005f; font-weight: bold;">Lock</span> <span style="color: #268bd2;">{</span>
+<span class="linenr"> 2: </span>  <span style="color: #268bd2; font-weight: bold;">private</span> <span style="color: #af005f; font-weight: bold;">boolean</span><span style="color: #8700af;">[]</span> <span style="color: #af5fd7;">flag</span> = <span style="color: #268bd2; font-weight: bold;">new</span> <span style="color: #af005f; font-weight: bold;">boolean</span><span style="color: #8700af;">[</span><span style="color: #8700af;">2</span><span style="color: #8700af;">]</span>;
 <span class="linenr"> 3: </span>                                       &#9650;
-<span class="linenr"> 4: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> lock() {
-<span class="linenr"> 5: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-<span class="linenr"> 6: </span>    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
-<span class="linenr"> 7: </span>    flag[i] = <span class="org-constant">true</span>;
-<span class="linenr"> 8: </span>    <span class="org-keyword">while</span> (flag[j]) {}
-<span class="linenr"> 9: </span>  }
+<span class="linenr"> 4: </span>  <span style="color: #268bd2; font-weight: bold;">public</span> <span style="color: #af005f; font-weight: bold;">void</span> lock<span style="color: #8700af;">()</span> <span style="color: #8700af;">{</span>
+<span class="linenr"> 5: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">i</span> = ThreadID.get<span style="color: #2aa198;">()</span>;
+<span class="linenr"> 6: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">j</span> = <span style="color: #8700af;">1</span>-i;
+<span class="linenr"> 7: </span>    flag<span style="color: #2aa198;">[</span>i<span style="color: #2aa198;">]</span> = <span style="color: #8700af;">true</span>;
+<span class="linenr"> 8: </span>    <span style="color: #268bd2; font-weight: bold;">while</span> <span style="color: #2aa198;">(</span>flag<span style="color: #5faf00;">[</span>j<span style="color: #5faf00;">]</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{}</span>
+<span class="linenr"> 9: </span>  <span style="color: #8700af;">}</span>
 <span class="linenr">10: </span>
-<span class="linenr">11: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
-<span class="linenr">12: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-<span class="linenr">13: </span>    flag[i] = <span class="org-constant">false</span>;
-<span class="linenr">14: </span>  }
-<span class="linenr">15: </span>}
+<span class="linenr">11: </span>  <span style="color: #268bd2; font-weight: bold;">public</span> <span style="color: #af005f; font-weight: bold;">void</span> <span style="color: #8700af; font-weight: bold;">unlock</span><span style="color: #8700af;">()</span> <span style="color: #8700af;">{</span>
+<span class="linenr">12: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">i</span> = ThreadID.get<span style="color: #2aa198;">()</span>;
+<span class="linenr">13: </span>    flag<span style="color: #2aa198;">[</span>i<span style="color: #2aa198;">]</span> = <span style="color: #8700af;">false</span>;
+<span class="linenr">14: </span>  <span style="color: #8700af;">}</span>
+<span class="linenr">15: </span><span style="color: #268bd2;">}</span>
 </pre>
 </div>
 
@@ -126,8 +123,8 @@ There are two flags, one for each thread
 </section>
 </section>
 <section>
-<section id="slide-sec-0-3">
-<h3 id="sec-0-3"><code>LockOne</code> mutex</h3>
+<section id="slide-orgheadline3">
+<h3 id="orgheadline3"><code>LockOne</code> mutex</h3>
 <p>
 The Art of Multiprocessor Programming, 2.3.1
 </p>
@@ -138,21 +135,21 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <div class="org-src-container">
 
-<pre  class="src src-java"><span class="linenr"> 1: </span><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
-<span class="linenr"> 2: </span>  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+<pre  class="src src-java"><span class="linenr"> 1: </span><span style="color: #268bd2; font-weight: bold;">class</span> <span style="color: #af005f; font-weight: bold;">LockOne</span> <span style="color: #268bd2; font-weight: bold;">implements</span> <span style="color: #af005f; font-weight: bold;">Lock</span> <span style="color: #268bd2;">{</span>
+<span class="linenr"> 2: </span>  <span style="color: #268bd2; font-weight: bold;">private</span> <span style="color: #af005f; font-weight: bold;">boolean</span><span style="color: #8700af;">[]</span> <span style="color: #af5fd7;">flag</span> = <span style="color: #268bd2; font-weight: bold;">new</span> <span style="color: #af005f; font-weight: bold;">boolean</span><span style="color: #8700af;">[</span><span style="color: #8700af;">2</span><span style="color: #8700af;">]</span>;
 <span class="linenr"> 3: </span>
-<span class="linenr"> 4: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
-<span class="linenr"> 5: </span>&#9654;   <span class="org-type">int</span> i = ThreadID.get();
-<span class="linenr"> 6: </span>    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
-<span class="linenr"> 7: </span>    flag[i] = <span class="org-constant">true</span>;
-<span class="linenr"> 8: </span>    <span class="org-keyword">while</span> (flag[j]) {}
-<span class="linenr"> 9: </span>  }
+<span class="linenr"> 4: </span>  <span style="color: #268bd2; font-weight: bold;">public</span> <span style="color: #af005f; font-weight: bold;">void</span> <span style="color: #8700af; font-weight: bold;">lock</span><span style="color: #8700af;">()</span> <span style="color: #8700af;">{</span>
+<span class="linenr"> 5: </span>&#9654;   <span style="color: #af005f; font-weight: bold;">int</span> i = ThreadID.get<span style="color: #2aa198;">()</span>;
+<span class="linenr"> 6: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">j</span> = <span style="color: #8700af;">1</span>-i;
+<span class="linenr"> 7: </span>    flag<span style="color: #2aa198;">[</span>i<span style="color: #2aa198;">]</span> = <span style="color: #8700af;">true</span>;
+<span class="linenr"> 8: </span>    <span style="color: #268bd2; font-weight: bold;">while</span> <span style="color: #2aa198;">(</span>flag<span style="color: #5faf00;">[</span>j<span style="color: #5faf00;">]</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{}</span>
+<span class="linenr"> 9: </span>  <span style="color: #8700af;">}</span>
 <span class="linenr">10: </span>
-<span class="linenr">11: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
-<span class="linenr">12: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-<span class="linenr">13: </span>    flag[i] = <span class="org-constant">false</span>;
-<span class="linenr">14: </span>  }
-<span class="linenr">15: </span>}
+<span class="linenr">11: </span>  <span style="color: #268bd2; font-weight: bold;">public</span> <span style="color: #af005f; font-weight: bold;">void</span> <span style="color: #8700af; font-weight: bold;">unlock</span><span style="color: #8700af;">()</span> <span style="color: #8700af;">{</span>
+<span class="linenr">12: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">i</span> = ThreadID.get<span style="color: #2aa198;">()</span>;
+<span class="linenr">13: </span>    flag<span style="color: #2aa198;">[</span>i<span style="color: #2aa198;">]</span> = <span style="color: #8700af;">false</span>;
+<span class="linenr">14: </span>  <span style="color: #8700af;">}</span>
+<span class="linenr">15: </span><span style="color: #268bd2;">}</span>
 </pre>
 </div>
 
@@ -166,8 +163,8 @@ Each thread gets it's own id &#x2026;
 </section>
 </section>
 <section>
-<section id="slide-sec-0-4">
-<h3 id="sec-0-4"><code>LockOne</code> mutex</h3>
+<section id="slide-orgheadline4">
+<h3 id="orgheadline4"><code>LockOne</code> mutex</h3>
 <p>
 The Art of Multiprocessor Programming, 2.3.1
 </p>
@@ -178,21 +175,21 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <div class="org-src-container">
 
-<pre  class="src src-java"><span class="linenr"> 1: </span><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
-<span class="linenr"> 2: </span>  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+<pre  class="src src-java"><span class="linenr"> 1: </span><span style="color: #268bd2; font-weight: bold;">class</span> <span style="color: #af005f; font-weight: bold;">LockOne</span> <span style="color: #268bd2; font-weight: bold;">implements</span> <span style="color: #af005f; font-weight: bold;">Lock</span> <span style="color: #268bd2;">{</span>
+<span class="linenr"> 2: </span>  <span style="color: #268bd2; font-weight: bold;">private</span> <span style="color: #af005f; font-weight: bold;">boolean</span><span style="color: #8700af;">[]</span> <span style="color: #af5fd7;">flag</span> = <span style="color: #268bd2; font-weight: bold;">new</span> <span style="color: #af005f; font-weight: bold;">boolean</span><span style="color: #8700af;">[</span><span style="color: #8700af;">2</span><span style="color: #8700af;">]</span>;
 <span class="linenr"> 3: </span>
-<span class="linenr"> 4: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
-<span class="linenr"> 5: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-<span class="linenr"> 6: </span>&#9654;   <span class="org-type">int</span> j = 1-i;
-<span class="linenr"> 7: </span>    flag[i] = <span class="org-constant">true</span>;
-<span class="linenr"> 8: </span>    <span class="org-keyword">while</span> (flag[j]) {}
-<span class="linenr"> 9: </span>  }
+<span class="linenr"> 4: </span>  <span style="color: #268bd2; font-weight: bold;">public</span> <span style="color: #af005f; font-weight: bold;">void</span> <span style="color: #8700af; font-weight: bold;">lock</span><span style="color: #8700af;">()</span> <span style="color: #8700af;">{</span>
+<span class="linenr"> 5: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">i</span> = ThreadID.get<span style="color: #2aa198;">()</span>;
+<span class="linenr"> 6: </span>&#9654;   <span style="color: #af005f; font-weight: bold;">int</span> j = <span style="color: #8700af;">1</span>-i;
+<span class="linenr"> 7: </span>    flag<span style="color: #2aa198;">[</span>i<span style="color: #2aa198;">]</span> = <span style="color: #8700af;">true</span>;
+<span class="linenr"> 8: </span>    <span style="color: #268bd2; font-weight: bold;">while</span> <span style="color: #2aa198;">(</span>flag<span style="color: #5faf00;">[</span>j<span style="color: #5faf00;">]</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{}</span>
+<span class="linenr"> 9: </span>  <span style="color: #8700af;">}</span>
 <span class="linenr">10: </span>
-<span class="linenr">11: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
-<span class="linenr">12: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-<span class="linenr">13: </span>    flag[i] = <span class="org-constant">false</span>;
-<span class="linenr">14: </span>  }
-<span class="linenr">15: </span>}
+<span class="linenr">11: </span>  <span style="color: #268bd2; font-weight: bold;">public</span> <span style="color: #af005f; font-weight: bold;">void</span> <span style="color: #8700af; font-weight: bold;">unlock</span><span style="color: #8700af;">()</span> <span style="color: #8700af;">{</span>
+<span class="linenr">12: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">i</span> = ThreadID.get<span style="color: #2aa198;">()</span>;
+<span class="linenr">13: </span>    flag<span style="color: #2aa198;">[</span>i<span style="color: #2aa198;">]</span> = <span style="color: #8700af;">false</span>;
+<span class="linenr">14: </span>  <span style="color: #8700af;">}</span>
+<span class="linenr">15: </span><span style="color: #268bd2;">}</span>
 </pre>
 </div>
 
@@ -205,8 +202,8 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 </section>
 </section>
 <section>
-<section id="slide-sec-0-5">
-<h3 id="sec-0-5"><code>LockOne</code> mutex</h3>
+<section id="slide-orgheadline5">
+<h3 id="orgheadline5"><code>LockOne</code> mutex</h3>
 <p>
 The Art of Multiprocessor Programming, 2.3.1
 </p>
@@ -217,21 +214,21 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <div class="org-src-container">
 
-<pre  class="src src-java"><span class="linenr"> 1: </span><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
-<span class="linenr"> 2: </span>  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+<pre  class="src src-java"><span class="linenr"> 1: </span><span style="color: #268bd2; font-weight: bold;">class</span> <span style="color: #af005f; font-weight: bold;">LockOne</span> <span style="color: #268bd2; font-weight: bold;">implements</span> <span style="color: #af005f; font-weight: bold;">Lock</span> <span style="color: #268bd2;">{</span>
+<span class="linenr"> 2: </span>  <span style="color: #268bd2; font-weight: bold;">private</span> <span style="color: #af005f; font-weight: bold;">boolean</span><span style="color: #8700af;">[]</span> <span style="color: #af5fd7;">flag</span> = <span style="color: #268bd2; font-weight: bold;">new</span> <span style="color: #af005f; font-weight: bold;">boolean</span><span style="color: #8700af;">[</span><span style="color: #8700af;">2</span><span style="color: #8700af;">]</span>;
 <span class="linenr"> 3: </span>
-<span class="linenr"> 4: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
-<span class="linenr"> 5: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-<span class="linenr"> 6: </span>    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
-<span class="linenr"> 7: </span>&#9654;   flag[i] = <span class="org-constant">true</span>;
-<span class="linenr"> 8: </span>    <span class="org-keyword">while</span> (flag[j]) {}
-<span class="linenr"> 9: </span>  }
+<span class="linenr"> 4: </span>  <span style="color: #268bd2; font-weight: bold;">public</span> <span style="color: #af005f; font-weight: bold;">void</span> <span style="color: #8700af; font-weight: bold;">lock</span><span style="color: #8700af;">()</span> <span style="color: #8700af;">{</span>
+<span class="linenr"> 5: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">i</span> = ThreadID.get<span style="color: #2aa198;">()</span>;
+<span class="linenr"> 6: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">j</span> = <span style="color: #8700af;">1</span>-i;
+<span class="linenr"> 7: </span>&#9654;   flag<span style="color: #2aa198;">[</span>i<span style="color: #2aa198;">]</span> = <span style="color: #8700af;">true</span>;
+<span class="linenr"> 8: </span>    <span style="color: #268bd2; font-weight: bold;">while</span> <span style="color: #2aa198;">(</span>flag<span style="color: #5faf00;">[</span>j<span style="color: #5faf00;">]</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{}</span>
+<span class="linenr"> 9: </span>  <span style="color: #8700af;">}</span>
 <span class="linenr">10: </span>
-<span class="linenr">11: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
-<span class="linenr">12: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-<span class="linenr">13: </span>    flag[i] = <span class="org-constant">false</span>;
-<span class="linenr">14: </span>  }
-<span class="linenr">15: </span>}
+<span class="linenr">11: </span>  <span style="color: #268bd2; font-weight: bold;">public</span> <span style="color: #af005f; font-weight: bold;">void</span> <span style="color: #8700af; font-weight: bold;">unlock</span><span style="color: #8700af;">()</span> <span style="color: #8700af;">{</span>
+<span class="linenr">12: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">i</span> = ThreadID.get<span style="color: #2aa198;">()</span>;
+<span class="linenr">13: </span>    flag<span style="color: #2aa198;">[</span>i<span style="color: #2aa198;">]</span> = <span style="color: #8700af;">false</span>;
+<span class="linenr">14: </span>  <span style="color: #8700af;">}</span>
+<span class="linenr">15: </span><span style="color: #268bd2;">}</span>
 </pre>
 </div>
 
@@ -249,8 +246,8 @@ threads
 </section>
 </section>
 <section>
-<section id="slide-sec-0-6">
-<h3 id="sec-0-6"><code>LockOne</code> mutex</h3>
+<section id="slide-orgheadline6">
+<h3 id="orgheadline6"><code>LockOne</code> mutex</h3>
 <p>
 The Art of Multiprocessor Programming, 2.3.1
 </p>
@@ -261,21 +258,21 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <div class="org-src-container">
 
-<pre  class="src src-java"><span class="linenr"> 1: </span><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
-<span class="linenr"> 2: </span>  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+<pre  class="src src-java"><span class="linenr"> 1: </span><span style="color: #268bd2; font-weight: bold;">class</span> <span style="color: #af005f; font-weight: bold;">LockOne</span> <span style="color: #268bd2; font-weight: bold;">implements</span> <span style="color: #af005f; font-weight: bold;">Lock</span> <span style="color: #268bd2;">{</span>
+<span class="linenr"> 2: </span>  <span style="color: #268bd2; font-weight: bold;">private</span> <span style="color: #af005f; font-weight: bold;">boolean</span><span style="color: #8700af;">[]</span> <span style="color: #af5fd7;">flag</span> = <span style="color: #268bd2; font-weight: bold;">new</span> <span style="color: #af005f; font-weight: bold;">boolean</span><span style="color: #8700af;">[</span><span style="color: #8700af;">2</span><span style="color: #8700af;">]</span>;
 <span class="linenr"> 3: </span>
-<span class="linenr"> 4: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
-<span class="linenr"> 5: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-<span class="linenr"> 6: </span>    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
-<span class="linenr"> 7: </span>    flag[i] = <span class="org-constant">true</span>;
-<span class="linenr"> 8: </span>&#9654;   <span class="org-keyword">while</span> (flag[j]) {}
-<span class="linenr"> 9: </span>  }
+<span class="linenr"> 4: </span>  <span style="color: #268bd2; font-weight: bold;">public</span> <span style="color: #af005f; font-weight: bold;">void</span> <span style="color: #8700af; font-weight: bold;">lock</span><span style="color: #8700af;">()</span> <span style="color: #8700af;">{</span>
+<span class="linenr"> 5: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">i</span> = ThreadID.get<span style="color: #2aa198;">()</span>;
+<span class="linenr"> 6: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">j</span> = <span style="color: #8700af;">1</span>-i;
+<span class="linenr"> 7: </span>    flag<span style="color: #2aa198;">[</span>i<span style="color: #2aa198;">]</span> = <span style="color: #8700af;">true</span>;
+<span class="linenr"> 8: </span>&#9654;   <span style="color: #268bd2; font-weight: bold;">while</span> <span style="color: #2aa198;">(</span>flag<span style="color: #5faf00;">[</span>j<span style="color: #5faf00;">]</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{}</span>
+<span class="linenr"> 9: </span>  <span style="color: #8700af;">}</span>
 <span class="linenr">10: </span>
-<span class="linenr">11: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
-<span class="linenr">12: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-<span class="linenr">13: </span>    flag[i] = <span class="org-constant">false</span>;
-<span class="linenr">14: </span>  }
-<span class="linenr">15: </span>}
+<span class="linenr">11: </span>  <span style="color: #268bd2; font-weight: bold;">public</span> <span style="color: #af005f; font-weight: bold;">void</span> <span style="color: #8700af; font-weight: bold;">unlock</span><span style="color: #8700af;">()</span> <span style="color: #8700af;">{</span>
+<span class="linenr">12: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">i</span> = ThreadID.get<span style="color: #2aa198;">()</span>;
+<span class="linenr">13: </span>    flag<span style="color: #2aa198;">[</span>i<span style="color: #2aa198;">]</span> = <span style="color: #8700af;">false</span>;
+<span class="linenr">14: </span>  <span style="color: #8700af;">}</span>
+<span class="linenr">15: </span><span style="color: #268bd2;">}</span>
 </pre>
 </div>
 
@@ -297,8 +294,8 @@ into some protected critical section of the code
 </section>
 </section>
 <section>
-<section id="slide-sec-0-7">
-<h3 id="sec-0-7"><code>LockOne</code> mutex</h3>
+<section id="slide-orgheadline7">
+<h3 id="orgheadline7"><code>LockOne</code> mutex</h3>
 <p>
 The Art of Multiprocessor Programming, 2.3.1
 </p>
@@ -309,31 +306,30 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 
 <div class="org-src-container">
 
-<pre  class="src src-java"><span class="linenr"> 1: </span><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
-<span class="linenr"> 2: </span>  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+<pre  class="src src-java"><span class="linenr"> 1: </span><span style="color: #268bd2; font-weight: bold;">class</span> <span style="color: #af005f; font-weight: bold;">LockOne</span> <span style="color: #268bd2; font-weight: bold;">implements</span> <span style="color: #af005f; font-weight: bold;">Lock</span> <span style="color: #268bd2;">{</span>
+<span class="linenr"> 2: </span>  <span style="color: #268bd2; font-weight: bold;">private</span> <span style="color: #af005f; font-weight: bold;">boolean</span><span style="color: #8700af;">[]</span> <span style="color: #af5fd7;">flag</span> = <span style="color: #268bd2; font-weight: bold;">new</span> <span style="color: #af005f; font-weight: bold;">boolean</span><span style="color: #8700af;">[</span><span style="color: #8700af;">2</span><span style="color: #8700af;">]</span>;
 <span class="linenr"> 3: </span>
-<span class="linenr"> 4: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
-<span class="linenr"> 5: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-<span class="linenr"> 6: </span>    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
-<span class="linenr"> 7: </span>&#9654;   flag[i] = <span class="org-constant">true</span>;
-<span class="linenr"> 8: </span>&#9654;   <span class="org-keyword">while</span> (flag[j]) {}
-<span class="linenr"> 9: </span>  }
+<span class="linenr"> 4: </span>  <span style="color: #268bd2; font-weight: bold;">public</span> <span style="color: #af005f; font-weight: bold;">void</span> <span style="color: #8700af; font-weight: bold;">lock</span><span style="color: #8700af;">()</span> <span style="color: #8700af;">{</span>
+<span class="linenr"> 5: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">i</span> = ThreadID.get<span style="color: #2aa198;">()</span>;
+<span class="linenr"> 6: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">j</span> = <span style="color: #8700af;">1</span>-i;
+<span class="linenr"> 7: </span>&#9654;   flag<span style="color: #2aa198;">[</span>i<span style="color: #2aa198;">]</span> = <span style="color: #8700af;">true</span>;
+<span class="linenr"> 8: </span>&#9654;   <span style="color: #268bd2; font-weight: bold;">while</span> <span style="color: #2aa198;">(</span>flag<span style="color: #5faf00;">[</span>j<span style="color: #5faf00;">]</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{}</span>
+<span class="linenr"> 9: </span>  <span style="color: #8700af;">}</span>
 <span class="linenr">10: </span>
-<span class="linenr">11: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
-<span class="linenr">12: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-<span class="linenr">13: </span>    flag[i] = <span class="org-constant">false</span>;
-<span class="linenr">14: </span>  }
-<span class="linenr">15: </span>}
+<span class="linenr">11: </span>  <span style="color: #268bd2; font-weight: bold;">public</span> <span style="color: #af005f; font-weight: bold;">void</span> <span style="color: #8700af; font-weight: bold;">unlock</span><span style="color: #8700af;">()</span> <span style="color: #8700af;">{</span>
+<span class="linenr">12: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">i</span> = ThreadID.get<span style="color: #2aa198;">()</span>;
+<span class="linenr">13: </span>    flag<span style="color: #2aa198;">[</span>i<span style="color: #2aa198;">]</span> = <span style="color: #8700af;">false</span>;
+<span class="linenr">14: </span>  <span style="color: #8700af;">}</span>
+<span class="linenr">15: </span><span style="color: #268bd2;">}</span>
 </pre>
 </div>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>these two operations are critical
-</li>
+<ul>
+<li>these two operations are critical</li>
 
-<li>The proof of mutual exclusion in the book requires that these two lines execute in program order
-</li>
+<li>The proof of mutual exclusion in the book requires that these two lines execute in program order</li>
+
 </ul>
 
 <p>
@@ -345,61 +341,60 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 </section>
 </section>
 <section>
-<section id="slide-sec-0-8">
-<h3 id="sec-0-8">good execution</h3>
+<section id="slide-orgheadline8">
+<h3 id="orgheadline8">good execution</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 </colgroup>
 <thead>
 <tr>
-<th scope="col" class="left">Thread 0</th>
-<th scope="col" class="left">Thread 1</th>
+<th scope="col" class="org-left">Thread 0</th>
+<th scope="col" class="org-left">Thread 1</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="left"><code>flag[0] = true</code></td>
-<td class="left">&#xa0;</td>
+<td class="org-left"><code>flag[0] = true</code></td>
+<td class="org-left">&#xa0;</td>
 </tr>
 
 <tr>
-<td class="left"><code>flag[1] : false</code></td>
-<td class="left">&#xa0;</td>
+<td class="org-left"><code>flag[1] : false</code></td>
+<td class="org-left">&#xa0;</td>
 </tr>
 
 <tr>
-<td class="left">&#xa0;</td>
-<td class="left"><code>flag[1] = true</code></td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><code>flag[1] = true</code></td>
 </tr>
 
 <tr>
-<td class="left">&#xa0;</td>
-<td class="left"><code>flag[0] : true</code></td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><code>flag[0] : true</code></td>
 </tr>
 
 <tr>
-<td class="left">&#xa0;</td>
-<td class="left">spin</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">spin</td>
 </tr>
 
 <tr>
-<td class="left">enter</td>
-<td class="left">&#xa0;</td>
+<td class="org-left">enter</td>
+<td class="org-left">&#xa0;</td>
 </tr>
 </tbody>
 </table>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>assuming everything behaves as expected
-</li>
-<li>example execution of two operations
-</li>
+<ul>
+<li>assuming everything behaves as expected</li>
+<li>example execution of two operations</li>
+
 </ul>
 
 </aside>
@@ -407,180 +402,119 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 </section>
 </section>
 <section>
-<section id="slide-sec-0-9">
-<h3 id="sec-0-9">good execution</h3>
+<section id="slide-orgheadline9">
+<h3 id="orgheadline9">good execution</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 </colgroup>
 <thead>
 <tr>
-<th scope="col" class="left">Thread 0</th>
-<th scope="col" class="left">Thread 1</th>
+<th scope="col" class="org-left">Thread 0</th>
+<th scope="col" class="org-left">Thread 1</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="left"><code>flag[0] = true</code></td>
-<td class="left">&#xa0;</td>
+<td class="org-left"><code>flag[0] = true</code></td>
+<td class="org-left">&#xa0;</td>
 </tr>
 
 <tr>
-<td class="left"><span class="hlght"> <code>flag[1] : false</code> </span></td>
-<td class="left">&#xa0;</td>
+<td class="org-left"><span class="hlght"> <code>flag[1] : false</code> </span></td>
+<td class="org-left">&#xa0;</td>
 </tr>
 
 <tr>
-<td class="left">&#xa0;</td>
-<td class="left"><code>flag[1] = true</code></td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><code>flag[1] = true</code></td>
 </tr>
 
 <tr>
-<td class="left">&#xa0;</td>
-<td class="left"><span class="hlght"> <code>flag[0] : true</code> </span></td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><span class="hlght"> <code>flag[0] : true</code> </span></td>
 </tr>
 
 <tr>
-<td class="left">&#xa0;</td>
-<td class="left">spin</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">spin</td>
 </tr>
 
 <tr>
-<td class="left">enter</td>
-<td class="left">&#xa0;</td>
+<td class="org-left">enter</td>
+<td class="org-left">&#xa0;</td>
 </tr>
 </tbody>
 </table>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>key: no way to mix up the instructions s.t. both can acquire/proceed
-</li>
+<ul>
+<li>key: no way to mix up the instructions s.t. both can acquire/proceed</li>
+
 </ul>
 
 </aside>
 </section>
 </section>
 <section>
-<section id="slide-sec-0-10">
-<h3 id="sec-0-10">bad execution</h3>
+<section id="slide-orgheadline10">
+<h3 id="orgheadline10">bad execution</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 </colgroup>
 <thead>
 <tr>
-<th scope="col" class="left">Thread 0</th>
-<th scope="col" class="left">Thread 1</th>
+<th scope="col" class="org-left">Thread 0</th>
+<th scope="col" class="org-left">Thread 1</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="left"><span class="hlght"> <code>flag[0] = true</code> </span></td>
-<td class="left">&#xa0;</td>
+<td class="org-left"><span class="hlght"> <code>flag[0] = true</code> </span></td>
+<td class="org-left">&#xa0;</td>
 </tr>
 
 <tr>
-<td class="left"><code>flag[1] : false</code></td>
-<td class="left">&#xa0;</td>
+<td class="org-left"><code>flag[1] : false</code></td>
+<td class="org-left">&#xa0;</td>
 </tr>
 
 <tr>
-<td class="left">&#xa0;</td>
-<td class="left"><code>flag[1] = true</code></td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><code>flag[1] = true</code></td>
 </tr>
 
 <tr>
-<td class="left">&#xa0;</td>
-<td class="left"><code>flag[0] : true</code></td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><code>flag[0] : true</code></td>
 </tr>
 
 <tr>
-<td class="left">&#xa0;</td>
-<td class="left">spin</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">spin</td>
 </tr>
 
 <tr>
-<td class="left">enter</td>
-<td class="left">&#xa0;</td>
+<td class="org-left">enter</td>
+<td class="org-left">&#xa0;</td>
 </tr>
 </tbody>
 </table>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>x86, ARM, and Power either store maybe be "reordered"
-</li>
-<li>reasons: store buffering, literal OOE
-</li>
-</ul>
+<ul>
+<li>x86, ARM, and Power either store maybe be "reordered"</li>
+<li>reasons: store buffering, literal OOE</li>
 
-</aside>
-
-</section>
-</section>
-<section>
-<section id="slide-sec-0-11">
-<h3 id="sec-0-11">bad execution</h3>
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-
-<col  class="left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="left">Thread 0</th>
-<th scope="col" class="left">Thread 1</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="left"><code>flag[1] : false</code></td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left"><code>flag[1] = true</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left"><code>flag[0] : false</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left">enter</td>
-</tr>
-
-<tr>
-<td class="left"><span class="hlght">  <code>flag[0] = true</code> </span></td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left">enter</td>
-<td class="left">&#xa0;</td>
-</tr>
-</tbody>
-</table>
-
-<aside class="notes">
-<ul class="org-ul">
-<li>if that happens we might see an execution like this
-</li>
 </ul>
 
 </aside>
@@ -588,118 +522,59 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 </section>
 </section>
 <section>
-<section id="slide-sec-0-12">
-<h3 id="sec-0-12">bad execution</h3>
+<section id="slide-orgheadline11">
+<h3 id="orgheadline11">bad execution</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 </colgroup>
 <thead>
 <tr>
-<th scope="col" class="left">Thread 0</th>
-<th scope="col" class="left">Thread 1</th>
+<th scope="col" class="org-left">Thread 0</th>
+<th scope="col" class="org-left">Thread 1</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="left"><span class="hlght"> <code>flag[1] : false</code> </span></td>
-<td class="left">&#xa0;</td>
+<td class="org-left"><code>flag[1] : false</code></td>
+<td class="org-left">&#xa0;</td>
 </tr>
 
 <tr>
-<td class="left">&#xa0;</td>
-<td class="left"><code>flag[1] = true</code></td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><code>flag[1] = true</code></td>
 </tr>
 
 <tr>
-<td class="left">&#xa0;</td>
-<td class="left"><span class="hlght"> <code>flag[0] : false</code> </span></td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><code>flag[0] : false</code></td>
 </tr>
 
 <tr>
-<td class="left">&#xa0;</td>
-<td class="left">enter</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">enter</td>
 </tr>
 
 <tr>
-<td class="left"><code>flag[0] = true</code></td>
-<td class="left">&#xa0;</td>
+<td class="org-left"><span class="hlght">  <code>flag[0] = true</code> </span></td>
+<td class="org-left">&#xa0;</td>
 </tr>
 
 <tr>
-<td class="left">enter</td>
-<td class="left">&#xa0;</td>
+<td class="org-left">enter</td>
+<td class="org-left">&#xa0;</td>
 </tr>
 </tbody>
 </table>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>now possible for both flag checks to see <code>false</code>
-</li>
-</ul>
+<ul>
+<li>if that happens we might see an execution like this</li>
 
-</aside>
-</section>
-</section>
-<section>
-<section id="slide-sec-0-13">
-<h3 id="sec-0-13">bad execution</h3>
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-
-
-<colgroup>
-<col  class="left" />
-
-<col  class="left" />
-</colgroup>
-<thead>
-<tr>
-<th scope="col" class="left">Thread 0</th>
-<th scope="col" class="left">Thread 1</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="left"><code>flag[1] : false</code></td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left"><code>flag[1] = true</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left"><code>flag[0] : false</code></td>
-</tr>
-
-<tr>
-<td class="left">&#xa0;</td>
-<td class="left"><span class="hlght">  enter </span></td>
-</tr>
-
-<tr>
-<td class="left"><code>flag[0] = true</code></td>
-<td class="left">&#xa0;</td>
-</tr>
-
-<tr>
-<td class="left"><span class="hlght">  enter </span></td>
-<td class="left">&#xa0;</td>
-</tr>
-</tbody>
-</table>
-
-<aside class="notes">
-<ul class="org-ul">
-<li>then possible for both threads to proceed into the protected code
-</li>
 </ul>
 
 </aside>
@@ -707,48 +582,167 @@ Maurice Herlihy &amp; Nir Shavit, 2012
 </section>
 </section>
 <section>
-<section id="slide-sec-0-14">
-<h3 id="sec-0-14">traditional solutions</h3>
+<section id="slide-orgheadline12">
+<h3 id="orgheadline12">bad execution</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
-
-<col  class="left" />
-
-<col  class="left" />
+<col  class="org-left" />
 </colgroup>
 <thead>
 <tr>
-<th scope="col" class="left">solutions</th>
-<th scope="col" class="left">lossy</th>
-<th scope="col" class="left">error prone</th>
-<th scope="col" class="left">overkill</th>
+<th scope="col" class="org-left">Thread 0</th>
+<th scope="col" class="org-left">Thread 1</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="left">sequential consistency</td>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left">✓</td>
+<td class="org-left"><span class="hlght"> <code>flag[1] : false</code> </span></td>
+<td class="org-left">&#xa0;</td>
 </tr>
 
 <tr>
-<td class="left"><code>volatile</code> modifier</td>
-<td class="left">✓</td>
-<td class="left">&#xa0;</td>
-<td class="left">✓</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><code>flag[1] = true</code></td>
 </tr>
 
 <tr>
-<td class="left">memory fences</td>
-<td class="left">✓</td>
-<td class="left">✓</td>
-<td class="left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><span class="hlght"> <code>flag[0] : false</code> </span></td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">enter</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>flag[0] = true</code></td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">enter</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+<aside class="notes">
+<ul>
+<li>now possible for both flag checks to see <code>false</code></li>
+
+</ul>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-orgheadline13">
+<h3 id="orgheadline13">bad execution</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Thread 0</th>
+<th scope="col" class="org-left">Thread 1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><code>flag[1] : false</code></td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><code>flag[1] = true</code></td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><code>flag[0] : false</code></td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><span class="hlght">  enter </span></td>
+</tr>
+
+<tr>
+<td class="org-left"><code>flag[0] = true</code></td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left"><span class="hlght">  enter </span></td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+<aside class="notes">
+<ul>
+<li>then possible for both threads to proceed into the protected code</li>
+
+</ul>
+
+</aside>
+
+</section>
+</section>
+<section>
+<section id="slide-orgheadline14">
+<h3 id="orgheadline14">traditional solutions</h3>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">solutions</th>
+<th scope="col" class="org-left">semantics</th>
+<th scope="col" class="org-left">error prone</th>
+<th scope="col" class="org-left">overkill</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">sequential consistency</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">✓</td>
+</tr>
+
+<tr>
+<td class="org-left"><code>volatile</code> modifier</td>
+<td class="org-left">✓</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">✓</td>
+</tr>
+
+<tr>
+<td class="org-left">memory fences</td>
+<td class="org-left">✓</td>
+<td class="org-left">✓</td>
+<td class="org-left">&#xa0;</td>
 </tr>
 </tbody>
 </table>
@@ -765,13 +759,11 @@ all be declared volatile to work properly.
 traditional solutions:
 </p>
 
-<ul class="org-ul">
-<li>sc
-</li>
-<li>volatile (java)
-</li>
-<li>memory fences (c/c++)
-</li>
+<ul>
+<li>sc</li>
+<li>volatile (java)</li>
+<li>memory fences (c/c++)</li>
+
 </ul>
 
 </aside>
@@ -779,48 +771,48 @@ traditional solutions:
 </section>
 </section>
 <section>
-<section id="slide-sec-0-15">
-<h3 id="sec-0-15">traditional solutions</h3>
+<section id="slide-orgheadline15">
+<h3 id="orgheadline15">traditional solutions</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 </colgroup>
 <thead>
 <tr>
-<th scope="col" class="left">solutions</th>
-<th scope="col" class="left">lossy</th>
-<th scope="col" class="left">error prone</th>
-<th scope="col" class="left">overkill</th>
+<th scope="col" class="org-left">solutions</th>
+<th scope="col" class="org-left">lossy</th>
+<th scope="col" class="org-left">error prone</th>
+<th scope="col" class="org-left">overkill</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="left"><span class="hlght"> sequential consistency </span></td>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left">✓</td>
+<td class="org-left"><span class="hlght"> sequential consistency </span></td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">✓</td>
 </tr>
 
 <tr>
-<td class="left"><code>volatile</code> modifier</td>
-<td class="left">✓</td>
-<td class="left">&#xa0;</td>
-<td class="left">✓</td>
+<td class="org-left"><code>volatile</code> modifier</td>
+<td class="org-left">✓</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">✓</td>
 </tr>
 
 <tr>
-<td class="left">memory fences</td>
-<td class="left">✓</td>
-<td class="left">✓</td>
-<td class="left">&#xa0;</td>
+<td class="org-left">memory fences</td>
+<td class="org-left">✓</td>
+<td class="org-left">✓</td>
+<td class="org-left">&#xa0;</td>
 </tr>
 </tbody>
 </table>
@@ -833,13 +825,11 @@ all be declared volatile to work properly.
 </blockquote>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>sc might be fine for code that calls these algorithms, but expensive here
-</li>
-<li>many ops can safely reorder for performance
-</li>
-<li>the algorithm will continue to work fine
-</li>
+<ul>
+<li>sc might be fine for code that calls these algorithms, but expensive here</li>
+<li>many ops can safely reorder for performance</li>
+<li>the algorithm will continue to work fine</li>
+
 </ul>
 
 </aside>
@@ -847,48 +837,48 @@ all be declared volatile to work properly.
 </section>
 </section>
 <section>
-<section id="slide-sec-0-16">
-<h3 id="sec-0-16">traditional solutions</h3>
+<section id="slide-orgheadline16">
+<h3 id="orgheadline16">traditional solutions</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 </colgroup>
 <thead>
 <tr>
-<th scope="col" class="left">solutions</th>
-<th scope="col" class="left">lossy</th>
-<th scope="col" class="left">error prone</th>
-<th scope="col" class="left">overkill</th>
+<th scope="col" class="org-left">solutions</th>
+<th scope="col" class="org-left">lossy</th>
+<th scope="col" class="org-left">error prone</th>
+<th scope="col" class="org-left">overkill</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="left">sequential consistency</td>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left">✓</td>
+<td class="org-left">sequential consistency</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">✓</td>
 </tr>
 
 <tr>
-<td class="left"><span class="hlght"> <code>volatile</code> modifier </span></td>
-<td class="left">✓</td>
-<td class="left">&#xa0;</td>
-<td class="left">✓</td>
+<td class="org-left"><span class="hlght"> <code>volatile</code> modifier </span></td>
+<td class="org-left">✓</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">✓</td>
 </tr>
 
 <tr>
-<td class="left">memory fences</td>
-<td class="left">✓</td>
-<td class="left">✓</td>
-<td class="left">&#xa0;</td>
+<td class="org-left">memory fences</td>
+<td class="org-left">✓</td>
+<td class="org-left">✓</td>
+<td class="org-left">&#xa0;</td>
 </tr>
 </tbody>
 </table>
@@ -901,19 +891,16 @@ all be declared volatile to work properly.
 </blockquote>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>note the pragma from the book
-</li>
+<ul>
+<li>note the pragma from the book</li>
 <li>lossy
-<ul class="org-ul">
-<li>algorithm broken without guarantees
-</li>
-<li>newcomer can't infer that from volatile
-</li>
-</ul>
-</li>
-<li>every operation on volatile variables is affected, unnecessary
-</li>
+<ul>
+<li>algorithm broken without guarantees</li>
+<li>newcomer can't infer that from volatile</li>
+
+</ul></li>
+<li>every operation on volatile variables is affected, unnecessary</li>
+
 </ul>
 
 </aside>
@@ -921,48 +908,48 @@ all be declared volatile to work properly.
 </section>
 </section>
 <section>
-<section id="slide-sec-0-17">
-<h3 id="sec-0-17">traditional solutions</h3>
+<section id="slide-orgheadline17">
+<h3 id="orgheadline17">traditional solutions</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 </colgroup>
 <thead>
 <tr>
-<th scope="col" class="left">solutions</th>
-<th scope="col" class="left">lossy</th>
-<th scope="col" class="left">error prone</th>
-<th scope="col" class="left">overkill</th>
+<th scope="col" class="org-left">solutions</th>
+<th scope="col" class="org-left">lossy</th>
+<th scope="col" class="org-left">error prone</th>
+<th scope="col" class="org-left">overkill</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="left">sequential consistency</td>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left">✓</td>
+<td class="org-left">sequential consistency</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">✓</td>
 </tr>
 
 <tr>
-<td class="left"><code>volatile</code> modifier</td>
-<td class="left">✓</td>
-<td class="left">&#xa0;</td>
-<td class="left">✓</td>
+<td class="org-left"><code>volatile</code> modifier</td>
+<td class="org-left">✓</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">✓</td>
 </tr>
 
 <tr>
-<td class="left"><span class="hlght"> memory fences </span></td>
-<td class="left">✓</td>
-<td class="left">✓</td>
-<td class="left">&#xa0;</td>
+<td class="org-left"><span class="hlght"> memory fences </span></td>
+<td class="org-left">✓</td>
+<td class="org-left">✓</td>
+<td class="org-left">&#xa0;</td>
 </tr>
 </tbody>
 </table>
@@ -975,11 +962,10 @@ all be declared volatile to work properly.
 </blockquote>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>relates many instructions obscuring the reason for placement
-</li>
-<li>you really need to know the docs to get these right
-</li>
+<ul>
+<li>relates many instructions obscuring the reason for placement</li>
+<li>you really need to know the docs to get these right</li>
+
 </ul>
 
 </aside>
@@ -987,48 +973,48 @@ all be declared volatile to work properly.
 </section>
 </section>
 <section>
-<section id="slide-sec-0-18">
-<h3 id="sec-0-18">traditional solutions</h3>
+<section id="slide-orgheadline18">
+<h3 id="orgheadline18">traditional solutions</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 </colgroup>
 <thead>
 <tr>
-<th scope="col" class="left">solutions</th>
-<th scope="col" class="left">lossy</th>
-<th scope="col" class="left">error prone</th>
-<th scope="col" class="left">overkill</th>
+<th scope="col" class="org-left">solutions</th>
+<th scope="col" class="org-left">lossy</th>
+<th scope="col" class="org-left">error prone</th>
+<th scope="col" class="org-left">overkill</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="left"><span class="hlght"> sequential consistency </span></td>
-<td class="left">&#xa0;</td>
-<td class="left">&#xa0;</td>
-<td class="left">✓</td>
+<td class="org-left"><span class="hlght"> sequential consistency </span></td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">✓</td>
 </tr>
 
 <tr>
-<td class="left"><span class="hlght"> <code>volatile</code> modifier </span></td>
-<td class="left">✓</td>
-<td class="left">&#xa0;</td>
-<td class="left">✓</td>
+<td class="org-left"><span class="hlght"> <code>volatile</code> modifier </span></td>
+<td class="org-left">✓</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">✓</td>
 </tr>
 
 <tr>
-<td class="left"><span class="hlght"> memory fences </span></td>
-<td class="left">✓</td>
-<td class="left">✓</td>
-<td class="left">&#xa0;</td>
+<td class="org-left"><span class="hlght"> memory fences </span></td>
+<td class="org-left">✓</td>
+<td class="org-left">✓</td>
+<td class="org-left">&#xa0;</td>
 </tr>
 </tbody>
 </table>
@@ -1041,9 +1027,9 @@ all be declared volatile to work properly.
 </blockquote>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>implementation details of a higher level concept
-</li>
+<ul>
+<li>implementation details of a higher level concept</li>
+
 </ul>
 
 </aside>
@@ -1051,8 +1037,8 @@ all be declared volatile to work properly.
 </section>
 </section>
 <section>
-<section id="slide-sec-0-19">
-<h3 id="sec-0-19">execution order</h3>
+<section id="slide-orgheadline19">
+<h3 id="orgheadline19">execution order</h3>
 <blockquote nil>
 <p>
 The requirement that two instructions appear to execute in program order.
@@ -1060,59 +1046,55 @@ The requirement that two instructions appear to execute in program order.
 </blockquote>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>simple but useful
-</li>
-<li>higher level concept is the execution order
-</li>
+<ul>
+<li>simple but useful</li>
+<li>higher level concept is the execution order</li>
+
 </ul>
 
 </aside>
 </section>
 </section>
 <section>
-<section id="slide-sec-0-20">
-<h3 id="sec-0-20">algorithms = code + orders</h3>
+<section id="slide-orgheadline20">
+<h3 id="orgheadline20">algorithms = code + orders</h3>
 <div class="org-src-container">
 
-<pre  class="src src-java"><span class="linenr"> 1: </span><span class="org-keyword">class</span> <span class="org-type">LockOne</span> <span class="org-keyword">implements</span> <span class="org-type">Lock</span> {
-<span class="linenr"> 2: </span>  <span class="org-keyword">private</span> <span class="org-type">boolean</span>[] <span class="org-variable-name">flag</span> = <span class="org-keyword">new</span> <span class="org-type">boolean</span>[2];
+<pre  class="src src-java"><span class="linenr"> 1: </span><span style="color: #268bd2; font-weight: bold;">class</span> <span style="color: #af005f; font-weight: bold;">LockOne</span> <span style="color: #268bd2; font-weight: bold;">implements</span> <span style="color: #af005f; font-weight: bold;">Lock</span> <span style="color: #268bd2;">{</span>
+<span class="linenr"> 2: </span>  <span style="color: #268bd2; font-weight: bold;">private</span> <span style="color: #af005f; font-weight: bold;">boolean</span><span style="color: #8700af;">[]</span> <span style="color: #af5fd7;">flag</span> = <span style="color: #268bd2; font-weight: bold;">new</span> <span style="color: #af005f; font-weight: bold;">boolean</span><span style="color: #8700af;">[</span><span style="color: #8700af;">2</span><span style="color: #8700af;">]</span>;
 <span class="linenr"> 3: </span>
-<span class="linenr"> 4: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">lock</span>() {
-<span class="linenr"> 5: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-<span class="linenr"> 6: </span>    <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
-<span class="linenr"> 7: </span>&#9654;   flag[i] = <span class="org-constant">true</span>;
-<span class="linenr"> 8: </span>&#9654;   <span class="org-keyword">while</span> (flag[j]) {}
-<span class="linenr"> 9: </span>  }
+<span class="linenr"> 4: </span>  <span style="color: #268bd2; font-weight: bold;">public</span> <span style="color: #af005f; font-weight: bold;">void</span> <span style="color: #8700af; font-weight: bold;">lock</span><span style="color: #8700af;">()</span> <span style="color: #8700af;">{</span>
+<span class="linenr"> 5: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">i</span> = ThreadID.get<span style="color: #2aa198;">()</span>;
+<span class="linenr"> 6: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">j</span> = <span style="color: #8700af;">1</span>-i;
+<span class="linenr"> 7: </span>&#9654;   flag<span style="color: #2aa198;">[</span>i<span style="color: #2aa198;">]</span> = <span style="color: #8700af;">true</span>;
+<span class="linenr"> 8: </span>&#9654;   <span style="color: #268bd2; font-weight: bold;">while</span> <span style="color: #2aa198;">(</span>flag<span style="color: #5faf00;">[</span>j<span style="color: #5faf00;">]</span><span style="color: #2aa198;">)</span> <span style="color: #2aa198;">{}</span>
+<span class="linenr"> 9: </span>  <span style="color: #8700af;">}</span>
 <span class="linenr">10: </span>
-<span class="linenr">11: </span>  <span class="org-keyword">public</span> <span class="org-type">void</span> <span class="org-function-name">unlock</span>() {
-<span class="linenr">12: </span>    <span class="org-type">int</span> <span class="org-variable-name">i</span> = ThreadID.get();
-<span class="linenr">13: </span>    flag[i] = <span class="org-constant">false</span>;
-<span class="linenr">14: </span>  }
-<span class="linenr">15: </span>}
+<span class="linenr">11: </span>  <span style="color: #268bd2; font-weight: bold;">public</span> <span style="color: #af005f; font-weight: bold;">void</span> <span style="color: #8700af; font-weight: bold;">unlock</span><span style="color: #8700af;">()</span> <span style="color: #8700af;">{</span>
+<span class="linenr">12: </span>    <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">i</span> = ThreadID.get<span style="color: #2aa198;">()</span>;
+<span class="linenr">13: </span>    flag<span style="color: #2aa198;">[</span>i<span style="color: #2aa198;">]</span> = <span style="color: #8700af;">false</span>;
+<span class="linenr">14: </span>  <span style="color: #8700af;">}</span>
+<span class="linenr">15: </span><span style="color: #268bd2;">}</span>
 </pre>
 </div>
 <p>
 
    <span class="plus">+</span>
    <div class="order">
-
+   
 \(\{ 7 \rightarrow 8, ... \}\)
 
    </div>
-
+   
 </p>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>LockOne not finished without orders!
-</li>
-<li>requires a side note in the book about <code>volatile</code>
-</li>
-<li>o/w it doesn't work properly
-</li>
-<li>"so the algorithim is in fact code plus a set of orders"
-</li>
+<ul>
+<li>LockOne not finished without orders!</li>
+<li>requires a side note in the book about <code>volatile</code></li>
+<li>o/w it doesn't work properly</li>
+<li>"so the algorithim is in fact code plus a set of orders"</li>
+
 </ul>
 
 </aside>
@@ -1120,14 +1102,13 @@ The requirement that two instructions appear to execute in program order.
 </section>
 </section>
 <section>
-<section id="slide-sec-1">
-<h2 id="sec-1">Enforcing Orders</h2>
+<section id="slide-orgheadline23">
+<h2 id="orgheadline23">Enforcing Orders</h2>
 <aside class="notes">
-<ul class="org-ul">
-<li>how do we help implementers use orders?
-</li>
-<li>fence insertion!
-</li>
+<ul>
+<li>how do we help implementers use orders?</li>
+<li>fence insertion!</li>
+
 </ul>
 
 </aside>
@@ -1142,8 +1123,8 @@ The requirement that two instructions appear to execute in program order.
 </section>
 </section>
 <section>
-<section id="slide-sec-1-1">
-<h3 id="sec-1-1">previous approaches</h3>
+<section id="slide-orgheadline21">
+<h3 id="orgheadline21">previous approaches</h3>
 <ul>
 <li>Insert fences to&#x2026;
 <ul>
@@ -1201,8 +1182,8 @@ Spec: Automatic Inference of Memory Fences, FMCAD '10, Kuperstein et al
 </section>
 </section>
 <section>
-<section id="slide-sec-1-2">
-<h3 id="sec-1-2">our approach</h3>
+<section id="slide-orgheadline22">
+<h3 id="orgheadline22">our approach</h3>
 <ul>
 <li>Algorithm = code + orders</li>
 <li>Insert fences to enforce orders</li>
@@ -1220,15 +1201,12 @@ Spec: Automatic Inference of Memory Fences, FMCAD '10, Kuperstein et al
 </ul>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>Instead of inferring the orders from the program, we ask the programmer for them
-</li>
-<li>This places our analysis at the procedure level.
-</li>
-<li>A Calculus for Relaxed Memory Models, POPL 2015, Crary et al
-</li>
-<li>they built the semantics, we built the tool
-</li>
+<ul>
+<li>Instead of inferring the orders from the program, we ask the programmer for them</li>
+<li>This places our analysis at the procedure level.</li>
+<li>A Calculus for Relaxed Memory Models, POPL 2015, Crary et al</li>
+<li>they built the semantics, we built the tool</li>
+
 </ul>
 
 </aside>
@@ -1236,8 +1214,8 @@ Spec: Automatic Inference of Memory Fences, FMCAD '10, Kuperstein et al
 </section>
 </section>
 <section>
-<section id="slide-sec-2">
-<h2 id="sec-2">Fence Insertion Subtleties</h2>
+<section id="slide-orgheadline32">
+<h2 id="orgheadline32">Fence Insertion Subtleties</h2>
 <aside class="notes">
 <p>
 We have an idea of what we think algorithms should look like,
@@ -1248,20 +1226,20 @@ what's standing in our way?
 </section>
 </section>
 <section>
-<section id="slide-sec-2-1">
-<h3 id="sec-2-1">many platforms</h3>
+<section id="slide-orgheadline24">
+<h3 id="orgheadline24">many platforms</h3>
 <div class="org-src-container">
 
-<pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
-  <span class="org-type">int</span> <span class="org-variable-name">i</span> = get_thread_id();
-  <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
-  flag[i] = <span class="org-constant">true</span>;
+<pre  class="src src-c++"><span style="color: #af005f; font-weight: bold;">void</span> <span style="color: #8700af; font-weight: bold;">lock</span><span style="color: #268bd2;">()</span> <span style="color: #268bd2;">{</span>
+  <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">i</span> = get_thread_id<span style="color: #8700af;">()</span>;
+  <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">j</span> = <span style="color: #8700af;">1</span>-i;
+  flag<span style="color: #8700af;">[</span>i<span style="color: #8700af;">]</span> = <span style="color: #8700af;">true</span>;
 
-&#9654; <span class="org-keyword">__asm__</span> (<span class="org-string">"mfence"</span>); <span class="org-comment-delimiter">// </span><span class="org-comment">x86</span>
-&#9654; <span class="org-keyword">__asm__</span> (<span class="org-string">"dmb"</span>);    <span class="org-comment-delimiter">// </span><span class="org-comment">ARMv7</span>
+&#9654; <span style="color: #268bd2; font-weight: bold;">__asm__</span> <span style="color: #8700af;">(</span><span style="color: #2aa198;">"mfence"</span><span style="color: #8700af;">)</span>; <span style="color: #008787; background-color: #ffffff;">// </span><span style="color: #008787; background-color: #ffffff;">x86</span>
+&#9654; <span style="color: #268bd2; font-weight: bold;">__asm__</span> <span style="color: #8700af;">(</span><span style="color: #2aa198;">"dmb"</span><span style="color: #8700af;">)</span>;    <span style="color: #008787; background-color: #ffffff;">// </span><span style="color: #008787; background-color: #ffffff;">ARMv7</span>
 
-  <span class="org-keyword">while</span> (flag[j]) {}
-}
+  <span style="color: #268bd2; font-weight: bold;">while</span> <span style="color: #8700af;">(</span>flag<span style="color: #2aa198;">[</span>j<span style="color: #2aa198;">]</span><span style="color: #8700af;">)</span> <span style="color: #8700af;">{}</span>
+<span style="color: #268bd2;">}</span>
 </pre>
 </div>
 
@@ -1277,20 +1255,20 @@ defined in the proof
 </section>
 </section>
 <section>
-<section id="slide-sec-2-2">
-<h3 id="sec-2-2">fence selection</h3>
+<section id="slide-orgheadline25">
+<h3 id="orgheadline25">fence selection</h3>
 <div class="org-src-container">
 
-<pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
-  <span class="org-type">int</span> <span class="org-variable-name">i</span> = get_thread_id();
-  <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
-  flag[i] = <span class="org-constant">true</span>;
+<pre  class="src src-c++"><span style="color: #af005f; font-weight: bold;">void</span> <span style="color: #8700af; font-weight: bold;">lock</span><span style="color: #268bd2;">()</span> <span style="color: #268bd2;">{</span>
+  <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">i</span> = get_thread_id<span style="color: #8700af;">()</span>;
+  <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">j</span> = <span style="color: #8700af;">1</span>-i;
+  flag<span style="color: #8700af;">[</span>i<span style="color: #8700af;">]</span> = <span style="color: #8700af;">true</span>;
 
-&#9654; <span class="org-keyword">__asm__</span> (<span class="org-string">"dmb"</span>);
-&#9654; <span class="org-keyword">__asm__</span> (<span class="org-string">"dmb st"</span>); <span class="org-comment-delimiter">// </span><span class="org-comment">may be faster</span>
+&#9654; <span style="color: #268bd2; font-weight: bold;">__asm__</span> <span style="color: #8700af;">(</span><span style="color: #2aa198;">"dmb"</span><span style="color: #8700af;">)</span>;
+&#9654; <span style="color: #268bd2; font-weight: bold;">__asm__</span> <span style="color: #8700af;">(</span><span style="color: #2aa198;">"dmb st"</span><span style="color: #8700af;">)</span>; <span style="color: #008787; background-color: #ffffff;">// </span><span style="color: #008787; background-color: #ffffff;">may be faster</span>
 
-  <span class="org-keyword">while</span> (flag[j]) {}
-}
+  <span style="color: #268bd2; font-weight: bold;">while</span> <span style="color: #8700af;">(</span>flag<span style="color: #2aa198;">[</span>j<span style="color: #2aa198;">]</span><span style="color: #8700af;">)</span> <span style="color: #8700af;">{}</span>
+<span style="color: #268bd2;">}</span>
 </pre>
 </div>
 
@@ -1305,20 +1283,20 @@ optimizing for performance
 </section>
 </section>
 <section>
-<section id="slide-sec-2-3">
-<h3 id="sec-2-3">existing fence(-likes)</h3>
+<section id="slide-orgheadline26">
+<h3 id="orgheadline26">existing fence(-likes)</h3>
 <div class="org-src-container">
 
-<pre  class="src src-c++"><span class="org-type">void</span> <span class="org-function-name">lock</span>() {
-  <span class="org-type">int</span> <span class="org-variable-name">i</span> = get_thread_id();
-  <span class="org-type">int</span> <span class="org-variable-name">j</span> = 1-i;
+<pre  class="src src-c++"><span style="color: #af005f; font-weight: bold;">void</span> <span style="color: #8700af; font-weight: bold;">lock</span><span style="color: #268bd2;">()</span> <span style="color: #268bd2;">{</span>
+  <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">i</span> = get_thread_id<span style="color: #8700af;">()</span>;
+  <span style="color: #af005f; font-weight: bold;">int</span> <span style="color: #af5fd7;">j</span> = <span style="color: #8700af;">1</span>-i;
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">x86:   cmpxchg</span>
-  <span class="org-comment-delimiter">// </span><span class="org-comment">ARMv7: ldrex/strex</span>
-&#9654; CAS(flag[i], <span class="org-constant">false</span>, <span class="org-constant">true</span>);
+  <span style="color: #008787; background-color: #ffffff;">// </span><span style="color: #008787; background-color: #ffffff;">x86:   cmpxchg</span>
+  <span style="color: #008787; background-color: #ffffff;">// </span><span style="color: #008787; background-color: #ffffff;">ARMv7: ldrex/strex</span>
+&#9654; CAS<span style="color: #8700af;">(</span>flag<span style="color: #2aa198;">[</span>i<span style="color: #2aa198;">]</span>, <span style="color: #8700af;">false</span>, <span style="color: #8700af;">true</span><span style="color: #8700af;">)</span>;
 
-  <span class="org-keyword">while</span> (flag[j]) {}
-}
+  <span style="color: #268bd2; font-weight: bold;">while</span> <span style="color: #8700af;">(</span>flag<span style="color: #2aa198;">[</span>j<span style="color: #2aa198;">]</span><span style="color: #8700af;">)</span> <span style="color: #8700af;">{}</span>
+<span style="color: #268bd2;">}</span>
 </pre>
 </div>
 
@@ -1333,37 +1311,35 @@ semantics that we should account for (by avoiding adding more fences).
 </section>
 </section>
 <section>
-<section id="slide-sec-2-4">
-<h3 id="sec-2-4">TL2 STM Algorithm</h3>
+<section id="slide-orgheadline27">
+<h3 id="orgheadline27">TL2 STM Algorithm</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c">  ...
 
-<span class="org-preprocessor">  # if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
-  <span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
-    <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
-&#9654;   WriteBackForward(wr);
-  }
-<span class="org-preprocessor">  # endif</span>
+<span style="color: #8700af;">  # if</span><span style="color: #8700af;">n</span><span style="color: #8700af;">def</span> TL2_EAGER
+  <span style="color: #268bd2; font-weight: bold;">for</span> <span style="color: #268bd2;">(</span>wr = logs; wr != end; wr++<span style="color: #268bd2;">)</span> <span style="color: #268bd2;">{</span>
+    <span style="color: #008787; background-color: #ffffff;">// </span><span style="color: #008787; background-color: #ffffff;">write the deferred stores</span>
+&#9654;   WriteBackForward<span style="color: #8700af;">(</span>wr<span style="color: #8700af;">)</span>;
+  <span style="color: #268bd2;">}</span>
+<span style="color: #8700af;">  # endif</span>
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
-  MEMBARSTST();
+  <span style="color: #008787; background-color: #ffffff;">// </span><span style="color: #008787; background-color: #ffffff;">make stores visible before unlock</span>
+  MEMBARSTST<span style="color: #268bd2;">()</span>;
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
-  DropLocks(Self, wv);
+  <span style="color: #008787; background-color: #ffffff;">// </span><span style="color: #008787; background-color: #ffffff;">release locks and increment version</span>
+  DropLocks<span style="color: #268bd2;">(</span>Self, wv<span style="color: #268bd2;">)</span>;
 
   ...
 </pre>
 </div>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>this is code from the tl2 transactional memory algorithm
-</li>
-<li>avoiding details
-</li>
-<li>there's a store to memory in the writebackforward
-</li>
+<ul>
+<li>this is code from the tl2 transactional memory algorithm</li>
+<li>avoiding details</li>
+<li>there's a store to memory in the writebackforward</li>
+
 </ul>
 
 </aside>
@@ -1371,104 +1347,102 @@ semantics that we should account for (by avoiding adding more fences).
 </section>
 </section>
 <section>
-<section id="slide-sec-2-5">
-<h3 id="sec-2-5">TL2 STM Algorithm</h3>
+<section id="slide-orgheadline28">
+<h3 id="orgheadline28">TL2 STM Algorithm</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c">  ...
 
-<span class="org-preprocessor">  # if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
-  <span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
-    <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
-    WriteBackForward(wr);
-  }
-<span class="org-preprocessor">  # endif</span>
+<span style="color: #8700af;">  # if</span><span style="color: #8700af;">n</span><span style="color: #8700af;">def</span> TL2_EAGER
+  <span style="color: #268bd2; font-weight: bold;">for</span> <span style="color: #268bd2;">(</span>wr = logs; wr != end; wr++<span style="color: #268bd2;">)</span> <span style="color: #268bd2;">{</span>
+    <span style="color: #008787; background-color: #ffffff;">// </span><span style="color: #008787; background-color: #ffffff;">write the deferred stores</span>
+    WriteBackForward<span style="color: #8700af;">(</span>wr<span style="color: #8700af;">)</span>;
+  <span style="color: #268bd2;">}</span>
+<span style="color: #8700af;">  # endif</span>
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
-  MEMBARSTST();
+  <span style="color: #008787; background-color: #ffffff;">// </span><span style="color: #008787; background-color: #ffffff;">make stores visible before unlock</span>
+  MEMBARSTST<span style="color: #268bd2;">()</span>;
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
-&#9654; DropLocks(Self, wv);
+  <span style="color: #008787; background-color: #ffffff;">// </span><span style="color: #008787; background-color: #ffffff;">release locks and increment version</span>
+&#9654; DropLocks<span style="color: #268bd2;">(</span>Self, wv<span style="color: #268bd2;">)</span>;
 
   ...
 </pre>
 </div>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>must happen before the store in droplocks for the algo to work
-</li>
+<ul>
+<li>must happen before the store in droplocks for the algo to work</li>
+
 </ul>
 
 </aside>
 </section>
 </section>
 <section>
-<section id="slide-sec-2-6">
-<h3 id="sec-2-6">TL2 STM Algorithm</h3>
+<section id="slide-orgheadline29">
+<h3 id="orgheadline29">TL2 STM Algorithm</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c">  ...
 
-<span class="org-preprocessor">  # if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
-  <span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
-    <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
-    WriteBackForward(wr);
-  }
-<span class="org-preprocessor">  # endif</span>
+<span style="color: #8700af;">  # if</span><span style="color: #8700af;">n</span><span style="color: #8700af;">def</span> TL2_EAGER
+  <span style="color: #268bd2; font-weight: bold;">for</span> <span style="color: #268bd2;">(</span>wr = logs; wr != end; wr++<span style="color: #268bd2;">)</span> <span style="color: #268bd2;">{</span>
+    <span style="color: #008787; background-color: #ffffff;">// </span><span style="color: #008787; background-color: #ffffff;">write the deferred stores</span>
+    WriteBackForward<span style="color: #8700af;">(</span>wr<span style="color: #8700af;">)</span>;
+  <span style="color: #268bd2;">}</span>
+<span style="color: #8700af;">  # endif</span>
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
-&#9654; MEMBARSTST();
+  <span style="color: #008787; background-color: #ffffff;">// </span><span style="color: #008787; background-color: #ffffff;">make stores visible before unlock</span>
+&#9654; MEMBARSTST<span style="color: #268bd2;">()</span>;
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
-  DropLocks(Self, wv);
+  <span style="color: #008787; background-color: #ffffff;">// </span><span style="color: #008787; background-color: #ffffff;">release locks and increment version</span>
+  DropLocks<span style="color: #268bd2;">(</span>Self, wv<span style="color: #268bd2;">)</span>;
 
   ...
 </pre>
 </div>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>the authors of the code add these fence macros
-</li>
+<ul>
+<li>the authors of the code add these fence macros</li>
 <li>provide a way to define platform appropriate solution to prevent
-stores from swapping
-</li>
+stores from swapping</li>
+
 </ul>
 
 </aside>
 </section>
 </section>
 <section>
-<section id="slide-sec-2-7">
-<h3 id="sec-2-7">code transformations</h3>
+<section id="slide-orgheadline30">
+<h3 id="orgheadline30">code transformations</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c">  ...
 
-<span class="org-preprocessor">  # if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
-&#9654; <span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
-&#9654;   <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
-&#9654;   WriteBackForward(wr);
-&#9654; }
-<span class="org-preprocessor">  # endif</span>
+<span style="color: #8700af;">  # if</span><span style="color: #8700af;">n</span><span style="color: #8700af;">def</span> TL2_EAGER
+&#9654; <span style="color: #268bd2; font-weight: bold;">for</span> <span style="color: #268bd2;">(</span>wr = logs; wr != end; wr++<span style="color: #268bd2;">)</span> <span style="color: #268bd2;">{</span>
+&#9654;   <span style="color: #008787; background-color: #ffffff;">// </span><span style="color: #008787; background-color: #ffffff;">write the deferred stores</span>
+&#9654;   WriteBackForward<span style="color: #8700af;">(</span>wr<span style="color: #8700af;">)</span>;
+&#9654; <span style="color: #268bd2;">}</span>
+<span style="color: #8700af;">  # endif</span>
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
-  MEMBARSTST();
+  <span style="color: #008787; background-color: #ffffff;">// </span><span style="color: #008787; background-color: #ffffff;">make stores visible before unlock</span>
+  MEMBARSTST<span style="color: #268bd2;">()</span>;
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
-  DropLocks(Self, wv);
+  <span style="color: #008787; background-color: #ffffff;">// </span><span style="color: #008787; background-color: #ffffff;">release locks and increment version</span>
+  DropLocks<span style="color: #268bd2;">(</span>Self, wv<span style="color: #268bd2;">)</span>;
 
   ...
 </pre>
 </div>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>if <code>TL2_EAGER</code> is defined will remove writebackforward
-</li>
-<li>so the macro and fence becomes unnecessary
-</li>
+<ul>
+<li>if <code>TL2_EAGER</code> is defined will remove writebackforward</li>
+<li>so the macro and fence becomes unnecessary</li>
+
 </ul>
 
 </aside>
@@ -1476,61 +1450,60 @@ stores from swapping
 </section>
 </section>
 <section>
-<section id="slide-sec-2-8">
-<h3 id="sec-2-8">faux order</h3>
+<section id="slide-orgheadline31">
+<h3 id="orgheadline31">faux order</h3>
 <div class="org-src-container">
 
 <pre  class="src src-c">  ...
 
-<span class="org-preprocessor">  # if</span><span class="org-negation-char"><span class="org-preprocessor">n</span></span><span class="org-preprocessor">def</span> TL2_EAGER
-  <span class="org-keyword">for</span> (wr = logs; wr != end; wr++) {
-    <span class="org-comment-delimiter">// </span><span class="org-comment">write the deferred stores</span>
-&#9654;   WriteBackForward(wr);
-  }
-<span class="org-preprocessor">  # endif</span>
+<span style="color: #8700af;">  # if</span><span style="color: #8700af;">n</span><span style="color: #8700af;">def</span> TL2_EAGER
+  <span style="color: #268bd2; font-weight: bold;">for</span> <span style="color: #268bd2;">(</span>wr = logs; wr != end; wr++<span style="color: #268bd2;">)</span> <span style="color: #268bd2;">{</span>
+    <span style="color: #008787; background-color: #ffffff;">// </span><span style="color: #008787; background-color: #ffffff;">write the deferred stores</span>
+&#9654;   WriteBackForward<span style="color: #8700af;">(</span>wr<span style="color: #8700af;">)</span>;
+  <span style="color: #268bd2;">}</span>
+<span style="color: #8700af;">  # endif</span>
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">make stores visible before unlock</span>
-  MEMBARSTST();
+  <span style="color: #008787; background-color: #ffffff;">// </span><span style="color: #008787; background-color: #ffffff;">make stores visible before unlock</span>
+  MEMBARSTST<span style="color: #268bd2;">()</span>;
 
-  <span class="org-comment-delimiter">// </span><span class="org-comment">release locks and increment version</span>
-&#9654; DropLocks(Self, wv);
+  <span style="color: #008787; background-color: #ffffff;">// </span><span style="color: #008787; background-color: #ffffff;">release locks and increment version</span>
+&#9654; DropLocks<span style="color: #268bd2;">(</span>Self, wv<span style="color: #268bd2;">)</span>;
 
   ...
 </pre>
 </div>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>more generally the implementers really wanted to define an order here
-</li>
+<ul>
+<li>more generally the implementers really wanted to define an order here</li>
 <li>by using a fence macro anyone coming to the code has to have the algorithm
-spec in hand to determine why that fence was placed
-</li>
+spec in hand to determine why that fence was placed</li>
+
 </ul>
 
 </aside>
 </section>
 </section>
 <section>
-<section id="slide-sec-3">
-<h2 id="sec-3">Algorithm</h2>
-<div class="outline-text-2" id="text-3">
+<section id="slide-orgheadline45">
+<h2 id="orgheadline45">Algorithm</h2>
+<div class="outline-text-2" id="text-orgheadline45">
 </div></section>
 </section>
 <section>
-<section id="slide-sec-3-1">
-<h3 id="sec-3-1">algorithm</h3>
+<section id="slide-orgheadline33">
+<h3 id="orgheadline33">algorithm</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span style="color: #268bd2; font-weight: bold;">def</span> <span style="color: #8700af; font-weight: bold;">Insert</span><span style="color: #268bd2;">(</span>G1, A, O1<span style="color: #268bd2;">)</span>:
       &#9650;
-  <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+  <span style="color: #af5fd7;">O2</span> = O1 \ Elim<span style="color: #268bd2;">(</span>G, A, O1<span style="color: #268bd2;">)</span>
 
-  <span class="org-variable-name">K</span>  = Cut(G1, O2)
+  <span style="color: #af5fd7;">K</span>  = Cut<span style="color: #268bd2;">(</span>G1, O2<span style="color: #268bd2;">)</span>
 
-  <span class="org-variable-name">G2</span> = Refine(G1, K)
+  <span style="color: #af5fd7;">G2</span> = Refine<span style="color: #268bd2;">(</span>G1, K<span style="color: #268bd2;">)</span>
 
-  <span class="org-keyword">return</span> G2
+  <span style="color: #268bd2; font-weight: bold;">return</span> G2
 end
 </pre>
 </div>
@@ -1549,11 +1522,10 @@ end
 </p>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>our algorithm insert
-</li>
-<li>left code, right inputs except for the architecture
-</li>
+<ul>
+<li>our algorithm insert</li>
+<li>left code, right inputs except for the architecture</li>
+
 </ul>
 
 </aside>
@@ -1561,19 +1533,19 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-3-2">
-<h3 id="sec-3-2">control flow graph</h3>
+<section id="slide-orgheadline34">
+<h3 id="orgheadline34">control flow graph</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span style="color: #268bd2; font-weight: bold;">def</span> <span style="color: #8700af; font-weight: bold;">Insert</span><span style="color: #268bd2;">(</span>G1, A, O1<span style="color: #268bd2;">)</span>:
             &#9650;
-  <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+  <span style="color: #af5fd7;">O2</span> = O1 \ Elim<span style="color: #268bd2;">(</span>G, A, O1<span style="color: #268bd2;">)</span>
 
-  <span class="org-variable-name">K</span>  = Cut(G1, O2)
+  <span style="color: #af5fd7;">K</span>  = Cut<span style="color: #268bd2;">(</span>G1, O2<span style="color: #268bd2;">)</span>
 
-  <span class="org-variable-name">G2</span> = Refine(G1, K)
+  <span style="color: #af5fd7;">G2</span> = Refine<span style="color: #268bd2;">(</span>G1, K<span style="color: #268bd2;">)</span>
 
-  <span class="org-keyword">return</span> G2
+  <span style="color: #268bd2; font-weight: bold;">return</span> G2
 end
 </pre>
 </div>
@@ -1592,28 +1564,28 @@ end
 </p>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>control flow graph for some simple procedure
-</li>
+<ul>
+<li>control flow graph for some simple procedure</li>
+
 </ul>
 
 </aside>
 </section>
 </section>
 <section>
-<section id="slide-sec-3-3">
-<h3 id="sec-3-3">architecture spec</h3>
+<section id="slide-orgheadline35">
+<h3 id="orgheadline35">architecture spec</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span style="color: #268bd2; font-weight: bold;">def</span> <span style="color: #8700af; font-weight: bold;">Insert</span><span style="color: #268bd2;">(</span>G1, A, O1<span style="color: #268bd2;">)</span>:
                &#9650;
-  <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+  <span style="color: #af5fd7;">O2</span> = O1 \ Elim<span style="color: #268bd2;">(</span>G, A, O1<span style="color: #268bd2;">)</span>
 
-  <span class="org-variable-name">K</span>  = Cut(G1, O2)
+  <span style="color: #af5fd7;">K</span>  = Cut<span style="color: #268bd2;">(</span>G1, O2<span style="color: #268bd2;">)</span>
 
-  <span class="org-variable-name">G2</span> = Refine(G1, K)
+  <span style="color: #af5fd7;">G2</span> = Refine<span style="color: #268bd2;">(</span>G1, K<span style="color: #268bd2;">)</span>
 
-  <span class="org-keyword">return</span> G2
+  <span style="color: #268bd2; font-weight: bold;">return</span> G2
 end
 </pre>
 </div>
@@ -1633,32 +1605,30 @@ end
 </p>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>an architecture specification not pictured here
-</li>
-<li>it tells us what the architecture WONT reorder
-</li>
-<li>we'll assume ARM for the sake of the example
-</li>
+<ul>
+<li>an architecture specification not pictured here</li>
+<li>it tells us what the architecture WONT reorder</li>
+<li>we'll assume ARM for the sake of the example</li>
+
 </ul>
 
 </aside>
 </section>
 </section>
 <section>
-<section id="slide-sec-3-4">
-<h3 id="sec-3-4">orders</h3>
+<section id="slide-orgheadline36">
+<h3 id="orgheadline36">orders</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span style="color: #268bd2; font-weight: bold;">def</span> <span style="color: #8700af; font-weight: bold;">Insert</span><span style="color: #268bd2;">(</span>G1, A, O1<span style="color: #268bd2;">)</span>:
                    &#9650;
-  <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+  <span style="color: #af5fd7;">O2</span> = O1 \ Elim<span style="color: #268bd2;">(</span>G, A, O1<span style="color: #268bd2;">)</span>
 
-  <span class="org-variable-name">K</span>  = Cut(G1, O2)
+  <span style="color: #af5fd7;">K</span>  = Cut<span style="color: #268bd2;">(</span>G1, O2<span style="color: #268bd2;">)</span>
 
-  <span class="org-variable-name">G2</span> = Refine(G1, K)
+  <span style="color: #af5fd7;">G2</span> = Refine<span style="color: #268bd2;">(</span>G1, K<span style="color: #268bd2;">)</span>
 
-  <span class="org-keyword">return</span> G2
+  <span style="color: #268bd2; font-weight: bold;">return</span> G2
 end
 </pre>
 </div>
@@ -1677,28 +1647,28 @@ end
 </p>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>set of orders that need to be enforced
-</li>
+<ul>
+<li>set of orders that need to be enforced</li>
+
 </ul>
 
 </aside>
 </section>
 </section>
 <section>
-<section id="slide-sec-3-5">
-<h3 id="sec-3-5">order elimination</h3>
+<section id="slide-orgheadline37">
+<h3 id="orgheadline37">order elimination</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span style="color: #268bd2; font-weight: bold;">def</span> <span style="color: #8700af; font-weight: bold;">Insert</span><span style="color: #268bd2;">(</span>G1, A, O1<span style="color: #268bd2;">)</span>:
 
-&#9654; <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+&#9654; <span style="color: #af5fd7;">O2</span> = O1 \ Elim<span style="color: #268bd2;">(</span>G, A, O1<span style="color: #268bd2;">)</span>
 
-  <span class="org-variable-name">K</span>  = Cut(G1, O2)
+  <span style="color: #af5fd7;">K</span>  = Cut<span style="color: #268bd2;">(</span>G1, O2<span style="color: #268bd2;">)</span>
 
-  <span class="org-variable-name">G2</span> = Refine(G1, K)
+  <span style="color: #af5fd7;">G2</span> = Refine<span style="color: #268bd2;">(</span>G1, K<span style="color: #268bd2;">)</span>
 
-  <span class="org-keyword">return</span> G2
+  <span style="color: #268bd2; font-weight: bold;">return</span> G2
 end
 </pre>
 </div>
@@ -1717,13 +1687,11 @@ end
 </p>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>first step is order elimination
-</li>
-<li>we want to avoid inserting fences where they are unnecessary
-</li>
-<li>on arm (and every other architecture) a load won't move past a store to the same address
-</li>
+<ul>
+<li>first step is order elimination</li>
+<li>we want to avoid inserting fences where they are unnecessary</li>
+<li>on arm (and every other architecture) a load won't move past a store to the same address</li>
+
 </ul>
 
 </aside>
@@ -1731,19 +1699,19 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-3-6">
-<h3 id="sec-3-6">order elimination</h3>
+<section id="slide-orgheadline38">
+<h3 id="orgheadline38">order elimination</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span style="color: #268bd2; font-weight: bold;">def</span> <span style="color: #8700af; font-weight: bold;">Insert</span><span style="color: #268bd2;">(</span>G1, A, O1<span style="color: #268bd2;">)</span>:
 
-&#9654; <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+&#9654; <span style="color: #af5fd7;">O2</span> = O1 \ Elim<span style="color: #268bd2;">(</span>G, A, O1<span style="color: #268bd2;">)</span>
 
-  <span class="org-variable-name">K</span>  = Cut(G1, O2)
+  <span style="color: #af5fd7;">K</span>  = Cut<span style="color: #268bd2;">(</span>G1, O2<span style="color: #268bd2;">)</span>
 
-  <span class="org-variable-name">G2</span> = Refine(G1, K)
+  <span style="color: #af5fd7;">G2</span> = Refine<span style="color: #268bd2;">(</span>G1, K<span style="color: #268bd2;">)</span>
 
-  <span class="org-keyword">return</span> G2
+  <span style="color: #268bd2; font-weight: bold;">return</span> G2
 end
 </pre>
 </div>
@@ -1762,9 +1730,9 @@ end
 </p>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>so we can safely discard that order
-</li>
+<ul>
+<li>so we can safely discard that order</li>
+
 </ul>
 
 </aside>
@@ -1772,40 +1740,32 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-3-7">
-<h3 id="sec-3-7">fence position</h3>
+<section id="slide-orgheadline39">
+<h3 id="orgheadline39">fence position</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span style="color: #268bd2; font-weight: bold;">def</span> <span style="color: #8700af; font-weight: bold;">Insert</span><span style="color: #268bd2;">(</span>G1, A, O1<span style="color: #268bd2;">)</span>:
 
-  <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+  <span style="color: #af5fd7;">O2</span> = O1 \ Elim<span style="color: #268bd2;">(</span>G, A, O1<span style="color: #268bd2;">)</span>
 
-&#9654; <span class="org-variable-name">K</span>  = Cut(G1, O2)
+&#9654; <span style="color: #af5fd7;">K</span>  = Cut<span style="color: #268bd2;">(</span>G1, O2<span style="color: #268bd2;">)</span>
 
-  <span class="org-variable-name">G2</span> = Refine(G1, K)
+  <span style="color: #af5fd7;">G2</span> = Refine<span style="color: #268bd2;">(</span>G1, K<span style="color: #268bd2;">)</span>
 
-  <span class="org-keyword">return</span> G2
+  <span style="color: #268bd2; font-weight: bold;">return</span> G2
 end
 </pre>
 </div>
 
 <p>
  <div class="algo-graph">
-</p>
-
-<div class="figure">
-<p><img src="assets/images/full-graph-cut.png" alt="full-graph-cut.png" />
-</p>
-</div>
-
-<p>
  </div>
 </p>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>the next step is finding good places for fences that will enforce the orders
-</li>
+<ul>
+<li>the next step is finding good places for fences that will enforce the orders</li>
+
 </ul>
 
 </aside>
@@ -1813,19 +1773,19 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-3-8">
-<h3 id="sec-3-8">fence position</h3>
+<section id="slide-orgheadline40">
+<h3 id="orgheadline40">fence position</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span style="color: #268bd2; font-weight: bold;">def</span> <span style="color: #8700af; font-weight: bold;">Insert</span><span style="color: #268bd2;">(</span>G1, A, O1<span style="color: #268bd2;">)</span>:
 
-  <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+  <span style="color: #af5fd7;">O2</span> = O1 \ Elim<span style="color: #268bd2;">(</span>G, A, O1<span style="color: #268bd2;">)</span>
 
-&#9654; <span class="org-variable-name">K</span>  = Cut(G1, O2)
+&#9654; <span style="color: #af5fd7;">K</span>  = Cut<span style="color: #268bd2;">(</span>G1, O2<span style="color: #268bd2;">)</span>
 
-  <span class="org-variable-name">G2</span> = Refine(G1, K)
+  <span style="color: #af5fd7;">G2</span> = Refine<span style="color: #268bd2;">(</span>G1, K<span style="color: #268bd2;">)</span>
 
-  <span class="org-keyword">return</span> G2
+  <span style="color: #268bd2; font-weight: bold;">return</span> G2
 end
 </pre>
 </div>
@@ -1844,11 +1804,10 @@ end
 </p>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>we consider all the orders
-</li>
-<li>use multicut to find an optimal set of edges to separate the sources from the sinks
-</li>
+<ul>
+<li>we consider all the orders</li>
+<li>use multicut to find an optimal set of edges to separate the sources from the sinks</li>
+
 </ul>
 
 </aside>
@@ -1856,19 +1815,19 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-3-9">
-<h3 id="sec-3-9">fence position</h3>
+<section id="slide-orgheadline41">
+<h3 id="orgheadline41">fence position</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span style="color: #268bd2; font-weight: bold;">def</span> <span style="color: #8700af; font-weight: bold;">Insert</span><span style="color: #268bd2;">(</span>G1, A, O1<span style="color: #268bd2;">)</span>:
 
-  <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+  <span style="color: #af5fd7;">O2</span> = O1 \ Elim<span style="color: #268bd2;">(</span>G, A, O1<span style="color: #268bd2;">)</span>
 
-&#9654; <span class="org-variable-name">K</span>  = Cut(G1, O2)
+&#9654; <span style="color: #af5fd7;">K</span>  = Cut<span style="color: #268bd2;">(</span>G1, O2<span style="color: #268bd2;">)</span>
 
-  <span class="org-variable-name">G2</span> = Refine(G1, K)
+  <span style="color: #af5fd7;">G2</span> = Refine<span style="color: #268bd2;">(</span>G1, K<span style="color: #268bd2;">)</span>
 
-  <span class="org-keyword">return</span> G2
+  <span style="color: #268bd2; font-weight: bold;">return</span> G2
 end
 </pre>
 </div>
@@ -1887,9 +1846,9 @@ end
 </p>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>so our cut set K is just the one edge between the two stores
-</li>
+<ul>
+<li>so our cut set K is just the one edge between the two stores</li>
+
 </ul>
 
 </aside>
@@ -1897,40 +1856,32 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-3-10">
-<h3 id="sec-3-10">fence placement</h3>
+<section id="slide-orgheadline42">
+<h3 id="orgheadline42">fence placement</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span style="color: #268bd2; font-weight: bold;">def</span> <span style="color: #8700af; font-weight: bold;">Insert</span><span style="color: #268bd2;">(</span>G1, A, O1<span style="color: #268bd2;">)</span>:
 
-  <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+  <span style="color: #af5fd7;">O2</span> = O1 \ Elim<span style="color: #268bd2;">(</span>G, A, O1<span style="color: #268bd2;">)</span>
 
-  <span class="org-variable-name">K</span>  = Cut(G1, O2)
+  <span style="color: #af5fd7;">K</span>  = Cut<span style="color: #268bd2;">(</span>G1, O2<span style="color: #268bd2;">)</span>
 
-&#9654; <span class="org-variable-name">G2</span> = Refine(G1, K)
+&#9654; <span style="color: #af5fd7;">G2</span> = Refine<span style="color: #268bd2;">(</span>G1, K<span style="color: #268bd2;">)</span>
 
-  <span class="org-keyword">return</span> G2
+  <span style="color: #268bd2; font-weight: bold;">return</span> G2
 end
 </pre>
 </div>
 
 <p>
  <div class="algo-graph">
-</p>
-
-<div class="figure">
-<p><img src="assets/images/full-graph-refine.png" alt="full-graph-refine.png" />
-</p>
-</div>
-
-<p>
  </div>
 </p>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>finally we use the cut set to place fences in the control flow graph
-</li>
+<ul>
+<li>finally we use the cut set to place fences in the control flow graph</li>
+
 </ul>
 
 </aside>
@@ -1938,19 +1889,19 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-3-11">
-<h3 id="sec-3-11">fence placement</h3>
+<section id="slide-orgheadline43">
+<h3 id="orgheadline43">fence placement</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span class="org-keyword">def</span> <span class="org-function-name">Insert</span>(G1, A, O1):
+<pre  class="src src-python"><span style="color: #268bd2; font-weight: bold;">def</span> <span style="color: #8700af; font-weight: bold;">Insert</span><span style="color: #268bd2;">(</span>G1, A, O1<span style="color: #268bd2;">)</span>:
 
-  <span class="org-variable-name">O2</span> = O1 \ Elim(G, A, O1)
+  <span style="color: #af5fd7;">O2</span> = O1 \ Elim<span style="color: #268bd2;">(</span>G, A, O1<span style="color: #268bd2;">)</span>
 
-  <span class="org-variable-name">K</span>  = Cut(G1, O2)
+  <span style="color: #af5fd7;">K</span>  = Cut<span style="color: #268bd2;">(</span>G1, O2<span style="color: #268bd2;">)</span>
 
-&#9654; <span class="org-variable-name">G2</span> = Refine(G1, K)
+&#9654; <span style="color: #af5fd7;">G2</span> = Refine<span style="color: #268bd2;">(</span>G1, K<span style="color: #268bd2;">)</span>
 
-  <span class="org-keyword">return</span> G2
+  <span style="color: #268bd2; font-weight: bold;">return</span> G2
 end
 </pre>
 </div>
@@ -1971,8 +1922,8 @@ end
 </section>
 </section>
 <section>
-<section id="slide-sec-3-12">
-<h3 id="sec-3-12">main theorem</h3>
+<section id="slide-orgheadline44">
+<h3 id="orgheadline44">main theorem</h3>
 <p>
 \(\mathsf{Insert}(G, A, O), A \vDash O\)
 </p>
@@ -1989,22 +1940,21 @@ will enforce the orders
 </section>
 </section>
 <section>
-<section id="slide-sec-4">
-<h2 id="sec-4">Results/Parry</h2>
+<section id="slide-orgheadline55">
+<h2 id="orgheadline55">Results/Parry</h2>
 <aside class="notes">
-<ul class="org-ul">
-<li>we built a tool called Parry
-</li>
-<li>see how well this idea can be implemented
-</li>
+<ul>
+<li>we built a tool called Parry</li>
+<li>see how well this idea can be implemented</li>
+
 </ul>
 
 </aside>
 </section>
 </section>
 <section>
-<section id="slide-sec-4-1">
-<h3 id="sec-4-1">benchmark: classic algorithms</h3>
+<section id="slide-orgheadline46">
+<h3 id="orgheadline46">benchmark: classic algorithms</h3>
 <ul>
 <li>from Algave et al, CAV 2014</li>
 <li>4 lock free algorithms</li>
@@ -2014,8 +1964,8 @@ will enforce the orders
 </section>
 </section>
 <section>
-<section id="slide-sec-4-2">
-<h3 id="sec-4-2">benchmark: STM algorithms</h3>
+<section id="slide-orgheadline47">
+<h3 id="orgheadline47">benchmark: STM algorithms</h3>
 <ul>
 <li>TL2/TL2 Eager</li>
 <li>Rochester ByteEager (TLRW)</li>
@@ -2024,21 +1974,19 @@ will enforce the orders
 </ul>
 
 <aside class="notes">
-<ul class="org-ul">
+<ul>
 <li>TL2/TL2 Eager
-<ul class="org-ul">
-<li>included with STAMP Benchmarks
-</li>
-</ul>
-</li>
+<ul>
+<li>included with STAMP Benchmarks</li>
+
+</ul></li>
 <li>RSTM ByteEager
-<ul class="org-ul">
-<li>part of Rochester STM Algorithm Suite
-</li>
-<li>Michael Scott
-</li>
-</ul>
-</li>
+<ul>
+<li>part of Rochester STM Algorithm Suite</li>
+<li>Michael Scott</li>
+
+</ul></li>
+
 </ul>
 
 </aside>
@@ -2046,8 +1994,8 @@ will enforce the orders
 </section>
 </section>
 <section>
-<section id="slide-sec-4-3">
-<h3 id="sec-4-3">benchmark: STM algorithms</h3>
+<section id="slide-orgheadline48">
+<h3 id="orgheadline48">benchmark: STM algorithms</h3>
 <ul>
 <li>TL2/TL2 Eager</li>
 <li>Rochester ByteEager (TLRW)</li>
@@ -2057,17 +2005,17 @@ will enforce the orders
 
 
 <aside class="notes">
-<ul class="org-ul">
-<li>for the sake of time arm7 only
-</li>
+<ul>
+<li>for the sake of time arm7 only</li>
+
 </ul>
 
 </aside>
 </section>
 </section>
 <section>
-<section id="slide-sec-4-4">
-<h3 id="sec-4-4">benchmark: STM algorithms</h3>
+<section id="slide-orgheadline49">
+<h3 id="orgheadline49">benchmark: STM algorithms</h3>
 <ul>
 <li><b>baseline</b>: original fences</li>
 <li><b>Parry</b>: fences placed by Parry</li>
@@ -2076,47 +2024,43 @@ will enforce the orders
 </ul>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>baseline is fences already placed in algorithms
-</li>
-<li>ours is fences placed by parry using orders from algorithm definitions
-</li>
+<ul>
+<li>baseline is fences already placed in algorithms</li>
+<li>ours is fences placed by parry using orders from algorithm definitions</li>
 
-<li>TL2 is the largest in terms of procedure size
-</li>
-<li>TxCommit method has nearly 400 nodes
-</li>
-<li>Just under 30s to run for 3 procedures in TL2
-</li>
+<li>TL2 is the largest in terms of procedure size</li>
+<li>TxCommit method has nearly 400 nodes</li>
+<li>Just under 30s to run for 3 procedures in TL2</li>
+
 </ul>
 
 </aside>
 </section>
 </section>
 <section>
-<section id="slide-sec-4-5">
-<h3 id="sec-4-5">tl2 - ARMv7</h3>
+<section id="slide-orgheadline50">
+<h3 id="orgheadline50">tl2 - ARMv7</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 </colgroup>
 <tbody>
 <tr>
-<td class="left">&#xa0;</td>
-<td class="left">baseline</td>
-<td class="left">Parry</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">baseline</td>
+<td class="org-left">Parry</td>
 </tr>
 
 <tr>
-<td class="left"><b><code>TxStore</code></b></td>
-<td class="left"><span class="hlght"> 1920: <code>dmb</code> </span></td>
-<td class="left"><span class="hlght"> 1886: <code>dmb</code> </span></td>
+<td class="org-left"><b><code>TxStore</code></b></td>
+<td class="org-left"><span class="hlght"> 1920: <code>dmb</code> </span></td>
+<td class="org-left"><span class="hlght"> 1886: <code>dmb</code> </span></td>
 </tr>
 </tbody>
 </table>
@@ -2134,29 +2078,29 @@ of similarly weighted edges, choosing the first
 </section>
 </section>
 <section>
-<section id="slide-sec-4-6">
-<h3 id="sec-4-6">tl2 eager - ARMv7</h3>
+<section id="slide-orgheadline51">
+<h3 id="orgheadline51">tl2 eager - ARMv7</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 </colgroup>
 <tbody>
 <tr>
-<td class="left">&#xa0;</td>
-<td class="left">baseline</td>
-<td class="left">Parry</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">baseline</td>
+<td class="org-left">Parry</td>
 </tr>
 
 <tr>
-<td class="left"><b><code>TxCommit</code></b></td>
-<td class="left"><span class="hlght"> 1669: <code>dmb st</code> </span></td>
-<td class="left"><span class="hlght">  — </span></td>
+<td class="org-left"><b><code>TxCommit</code></b></td>
+<td class="org-left"><span class="hlght"> 1669: <code>dmb st</code> </span></td>
+<td class="org-left"><span class="hlght">  — </span></td>
 </tr>
 </tbody>
 </table>
@@ -2172,29 +2116,29 @@ able to eliminate the stst fence at line 1669 on arm
 </section>
 </section>
 <section>
-<section id="slide-sec-4-7">
-<h3 id="sec-4-7">rstm - ARMv7</h3>
+<section id="slide-orgheadline52">
+<h3 id="orgheadline52">rstm - ARMv7</h3>
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
 
 <colgroup>
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 
-<col  class="left" />
+<col  class="org-left" />
 </colgroup>
 <tbody>
 <tr>
-<td class="left">&#xa0;</td>
-<td class="left">baseline</td>
-<td class="left">Parry</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">baseline</td>
+<td class="org-left">Parry</td>
 </tr>
 
 <tr>
-<td class="left"><b><code>read_rw</code></b></td>
-<td class="left"><span class="hlght"> 163: <code>ldrex/strex</code> </span></td>
-<td class="left"><span class="hlght"> 163: <code>dmb st</code> </span></td>
+<td class="org-left"><b><code>read_rw</code></b></td>
+<td class="org-left"><span class="hlght"> 163: <code>ldrex/strex</code> </span></td>
+<td class="org-left"><span class="hlght"> 163: <code>dmb st</code> </span></td>
 </tr>
 </tbody>
 </table>
@@ -2210,8 +2154,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-4-8">
-<h3 id="sec-4-8">tl2 performance</h3>
+<section id="slide-orgheadline53">
+<h3 id="orgheadline53">tl2 performance</h3>
 
 <div class="figure">
 <p><img src="./assets/images/stamp-arm-tl2.png" alt="stamp-arm-tl2.png" />
@@ -2219,21 +2163,19 @@ compare and swap to enforce a store/store order
 </div>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>STAMP results for TL2 on ARM
-</li>
-<li>Gray bars are Parry
-</li>
-<li>matched hand placed fences
-</li>
+<ul>
+<li>STAMP results for TL2 on ARM</li>
+<li>Gray bars are Parry</li>
+<li>matched hand placed fences</li>
+
 </ul>
 
 </aside>
 </section>
 </section>
 <section>
-<section id="slide-sec-4-9">
-<h3 id="sec-4-9">rstm performance</h3>
+<section id="slide-orgheadline54">
+<h3 id="orgheadline54">rstm performance</h3>
 
 <div class="figure">
 <p><img src="./assets/images/stamp-arm-rstm.png" alt="stamp-arm-rstm.png" />
@@ -2241,13 +2183,11 @@ compare and swap to enforce a store/store order
 </div>
 
 <aside class="notes">
-<ul class="org-ul">
-<li>STAMP results for RSTM/byteeager on ARM
-</li>
-<li>verified that slower due to the pairing of a store/dmb st fence
-</li>
-<li>suggests ldrex/strex can be faster in some circumstances
-</li>
+<ul>
+<li>STAMP results for RSTM/byteeager on ARM</li>
+<li>verified that slower due to the pairing of a store/dmb st fence</li>
+<li>suggests ldrex/strex can be faster in some circumstances</li>
+
 </ul>
 
 </aside>
@@ -2255,8 +2195,8 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-5">
-<h2 id="sec-5">algorithms = code + orders</h2>
+<section id="slide-orgheadline56">
+<h2 id="orgheadline56">algorithms = code + orders</h2>
 <ul>
 <li>Describe the algorithm behavior</li>
 <li>Let the compiler enforce the orders</li>
@@ -2265,13 +2205,12 @@ compare and swap to enforce a store/store order
 </section>
 </section>
 <section>
-<section id="slide-sec-6">
-<h2 id="sec-6">Thanks!</h2>
+<section id="slide-orgheadline57">
+<h2 id="orgheadline57">Thanks!</h2>
 </section>
 </section>
 </div>
 </div>
-
 <script src="assets/reveal/lib/js/head.min.js"></script>
 <script src="assets/reveal/js/reveal.js"></script>
 
@@ -2284,7 +2223,7 @@ controls: false,
 progress: true,
 history: true,
 center: true,
-slideNumber: true,
+slideNumber: 'c',
 rollingLinks: false,
 keyboard: true,
 overview: true,
@@ -2303,10 +2242,8 @@ dependencies: [
  { src: 'assets/reveal/lib/js/classList.js', condition: function() { return !document.body.classList; } },
  { src: 'assets/reveal/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
  { src: 'assets/reveal/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
- { src: 'assets/reveal/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
  { src: 'assets/reveal/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
- { src: 'assets/reveal/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
-]
+ { src: 'assets/reveal/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }]
 });
 </script>
 </body>

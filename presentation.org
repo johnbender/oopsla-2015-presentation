@@ -6,7 +6,7 @@
 #+REVEAL_HLEVEL: 10
 #+EXPORT_FILE_NAME: index
 #+TITLE: Declarative Fence Insertion
-#+AUTHOR: John Bender, Jens Palsberg - UCLA @@html: <br/> @@ Mohsen Lesani - MIT
+#+AUTHOR: John Bender, Jens Palsberg - UCLA @@html: <br/> @@ Mohsen Lesani - MIT @@html: <br/> <img src='assets/images/badge.png' class='badge'></img> @@
 #+EMAIL:
 #+OPTIONS: num:nil toc:nil reveal_history:t reveal_control:nil reveal_mathjax:t
 ** ~LockOne~ mutex
@@ -289,11 +289,11 @@ class LockOne implements Lock {
    #+END_NOTES
 
 ** traditional solutions
-   | solutions              | lossy | error prone | overkill |
-   |------------------------+-------+-------------+----------|
-   | sequential consistency |       |             | ✓        |
-   | ~volatile~ modifier    | ✓     |             | ✓        |
-   | memory fences          | ✓     | ✓           |          |
+   | solutions              | semantics | error prone | overkill |
+   |------------------------+-----------+-------------+----------|
+   | sequential consistency |           |             | ✓        |
+   | ~volatile~ modifier    | ✓         |             | ✓        |
+   | memory fences          | ✓         | ✓           |          |
 
    #+BEGIN_QUOTE
    Pragma 2.3.1. In practice, the Boolean flag variables ... must
