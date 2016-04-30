@@ -309,7 +309,7 @@ class LockOne implements Lock {
    #+END_NOTES
 
 ** traditional solutions
-   | solutions                                                             | lossy | error prone | overkill |
+   | solutions                                                             | semantics | error prone | overkill |
    |-----------------------------------------------------------------------+-------+-------------+----------|
    | @@html:<span class="hlght">@@ sequential consistency @@html:</span>@@ |       |             | ✓        |
    | ~volatile~ modifier                                                   | ✓     |             | ✓        |
@@ -327,7 +327,7 @@ class LockOne implements Lock {
    #+END_NOTES
 
 ** traditional solutions
-   | solutions                                                          | lossy | error prone | overkill |
+   | solutions                                                          | semantics | error prone | overkill |
    |--------------------------------------------------------------------+-------+-------------+----------|
    | sequential consistency                                             |       |             | ✓        |
    | @@html:<span class="hlght">@@ ~volatile~ modifier @@html:</span>@@ | ✓     |             | ✓        |
@@ -340,14 +340,14 @@ class LockOne implements Lock {
 
    #+BEGIN_NOTES
    - note the pragma from the book
-   - lossy
+   - semantics
      - algorithm broken without guarantees
      - newcomer can't infer that from volatile
    - every operation on volatile variables is affected, unnecessary
    #+END_NOTES
 
 ** traditional solutions
-   | solutions                                                    | lossy | error prone | overkill |
+   | solutions                                                    | semantics | error prone | overkill |
    |--------------------------------------------------------------+------+-------------+----------|
    | sequential consistency                                       |      |             | ✓        |
    | ~volatile~ modifier                                          | ✓    |             | ✓        |
@@ -364,7 +364,7 @@ class LockOne implements Lock {
    #+END_NOTES
 
 ** traditional solutions
-   | solutions                                                             | lossy | error prone | overkill |
+   | solutions                                                             | semantics | error prone | overkill |
    |-----------------------------------------------------------------------+------+-------------+----------|
    | @@html:<span class="hlght">@@ sequential consistency @@html:</span>@@ |      |             | ✓        |
    | @@html:<span class="hlght">@@ ~volatile~ modifier @@html:</span>@@    | ✓    |             | ✓        |

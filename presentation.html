@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <title>Declarative Fence Insertion</title>
-<meta name="author" content="(John Bender, Jens Palsberg - UCLA  (export-snippet (:back-end html :value  <br/>  :begin 35 :end 52 :post-blank 1 :parent #0)) Mohsen Lesani - MIT  (export-snippet (:back-end html :value  <img src='assets/images/badge.png' class='badge'></img>  :begin 72 :end 138 :post-blank 0 :parent #0)))"/>
+<meta name="author" content="(John Bender, Jens Palsberg - UCLA  (export-snippet (:back-end html :value  <br/>  :begin 35 :end 52 :post-blank 1 :parent #0)) Mohsen Lesani - MIT  (export-snippet (:back-end html :value  <br/> <img src='assets/images/badge.png' class='badge'></img>  :begin 72 :end 144 :post-blank 0 :parent #0)))"/>
 <style type="text/css">
 .underline { text-decoration: underline; }
 </style>
@@ -28,7 +28,7 @@
 <div class="slides">
 <section id="sec-title-slide">
 <h1>Declarative Fence Insertion</h1>
-<h2>John Bender, Jens Palsberg - UCLA  <br/>  Mohsen Lesani - MIT  <img src='assets/images/badge.png' class='badge'></img> </h2>
+<h2>John Bender, Jens Palsberg - UCLA  <br/>  Mohsen Lesani - MIT  <br/> <img src='assets/images/badge.png' class='badge'></img> </h2>
 <h2><a href="mailto:"></a></h2>
 <h2></h2>
 </section>
@@ -788,7 +788,7 @@ traditional solutions:
 <thead>
 <tr>
 <th scope="col" class="org-left">solutions</th>
-<th scope="col" class="org-left">lossy</th>
+<th scope="col" class="org-left">semantics</th>
 <th scope="col" class="org-left">error prone</th>
 <th scope="col" class="org-left">overkill</th>
 </tr>
@@ -854,7 +854,7 @@ all be declared volatile to work properly.
 <thead>
 <tr>
 <th scope="col" class="org-left">solutions</th>
-<th scope="col" class="org-left">lossy</th>
+<th scope="col" class="org-left">semantics</th>
 <th scope="col" class="org-left">error prone</th>
 <th scope="col" class="org-left">overkill</th>
 </tr>
@@ -893,7 +893,7 @@ all be declared volatile to work properly.
 <aside class="notes">
 <ul>
 <li>note the pragma from the book</li>
-<li>lossy
+<li>semantics
 <ul>
 <li>algorithm broken without guarantees</li>
 <li>newcomer can't infer that from volatile</li>
@@ -925,7 +925,7 @@ all be declared volatile to work properly.
 <thead>
 <tr>
 <th scope="col" class="org-left">solutions</th>
-<th scope="col" class="org-left">lossy</th>
+<th scope="col" class="org-left">semantics</th>
 <th scope="col" class="org-left">error prone</th>
 <th scope="col" class="org-left">overkill</th>
 </tr>
@@ -990,7 +990,7 @@ all be declared volatile to work properly.
 <thead>
 <tr>
 <th scope="col" class="org-left">solutions</th>
-<th scope="col" class="org-left">lossy</th>
+<th scope="col" class="org-left">semantics</th>
 <th scope="col" class="org-left">error prone</th>
 <th scope="col" class="org-left">overkill</th>
 </tr>
