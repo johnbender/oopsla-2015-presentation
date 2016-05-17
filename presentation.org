@@ -10,23 +10,23 @@
 #+EMAIL:
 #+OPTIONS: num:nil toc:nil reveal_history:t reveal_control:nil reveal_mathjax:t
 ** ~LockOne~ mutex
-   The Art of Multiprocessor Programming, 2.3.1
+ The Art of Multiprocessor Programming, 2.3.1
 
-   Maurice Herlihy & Nir Shavit, 2012
+ Maurice Herlihy & Nir Shavit, 2012
 
-   #+INCLUDE: "code/LockOne.java" src java -n
+ #+INCLUDE: "code/LockOne.java" src java -n
 
-   #+BEGIN_NOTES
-   - Our work focuses on performance critical concurrent algorithms
+ #+BEGIN_NOTES
+ - Our work focuses on performance critical concurrent algorithms
 
-   - To illustrate the problem we have an example of one such algorithm
-     from the art of multiproc programming
+ - To illustrate the problem we have an example of one such algorithm
+   from the art of multiproc programming
 
-   - by Maurice Herlihy and Nir Shavit
+ - by Maurice Herlihy and Nir Shavit
 
-   - lock intended to guarantee mutual exclusion for two threads
-   - notably doesn't guarantee progress, only safety
-   #+END_NOTES
+ - lock intended to guarantee mutual exclusion for two threads
+ - notably doesn't guarantee progress, only safety
+ #+END_NOTES
 
 ** ~LockOne~ mutex
    The Art of Multiprocessor Programming, 2.3.1
